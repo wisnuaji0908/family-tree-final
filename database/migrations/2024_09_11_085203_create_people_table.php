@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('people', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parent_id');
-            $table->foreignId('couple_id');
             $table->string('name');
             $table->enum('gender', ['male', 'female']);
             $table->string('place_birth');

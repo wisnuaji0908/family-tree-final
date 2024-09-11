@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('parents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
+            $table->foreignId('parent_id');
             $table->enum('parent', ['father', 'mother']);
             $table->timestamps();
         });

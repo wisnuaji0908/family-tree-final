@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('couple', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id');
+            $table->foreignId('parent_id');
             $table->date('married_date');
             $table->date('divorce_date');
             $table->timestamps();

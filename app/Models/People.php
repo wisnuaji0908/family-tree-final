@@ -10,8 +10,6 @@ class People extends Model
     use HasFactory;
 
     protected $fillable = [
-        'parent_id',
-        'couple_id',
         'name',
         'gender',
         'place_birth',
