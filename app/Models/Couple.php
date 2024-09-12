@@ -15,4 +15,12 @@ class Couple extends Model
         'married_date',
         'divorce_date',
     ];
+
+    public function user(){
+        return $this->hasMany(User::class, 'user_id', 'id');
+    }
+
+    public function parents(){
+        return $this->hasOne(Parents::class, 'parent_id', 'id');
+    }
 }

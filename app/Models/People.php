@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class People extends Model
 {
     use HasFactory;
+    protected $table= 'people';
 
     protected $fillable = [
         'name',
@@ -15,4 +16,8 @@ class People extends Model
         'place_birth',
         'birth_date',
     ];
+
+    public function user(){
+        return $this->hasOne(User::class, 'people_id', 'id');
+    }
 }
