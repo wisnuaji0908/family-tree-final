@@ -1,5 +1,5 @@
 <?php
-use App\Models\User;
+use App\Models\People;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('parents', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class, 'user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('parent_id')->nullable()->constrained('parents')->references('id');
+            $table->foreignIdFor(People::class, 'people_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('parent_id')->nullable()->constrained('parents')->cascadeOnDelete(); 
             $table->enum('parent', ['father', 'mother']);
             $table->timestamps();
         });

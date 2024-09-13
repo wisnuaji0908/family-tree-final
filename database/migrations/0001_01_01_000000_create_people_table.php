@@ -17,6 +17,7 @@ return new class extends Migration
             $table->enum('gender', ['male', 'female']);
             $table->string('place_birth');
             $table->date('birth_date');
+            $table->date('death_date')->nullable();
             $table->timestamps();
         });
     }

@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\User;
-use App\Models\Parents;
+use App\Models\People;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,10 +14,10 @@ return new class extends Migration
     {
         Schema::create('couple', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class, 'user_id')->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(Parents::class, 'parent_id')->constrained()->cascadeOnDelete();
-            $table->date('married_date');
-            $table->date('divorce_date');
+            $table->foreignIdFor(People::class, 'people_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('couple_id')->nullable()->constrained('couple')->cascadeOnDelete(); 
+            $table->date('married_date')->nullable();
+            $table->date('divorce_date')->nullable();
             $table->timestamps();
         });
     }
