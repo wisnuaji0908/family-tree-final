@@ -12,6 +12,7 @@ class People extends Model
     protected $table= 'people';
 
     protected $fillable = [
+        'user_id',
         'name',
         'gender',
         'place_birth',
@@ -21,9 +22,5 @@ class People extends Model
 
     public function user(){
         return $this->belongsTo(User::class, 'user_id', 'id');
-    }
-
-    public function people() {
-        return $this->hasOne(People::class, 'parent_id', 'id');
     }
 }

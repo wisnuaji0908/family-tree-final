@@ -11,13 +11,13 @@ class Parents extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'people_id',
         'parent_id',
         'parent',
     ];
 
     public function user(): BelongsTo{
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'people_id', 'id');
     }
 
     public function parents() {
