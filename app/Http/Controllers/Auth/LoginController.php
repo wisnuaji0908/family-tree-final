@@ -26,7 +26,7 @@ class LoginController extends Controller
                 return redirect()->intended('/admin');
             }
 
-                return redirect()->intended('/parents');
+                return redirect()->intended('/people');
         }
 
         
