@@ -59,6 +59,17 @@
         .text-decoration-none:hover {
             text-decoration: underline;
         }
+        .eye-icon {
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #007bff;
+            font-size: 1.2rem; 
+            line-height: 1; 
+        }
+
     </style>
 </head>
 <body>
@@ -86,13 +97,16 @@
                                 </div>
                                 <!-- Email input -->
                                 <div class="form-floating mb-4">
-                                    <input type="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" autocomplete="off">
+                                    <input type="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" autocomplete="off" value="{{ old('email') }}">
                                     <label for="floatingInput">Email address</label>
                                 </div>
                                 <!-- Password input -->
-                                <div class="form-floating mb-4">
+                                <div class="form-floating mb-4 position-relative">
                                     <input type="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}" id="floatingPassword" placeholder="Password" name="password" autocomplete="off">
                                     <label for="floatingPassword">Password</label>
+                                    <i class="eye-icon" id="togglePassword" onclick="togglePassword()">
+                                        <span id="eyeIcon">👁️</span>
+                                    </i>
                                 </div>
                                 <!-- 2 column grid layout for inline styling -->
                                 <div class="row mb-4 align-items-center">
@@ -123,6 +137,20 @@
             </div>
         </section>
         <!-- Section: Design Block -->
-    </div>    
+    </div> 
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById("floatingPassword");
+            const eyeIcon = document.getElementById("eyeIcon");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                eyeIcon.textContent = "🙈"; 
+            } else {
+                passwordInput.type = "password";
+                eyeIcon.textContent = "👁️";
+            }
+        }
+    </script>
 </body>
 </html>

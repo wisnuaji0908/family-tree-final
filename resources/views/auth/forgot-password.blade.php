@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Family Tree - Forgot Password</title>
-    {{-- bootsrap 5 --}}
+    {{-- Bootstrap 5 --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    {{-- font --}}
+    {{-- Font --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Sofadi+One&display=swap" rel="stylesheet">
@@ -38,9 +38,12 @@
                     </div>
                     <div class="col-lg-8">
                         <div class="card-body py-5 px-md-5">
+                            <div class="text-center mb-4 d-flex justify-content-center align-items-center">
+                                <img src="{{ asset('logo_ft.png') }}" alt="Logo" class="img-fluid me-3" style="max-width: 150px;"> 
+                                <h3 class="mb-0">Forgot Password</h3>
+                            </div>
                             <form action="{{ route('forgot-password') }}" method="POST">
                                 @csrf
-                                <h3 class="text-center mb-5">Forgot Password</h3>
                                 {{-- notification success --}}
                                 <div class="form-floating mb-4">
                                     @if($message = session('status'))
