@@ -3,62 +3,81 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User; 
+use App\Models\People;
 
 class AdminController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return view('admin');
+        $people = People::all(); 
+        return view('admin.index', compact('people'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $users = User::all(); 
+        return view('people.create', compact('users'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'gender' => 'required|string',
+            'place_birth' => 'required|string|max:255',
+            'birth_date' => 'required|date',
+            'death_date' => 'nullable|date',
+        ]);
+
+        People::create($request->all());
+
+        return redirect()->route('admin.index')->with('success', 'Person added successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+
+    public function show($id)
     {
-        //
+        $person = People::findOrFail($id); 
+        return view('admin.show', compact('person')); 
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+
+    public function edit($id)
     {
-        //
+        $person = People::findOrFail($id); 
+        $users = User::all(); 
+        return view('admin.edit', compact('person', 'users'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+
+    public function update(Request $request, $id)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'gender' => 'required|in:male,female',
+            'place_birth' => 'required|string|max:255',
+            'birth_date' => 'required|date',
+            'death_date' => 'nullable|date|after_or_equal:birth_date',
+        ]);
+
+        $person = People::findOrFail($id);
+
+        $person->update($validatedData);
+
+        return redirect()->route('admin.index')->with('success', 'Data updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+
+
+
+    public function destroy($id)
     {
-        //
+        $person = People::findOrFail($id);
+        $person->delete();
+    
+        return redirect()->route('people.index')->with('success', 'Data successfully removed.');
     }
+    
 }

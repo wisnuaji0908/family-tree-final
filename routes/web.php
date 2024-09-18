@@ -22,6 +22,15 @@ Route::get('/', function () {
     Route::middleware(['auth'])->group(function(){
         Route::get('logout', [LogoutController::class, 'logout'])->name('logout');
         Route::post('logout', [LogoutController::class, 'logout']);
+
+        Route::resource('admin', AdminController::class);
+        Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+        Route::get('/admin/create', [AdminController::class, 'create'])->name('admin.create');
+        Route::post('/admin/store', [AdminController::class, 'store'])->name('admin.store');
+        Route::get('/admin/{id}', [AdminController::class, 'show'])->name('admin.show');
+        Route::get('/admin/{id}/edit', [AdminController::class, 'edit'])->name('admin.edit');
+        Route::put('/admin/{id}', [AdminController::class, 'update'])->name('admin.update');
+        Route::delete('/admin/{id}', [AdminController::class, 'destroy'])->name('admin.destroy');
       
         Route::resource('people', PeopleController::class);
         Route::get('/people', [PeopleController::class, 'index'])->name('people.index');
