@@ -10,6 +10,7 @@ class Couple extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'people_id',
         'couple_id',
         'married_date',
