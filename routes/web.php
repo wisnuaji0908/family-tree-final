@@ -1,7 +1,9 @@
 <?php
-use App\Http\Controllers\PeopleController;
+
+use App\Http\Middleware\ClaimPeopleMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PeopleController;
 use App\Http\Controllers\ParentsController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
@@ -19,7 +21,7 @@ Route::get('/', function () {
     Route::get('register', [RegisterController::class, 'register'])->name('register');
     Route::post('register', [RegisterController::class, 'store']);
 
-    Route::middleware(['auth'])->group(function(){
+    Route::middleware(['auth', ClaimPeopleMiddleware::class])->group(function(){
         Route::get('logout', [LogoutController::class, 'logout'])->name('logout');
         Route::post('logout', [LogoutController::class, 'logout']);
 
@@ -32,15 +34,20 @@ Route::get('/', function () {
         Route::put('/admin/{id}', [AdminController::class, 'update'])->name('admin.update');
         Route::delete('/admin/{id}', [AdminController::class, 'destroy'])->name('admin.destroy');
       
-        Route::resource('people', PeopleController::class);
+        
         Route::get('/people', [PeopleController::class, 'index'])->name('people.index');
         Route::get('/people/create', [PeopleController::class, 'create'])->name('people.create');
         Route::post('/people/store', [PeopleController::class, 'store'])->name('people.store');
-        Route::get('/people/{id}', [PeopleController::class, 'show'])->name('people.show');
         Route::get('/people/{id}/edit', [PeopleController::class, 'edit'])->name('people.edit');
         Route::put('/people/{id}', [PeopleController::class, 'update'])->name('people.update');
         Route::delete('/people/{id}', [PeopleController::class, 'destroy'])->name('people.destroy');
-      
+        
+        
+    });
+    
+    Route::middleware(['auth'])->group(function(){
+        Route::get('/people/claim', [PeopleController::class, 'showClaimForm'])->name('people.claim');
+        Route::post('/people/claim', [PeopleController::class, 'claim'])->name('people.claim.process');
     });
 
     // forgot password
@@ -57,6 +64,6 @@ Route::get('/', function () {
     Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->middleware('guest')->name('password.store');
     
     // buat nyoba aja, jgn dianggap -----------------------------------------
-    Route::resource('/admin', AdminController::class); 
+
     Route::resource('/parents', ParentsController::class);
     // ----------------------------------------------------------------------
