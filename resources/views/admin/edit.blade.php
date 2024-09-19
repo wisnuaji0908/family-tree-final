@@ -58,22 +58,22 @@
             font-size: 0.95rem;
         }
 
+        .btn.bg-gradient-danger {
+            background: linear-gradient(45deg, #dc3545, #c82333); /* Warna merah */
+            color: white;
+        }
+
+        .btn.bg-gradient-danger:hover {
+            background: linear-gradient(45deg, #c82333, #bd2130); /* Warna merah lebih gelap */
+        }
+
         .btn.bg-gradient-primary {
-            background: linear-gradient(45deg, #007bff, #0056b3);
+            background: linear-gradient(45deg, #007bff, #0056b3); /* Warna biru */
             color: white;
         }
 
         .btn.bg-gradient-primary:hover {
-            background: linear-gradient(45deg, #0056b3, #003f7f);
-        }
-
-        .btn.bg-gradient-success {
-            background: linear-gradient(45deg, #28a745, #218838);
-            color: white;
-        }
-
-        .btn.bg-gradient-success:hover {
-            background: linear-gradient(45deg, #218838, #1e7e34);
+            background: linear-gradient(45deg, #0056b3, #003f7f); /* Warna biru lebih gelap */
         }
 
         .form-label {
@@ -171,10 +171,10 @@
                 @enderror
             </div>
             <div class="text-end">
-                <a href="{{ route('admin.index') }}" class="btn bg-gradient-primary">
+                <a href="{{ route('admin.index') }}" class="btn bg-gradient-danger">
                     <i class="fas fa-times-circle"></i> Cancel
                 </a>
-                <button type="submit" class="btn bg-gradient-success">
+                <button type="submit" class="btn bg-gradient-primary">
                     <i class="fas fa-check-circle"></i> Save
                 </button>
             </div>

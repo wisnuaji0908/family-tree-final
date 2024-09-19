@@ -63,21 +63,21 @@
     }
 
     .btn.bg-gradient-primary {
-        background: linear-gradient(45deg, #007bff, #0056b3);
+        background: linear-gradient(45deg, #dc3545, #c82333); /* Merah untuk Cancel */
         color: white;
     }
 
     .btn.bg-gradient-primary:hover {
-        background: linear-gradient(45deg, #0056b3, #003f7f);
+        background: linear-gradient(45deg, #c82333, #a71c1f);
     }
 
     .btn.bg-gradient-success {
-        background: linear-gradient(45deg, #28a745, #218838);
+        background: linear-gradient(45deg, #007bff, #0056b3); /* Biru untuk Save */
         color: white;
     }
 
     .btn.bg-gradient-success:hover {
-        background: linear-gradient(45deg, #218838, #1e7e34);
+        background: linear-gradient(45deg, #0056b3, #003f7f);
     }
 
     .form-label {

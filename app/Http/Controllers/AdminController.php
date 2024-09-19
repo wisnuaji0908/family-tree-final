@@ -17,7 +17,7 @@ class AdminController extends Controller
     public function create()
     {
         $users = User::all(); 
-        return view('people.create', compact('users'));
+        return view('admin.create', compact('users'));
     }
 
 
@@ -77,7 +77,7 @@ class AdminController extends Controller
         $person = People::findOrFail($id);
         $person->delete();
     
-        return redirect()->route('people.index')->with('success', 'Data successfully removed.');
+        return redirect()->route('admin.index')->with('success', 'Data successfully removed.');
     }
     
 }

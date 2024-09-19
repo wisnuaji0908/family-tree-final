@@ -5,15 +5,15 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PeopleController;
 use App\Http\Controllers\ParentsController;
+use App\Http\Controllers\CoupleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
 
-
-Route::get('/', function () {
-    return view('welcome');
-});
+    Route::get('/', function () {
+        return redirect()->route('login');
+    });
 
     Route::get('login', [LoginController::class, 'login'])->name('login');
     Route::post('login', [LoginController::class, 'store']);
@@ -65,3 +65,6 @@ Route::get('/', function () {
 
     Route::resource('/parents', ParentsController::class);
     // ----------------------------------------------------------------------
+
+    //couple 
+    Route::resource('couple', CoupleController::class);
