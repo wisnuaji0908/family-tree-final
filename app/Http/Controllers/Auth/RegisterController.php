@@ -23,7 +23,7 @@ class RegisterController extends Controller
 
         User::create([
             ...$validated,
-            'role' => 'parents',
+            'role' => 'people',
         ]);
 
         // Auth::login($user);
