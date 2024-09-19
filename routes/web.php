@@ -10,10 +10,9 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
 
-
-Route::get('/', function () {
-    return view('welcome');
-});
+    Route::get('/', function () {
+        return redirect()->route('login');
+    });
 
     Route::get('login', [LoginController::class, 'login'])->name('login');
     Route::post('login', [LoginController::class, 'store']);

@@ -41,9 +41,14 @@ class PeopleController extends Controller
     {
         $person = People::findOrFail($id); 
         $users = User::all(); 
+    
+        if ($person->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+    
         return view('people.edit', compact('person', 'users'));
     }
-
+    
 
     public function update(Request $request, $id)
     {
@@ -85,12 +90,11 @@ class PeopleController extends Controller
     $request->validate([
         'person_id' => 'required|exists:people,id',
         'birth_date' => 'required|date',
-        'place_birth' => 'required|string|max:255', // Ubah max menjadi lebih kecil jika perlu
+        'place_birth' => 'required|string|max:255',
     ]);
 
-    // Mencari orang berdasarkan ID dan memastikan user_id belum diisi
     $person = People::where('id', $request->person_id)
-                    ->whereNull('user_id') // Pastikan user belum mengklaim
+                    ->whereNull('user_id')
                     ->firstOrFail();
 
     // Cek kecocokan tanggal lahir dan tempat lahir

@@ -180,6 +180,16 @@
         </form>
     </div>
 </div>
-<script src="https://kit.fontawesome.com/a076d05399.js"></script>
-</body>
+    <script>
+        document.querySelector('.btn.bg-gradient-danger').addEventListener('click', function(event) {
+            event.preventDefault();
+            var userConfirmed = confirm('Are you sure you want to cancel? Unsaved changes will be lost.');
+            
+            if (userConfirmed) {
+                window.location.href = this.href;
+            }
+        });
+    </script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    </body>
 </html>
