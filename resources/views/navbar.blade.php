@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-  <a class="navbar-brand">
+  <a class="navbar-brand ps-3">
     <img src="{{ asset('logo_ft.png') }}" alt="Logo" style="width: 100px; height: auto;">
   </a>
   <a class="navbar-brand" style="margin-left: 10px;">Family Tree</a>

@@ -7,10 +7,10 @@ use App\Models\User;
 use App\Models\People;
 
 class AdminController extends Controller
-{
+    {
     public function index()
     {
-        $people = People::all(); 
+        $people = People::paginate(5); 
         return view('admin.index', compact('people'));
     }
 

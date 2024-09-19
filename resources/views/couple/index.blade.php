@@ -4,78 +4,143 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Couple List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        /* Custom CSS */
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Poppins', sans-serif;
+        }
+        .container-fluid {
+            padding: 0; 
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+            margin-top: 5px;
+        }
         .card-header {
-            background-color: #6ed6b9; 
+            background-color: #51A783;
             color: white;
             border-radius: 12px 12px 0 0;
-            padding: 30px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .table th, .table td {
-            vertical-align: middle;
-        }
-        .btn-custom {
-            background-color: #6ed6b9;
+        .btn-add {
+            background-color: #007bff; 
+            border: none;
+            padding: 13px 30px; 
+            font-size: 14px; 
+            font-weight: 600; 
             color: white;
-            border: 3px solid white;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3); 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px; 
         }
-        .btn-custom:hover {
-            background-color: #0056b3;
+        .btn-edit {
+            background-color: #007bff; 
             color: white;
         }
-        .btn-custom-sm {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+        .table {
+            margin: 0 20px;
+            max-width: 95%; 
+            margin-left: auto;
+            margin-right: auto; 
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        th {
+            background-color: #51A783;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
+            background-color: #e2f0e8;
+        }
+        .text-danger {
+            font-weight: bold;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     </style>
 </head>
 <body>
-    <div class="container mt-4">
-        <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h2 class="mb-0">Couple List</h2>
-                <a href="{{ route('couple.create') }}" class="btn btn-custom">Add New Couple</a>
-            </div>
+    <!-- Include Navbar -->
+    @include('navbar')
 
-            <div class="card-body">
-                @if ($message = Session::get('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ $message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="container-fluid py-0"> 
+        <div class="row">
+            <div class="col-12">
+                <div class="card my-2">
+                    <div class="card-header pb-0">
+                        <h5 class="mb-0" style="font-size: 20px;">Couple List</h5> 
+                        <a href="{{ route('couple.create') }}" class="btn btn-add">
+                            <span class="btn-add-icon"></span> [+] Add Couple
+                        </a>
                     </div>
-                @endif
-
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Person</th>
-                                <th>Partner</th>
-                                <th>Married Date</th>
-                                <th>Divorce Date</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($couple as $couple)
-                                <tr>
-                                    <td>{{ $couple->people->name }}</td>
-                                    <td>{{ $couple->partner->name }}</td>
-                                    <td>{{ $couple->married_date }}</td>
-                                    <td>{{ $couple->divorce_date }}</td>
-                                    <td>
-                                        <a href="{{ route('couple.edit', $couple->id) }}" class="btn btn-warning btn-custom-sm">Edit</a>
-                                        <form action="{{ route('couple.destroy', $couple->id) }}" method="POST" style="display:inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-custom-sm" onclick="return confirm('Are you sure you want to delete this person?')">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                    <div class="card-body">
+                        @if ($message = Session::get('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ $message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+                        <div class="card-body px-0 pb-2">
+                            <div class="table-responsive p-0">
+                                <table class="table align-items-center mb-0" id="datatable">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th> 
+                                            <th>Person</th>
+                                            <th>Partner</th>
+                                            <th>Married Date</th>
+                                            <th>Divorce Date</th>
+                                            <th class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($couple as $index => $coupleData)
+                                            <tr>
+                                                <td>{{ $index + 1 }}.</td> 
+                                                <td>{{ $coupleData->people->name }}</td>
+                                                <td>{{ $coupleData->partner->name }}</td>
+                                                <td>{{ $coupleData->married_date }}</td>
+                                                <td>{{ $coupleData->divorce_date ?? '-' }}</td>
+                                                <td class="text-center action-buttons">
+                                                    <a href="{{ route('couple.edit', $coupleData->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
+                                                    <form action="{{ route('couple.destroy', $coupleData->id) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

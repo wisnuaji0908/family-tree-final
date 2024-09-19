@@ -161,7 +161,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="death_date" class="form-label">Death Date</label>
+                <label for="death_date" class="form-label">Death Date (Optional)</label>
                 <input type="date" class="form-control @error('death_date') is-invalid @enderror" 
                     id="death_date" name="death_date" 
                     value="{{ $person->death_date ? \Carbon\Carbon::parse($person->death_date)->format('Y-m-d') : '' }}" 
@@ -171,7 +171,7 @@
                 @enderror
             </div>
             <div class="text-end">
-                <a href="{{ route('admin.index') }}" class="btn bg-gradient-danger">
+                <a href="{{ route('admin.index') }}" class="btn bg-gradient-danger" onclick="return confirm('Are you sure you want to cancel? Unsaved changes will be lost.');">
                     <i class="fas fa-times-circle"></i> Cancel
                 </a>
                 <button type="submit" class="btn bg-gradient-primary">

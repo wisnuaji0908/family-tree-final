@@ -177,7 +177,7 @@
                     });
                 </script>
                 <div class="text-end">
-                <a href="{{ route('admin.index')}}" class="btn bg-gradient-primary btn-cancel">
+                <a href="{{ route('admin.index')}}" class="btn bg-gradient-primary btn-cancel" onclick="return confirm('Are you sure you want to cancel?');">
                     <i class="fas fa-times-circle"></i> Cancel
                 </a>
                 <button type="submit" class="btn bg-gradient-success btn-save">

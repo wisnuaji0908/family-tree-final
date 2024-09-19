@@ -55,7 +55,6 @@
             background-color: #dc3545;
             color: white;
         }
-
         .table {
             margin: 0 20px;
             max-width: 95%; 
@@ -63,11 +62,6 @@
             margin-right: auto; 
             border-collapse: collapse;
         }
-
-        .navbar-brand {
-            padding: 5px 15px; 
-        }
-
         th, td {
             text-align: left;
             padding: 12px;
@@ -94,17 +88,37 @@
 @include('navbar')
 
 <div class="container-fluid py-0"> 
-        <div class="row">
-            <div class="col-12">
+    <div class="row">
+        <div class="col-12">
             <div class="card my-2">
-            <div class="card-header pb-0">
-                        <h5 class="mb-0">People List</h5>
+                <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0" style="font-size: 20px;">People List</h5>
+                    <div class="text-end">
                         <a href="{{ route('people.create') }}" class="btn btn-add">
                             <span class="btn-add-icon"></span> [+] Add People
                         </a>
                     </div>
-                <div class="card-body px-0 pb-2">
-                    <div class="table-responsive p-0">
+                </div>
+                <div class="card-body">
+                    @if ($message = Session::get('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ $message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                    @if ($message = Session::get('added'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ $message }} Data berhasil ditambahkan.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                    @if ($message = Session::get('data_added'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ $message }} Data tabel berhasil ditambahkan.
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+                    <div class="table-responsive p-0 mt-3">
                         <table class="table align-items-center mb-0" id="datatable">
                             <thead>
                                 <tr>
@@ -155,6 +169,9 @@
             </div>
         </div>
     </div>
+</div>
+<div class="d-flex justify-content-center mt-4">
+    {{ $people->links('pagination::bootstrap-4') }}
 </div>
 
 <!-- Bootstrap JS -->
