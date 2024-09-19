@@ -1,10 +1,10 @@
 <?php
 use App\Models\People;
 use App\Models\Parents;
-use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\User;
 
 return new class extends Migration
 {
@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class, 'user_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->foreignIdFor(People::class, 'people_id')->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(Parents::class, 'parent_id')->constrained()->cascadeOnDelete(); 
+            $table->foreignIdFor(Parents::class, 'parent_id')->nullable()->constrained()->cascadeOnDelete();
             $table->enum('parent', ['father', 'mother']);
             $table->timestamps();
         });
