@@ -53,16 +53,25 @@
                                 <div class="form-floating mb-4">
                                     <input type="email" readonly class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" value="{{ old('email', request('email')) }}">
                                     <label for="floatingInput">Email address</label>
+                                    @error('email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <!-- Password input -->
                                 <div class="form-floating mb-4">
                                     <input type="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}" id="floatingPassword" placeholder="Password" name="password" autocomplete="off">
                                     <label for="floatingPassword">Password</label>
+                                    @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 {{-- Password Confirmation input --}}
                                 <div class="form-floating mb-4">
                                     <input type="password" class="form-control {{ $errors->has('password_confirmation') ? 'is-invalid' : '' }}" id="floatingPassword" placeholder="Password Confimation" name="password_confirmation" autocomplete="off">
                                     <label for="floatingPassword">Password Confirmation</label>
+                                    @error('password_confirmation')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <!-- Submit button -->
                                 <div class="d-grid gap-2">

@@ -51,11 +51,17 @@
                                 <div class="form-floating mb-4">
                                     <input type="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" autocomplete="off">
                                     <label for="floatingInput">Email address</label>
+                                    @error('email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <!-- Password input -->
                                 <div class="form-floating mb-4">
                                     <input type="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}" id="floatingPassword" placeholder="Password" name="password" autocomplete="off">
                                     <label for="floatingPassword">Password</label>
+                                    @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <!-- 2 column grid layout for inline styling -->
                                 <div class="row mb-4 align-items-center">
@@ -66,13 +72,10 @@
                                             <label class="form-check-label" for="form2Example31"> Remember me </label>
                                         </div>
                                     </div>
-                                    <!-- Forgot password -->
                                     <div class="col-6 text-end">
                                         <a href="{{ route('password.request') }}" class="text-decoration-none">Forgot password?</a>
                                     </div>
                                 </div>
-
-                                <!-- Submit button -->
                                 <div class="d-grid gap-2">
                                     <input type="submit" value="Sign In" class="btn btn-primary mb-4">
                                 </div>

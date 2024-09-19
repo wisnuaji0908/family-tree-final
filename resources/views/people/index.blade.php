@@ -110,6 +110,7 @@
             <div class="card my-4">
                 <div class="card-header pb-0">
                     <h1>People</h1>
+                    <a href="{{ route('logout') }}">Logout</a>
                     <a href="{{ route('people.create') }}" class="btn btn-primary"> [+] Add People</a>
                 </div>
                 <div class="card-body px-0 pb-2">
