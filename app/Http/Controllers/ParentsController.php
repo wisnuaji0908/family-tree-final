@@ -2,64 +2,82 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Parents;
+use App\Models\User;
+use App\Models\People;
 use Illuminate\Http\Request;
 
 class ParentsController extends Controller
 {
-// UJI COBA AJA, jgn dibawa pusing.
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return view('parents');
+        // Mengambil semua data parents dan memuat relasi user, people, dan parentEntity
+        $parents = Parents::with(['user', 'people', 'parentEntity'])->get();
+        return view('parents.index', compact('parents'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        // Ambil data user dan people untuk keperluan form
+        $users = User::all();
+        $people = People::all();
+        return view('parents.create', compact('users', 'people'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        // Validasi input
+        $request->validate([
+            'id' => 'nullable|exists:id',
+            'user_id' => 'nullable|exists:users,id', // User_id bisa kosong
+            'people_id' => 'required|exists:people,id',
+            'parent_id' => 'nullable|exists:parents,id', // Parent_id bisa kosong
+            'parent' => 'required|in:father,mother',
+        ]);
+
+        // Buat data baru
+        Parents::create($request->only(['user_id', 'people_id', 'parent_id', 'parent']));
+        return redirect()->route('parents.index')->with('success', 'Parent added successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit($id)
     {
-        //
+        $parent = Parents::findOrFail($id);
+        $users = User::all();
+        $people = People::all();
+        return view('parents.edit', compact('parent', 'users', 'people'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, $id)
     {
-        //
+            // Validasi input
+        $request->validate([
+            'user_id' => 'nullable|exists:users,id', 
+            'people_id' => 'required|exists:people,id',
+            'parent_id' => 'nullable|exists:parents,id', 
+            'parent' => 'required|in:father,mother',
+         ]);
+
+            // Update data
+        $parent = Parents::findOrFail($id);
+        $parent->update($request->only(['user_id', 'people_id', 'parent_id', 'parent']));
+            
+        return redirect()->route('parents.index')->with('success', 'Parent updated successfully.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        // Validasi: Pastikan parent dengan ID tersebut ada
+        $parent = Parents::find($id);
+
+        if (!$parent) {
+            return redirect()->route('parents.index')->with('error', 'Parent not found.');
+        }
+
+        // Hapus data
+        $parent->delete();
+        
+        return redirect()->route('parents.index')->with('success', 'Data successfully removed.');
     }
 }

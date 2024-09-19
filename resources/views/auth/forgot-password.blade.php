@@ -54,6 +54,9 @@
                                 <div class="form-floating mb-4">
                                     <input type="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" autocomplete="off">
                                     <label for="floatingInput">Email address</label>
+                                    @error('email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <!-- Submit button -->
                                 <div class="d-grid gap-2">

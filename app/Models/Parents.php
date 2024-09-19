@@ -11,6 +11,7 @@ class Parents extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'user_id',
         'people_id',
         'parent_id',
@@ -24,5 +25,14 @@ class Parents extends Model
     public function parents() {
         return $this->hasOne(Parents::class, 'parent_id', 'id');
     }
-}
 
+    public function parentEntity(): BelongsTo
+    {
+        return $this->belongsTo(Parents::class, 'parent_id', 'id');
+    }
+
+    public function people(): BelongsTo
+    {
+        return $this->belongsTo(People::class, 'people_id', 'id');
+    }
+}

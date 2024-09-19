@@ -95,24 +95,26 @@
                                 <div class="form-floating mb-4">
                                     <input type="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" autocomplete="off">
                                     <label for="floatingInput">Email address</label>
+                                    @error('email')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <!-- Password input -->
                                 <div class="form-floating mb-4 position-relative">
                                     <input type="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}" id="floatingPassword" placeholder="Password" name="password" autocomplete="off">
                                     <label for="floatingPassword">Password</label>
-                                    <i class="eye-icon" id="togglePassword" onclick="togglePassword('floatingPassword', 'eyeIcon')">
-                                        <span id="eyeIcon">👁️</span>
-                                    </i>
+                                    @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                                <!-- Password Confirmation input -->
-                                <div class="form-floating mb-4 position-relative">
-                                    <input type="password" class="form-control {{ $errors->has('password_confirmation') ? 'is-invalid' : '' }}" id="floatingPasswordConfirmation" placeholder="Password Confirmation" name="password_confirmation" autocomplete="off">
-                                    <label for="floatingPasswordConfirmation">Password Confirmation</label>
-                                    <i class="eye-icon" id="togglePasswordConfirmation" onclick="togglePassword('floatingPasswordConfirmation', 'eyeIconConfirmation')">
-                                        <span id="eyeIconConfirmation">👁️</span>
-                                    </i>
+                                {{-- Password Confirmation input --}}
+                                <div class="form-floating mb-4">
+                                    <input type="password" class="form-control {{ $errors->has('password_confirmation') ? 'is-invalid' : '' }}" id="floatingPassword" placeholder="Password Confimation" name="password_confirmation" autocomplete="off">
+                                    <label for="floatingPassword">Password Confirmation</label>
+                                    @error('password_confirmation')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                                <!-- Submit button -->
                                 <div class="d-grid gap-2">
                                     <input type="submit" value="Sign Up" class="btn btn-primary mb-4">
                                 </div>

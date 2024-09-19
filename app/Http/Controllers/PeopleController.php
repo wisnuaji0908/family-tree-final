@@ -7,6 +7,7 @@ use App\Models\People;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+
 class PeopleController extends Controller
 {
     public function index()
