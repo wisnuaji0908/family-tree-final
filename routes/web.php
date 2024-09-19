@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PeopleController;
 use App\Http\Controllers\ParentsController;
+use App\Http\Controllers\CoupleController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -67,3 +68,6 @@ Route::get('/', function () {
 
     Route::resource('/parents', ParentsController::class);
     // ----------------------------------------------------------------------
+
+    //couple 
+    Route::resource('couple', CoupleController::class);
