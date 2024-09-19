@@ -107,49 +107,38 @@
 <body>
 <div class="container-fluid">
     <div class="row justify-content-center">
-        @if($message = session('error'))
-            <div class="alert alert-danger my-4" role="alert">{{ $message }}</div>
-        @endif
-        <div class="col-12">
+        <div class="col-12">  
             <form action="{{ route('people.claim.process') }}" method="POST">
                 @csrf
-                <h2 class="text-center mb-3">Claim Account</h2>
-                <div class="form-group">
-                @if($message = session('message'))
-                        <div class="alert alert-warning my-4  text-black" role="alert">{{ $message }}</div>
-                @endif
-                </div>
-                {{-- <div class="form-group">
-                    <label for="person_id">Select Person</label>
-                    <select name="person_id" id="person_id" class="form-select">
-                        @foreach ($people as $person)
-                            <option value="{{ $person->id }}">{{ $person->name }}</option>
-                        @endforeach
-                    </select>
-                </div> --}}
-                <div class="form-floating">
-                    <select class="form-select" id="floatingSelect" aria-label="Floating label select example" name="person_id">
+                <h2 class="text-center">Claim Account</h2>
+                <p class="text-center" style="font-size: 12px;">Please claim your account first.</p>
+                <div class="form-floating mb-3">
+                    <select class="form-select {{ $errors->has('person_id') ? 'is-invalid' : '' }}" id="floatingSelect" aria-label="Floating label select example" name="person_id">
                       <option selected disabled>Select Person</option>
                       @foreach ($people as $person)
                             <option value="{{ $person->id }}">{{ $person->name }}</option>
                         @endforeach
                     </select>
+                    @error('person_id')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                     <label for="floatingSelect">Choose One</label>
                 </div>
-                {{-- <div class="form-group mb-3">
-                    <label for="birth_date">Enter Birth Date</label>
-                    <input type="date" name="birth_date" id="birth_date" class="form-control" required>
-                </div> --}}
                 <div class="form-floating mb-3">
-                    <input type="date" class="form-control" id="floatingInput" name="birth_date">
+                    <input type="date" class="form-control {{ $errors->has('birth_date') ? 'is-invalid' : '' }}" id="floatingInput" name="birth_date">
                     <label for="floatingInput">Birth Date</label>
+                @error('birth_date')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
                 </div>
                 <div class="form-floating mb-3">
-                    <textarea class="form-control" placeholder="Enter Your Birth Place" id="floatingTextarea" style="height: 150px;" name="place_birth"></textarea>
+                    <textarea class="form-control {{ $errors->has('place_birth') ? 'is-invalid' : '' }}" placeholder="Enter Your Birth Place" id="floatingTextarea" style="height: 150px;" name="place_birth"></textarea>
                     <label for="floatingTextarea">Birth Place</label>
+                @error('place_birth')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
                 </div>
                 <div class="d-grid gap-2">
-                    {{-- <button type="submit" class="btn btn-primary" style="width: 100%">Claim</button> --}}
                     <input type="submit" value="Claim" class="btn btn-primary" style="width: 100%">
                 </div>                  
             </form>

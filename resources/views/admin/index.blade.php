@@ -92,6 +92,7 @@
 </head>
 <body>
 
+
     <!-- Include Navbar -->
     @include('navbar')
 
