@@ -71,6 +71,15 @@
         background: linear-gradient(45deg, #0056b3, #003f7f);
     }
 
+    .btn.bg-gradient-danger {
+        background: linear-gradient(45deg, #dc3545, #c82333);
+        color: white;
+    }
+
+    .btn.bg-gradient-danger:hover {
+        background: linear-gradient(45deg, #c82333, #bd2130);
+    }
+
     .btn.bg-gradient-success {
         background: linear-gradient(45deg, #28a745, #218838);
         color: white;
@@ -177,15 +186,14 @@
                     });
                 </script>
                 <div class="text-end">
-                <a href="{{ route('people.index')}}" class="btn bg-gradient-primary btn-cancel">
-                    <i class="fas fa-times-circle"></i> Cancel
-                </a>
-                <button type="submit" class="btn bg-gradient-success btn-save">
-                    <i class="fas fa-check-circle"></i> Save
-                </button>
-            </div>
-            <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-
+                    <a href="{{ route('people.index')}}" class="btn bg-gradient-danger btn-cancel">
+                        <i class="fas fa-times-circle"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn bg-gradient-primary btn-save">
+                        <i class="fas fa-check-circle"></i> Save
+                    </button>
+                </div>
+                <script src="https://kit.fontawesome.com/a076d05399.js"></script>
             </form>
         </div>
     </div>

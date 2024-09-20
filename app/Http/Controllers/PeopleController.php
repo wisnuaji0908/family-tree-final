@@ -7,11 +7,12 @@ use App\Models\People;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+
 class PeopleController extends Controller
 {
     public function index()
     {
-        $people = People::all(); 
+        $people = People::paginate(5);
         return view('people.index', compact('people'));
     }
 

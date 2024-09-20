@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit People Admin</title>
+    <title>Edit Couple</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -102,13 +102,10 @@
 <body>
 <div class="container-fluid">
     <div class="card">
-        <form action="{{ route('admin.update', $person->id) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('couple.update', $couple->id) }}" method="POST">
             @csrf
             @method('PUT')
-            <h1 class="text-center">Edit People</h1>
-            @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
+            <h1 class="text-center">Edit Couple</h1>
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
@@ -118,60 +115,32 @@
                     </ul>
                 </div>
             @endif
-            <div class="mb-2">
-                <label for="name" class="form-label">Name</label>
-                <input type="text" 
-                    id="name" name="name" 
-                    class="form-control @error('name') is-invalid @enderror" 
-                    placeholder="Enter Name" 
-                    value="{{ old('name', $person->name ?? '') }}" />
-                @error('name')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
             <div class="mb-3">
-                <label for="gender" class="form-label">Gender</label>
-                <select class="form-select @error('gender') is-invalid @enderror" id="gender" name="gender">
-                    <option value="male" @if ($person->gender == 'male' || old('gender') == 'male') selected @endif>Male</option>
-                    <option value="female" @if ($person->gender == 'female' || old('gender') == 'female') selected @endif>Female</option>
+                <label for="people_id" class="form-label">Person</label>
+                <select name="people_id" id="people_id" class="form-select">
+                    @foreach($people as $person)
+                        <option value="{{ $person->id }}" {{ $couple->people_id == $person->id ? 'selected' : '' }}>{{ $person->name }}</option>
+                    @endforeach
                 </select>
-                @error('gender')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
             </div>
             <div class="mb-3">
-                <label for="place_birth" class="form-label">Place Birth</label>
-                <input type="text" class="form-control @error('place_birth') is-invalid @enderror" 
-                       id="place_birth" name="place_birth" 
-                       placeholder="Place of Birth" 
-                       value="{{ old('place_birth', $person->place_birth) }}">
-                @error('place_birth')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+                <label for="couple_id" class="form-label">Partner</label>
+                <select name="couple_id" id="couple_id" class="form-select">
+                    @foreach($people as $person)
+                        <option value="{{ $person->id }}" {{ $couple->couple_id == $person->id ? 'selected' : '' }}>{{ $person->name }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="mb-3">
-                <label for="birth_date" class="form-label">Birth Date</label>
-                <input type="date" class="form-control @error('birth_date') is-invalid @enderror" 
-                    id="birth_date" name="birth_date" 
-                    value="{{ old('birth_date', $person->birth_date) }}" 
-                    max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
-                @error('birth_date')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+                <label for="married_date" class="form-label">Married Date</label>
+                <input type="date" name="married_date" id="married_date" class="form-control" value="{{ $couple->married_date }}">
             </div>
-
             <div class="mb-3">
-                <label for="death_date" class="form-label">Death Date (Optional)</label>
-                <input type="date" class="form-control @error('death_date') is-invalid @enderror" 
-                    id="death_date" name="death_date" 
-                    value="{{ $person->death_date ? \Carbon\Carbon::parse($person->death_date)->format('Y-m-d') : '' }}" 
-                    max="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
-                @error('death_date')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+                <label for="divorce_date" class="form-label">Divorce Date (Optional)</label>
+                <input type="date" name="divorce_date" id="divorce_date" class="form-control" value="{{ $couple->divorce_date }}">
             </div>
             <div class="text-end">
-                <a href="{{ route('admin.index') }}" class="btn bg-gradient-danger" onclick="return confirm('Are you sure you want to cancel? Unsaved changes will be lost.');">
+                <a href="{{ route('couple.index')}}" class="btn bg-gradient-danger" onclick="return confirm('Are you sure you want to cancel? Unsaved changes will be lost.');">
                     <i class="fas fa-times-circle"></i> Cancel
                 </a>
                 <button type="submit" class="btn bg-gradient-primary">

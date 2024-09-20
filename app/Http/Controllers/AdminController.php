@@ -7,17 +7,17 @@ use App\Models\User;
 use App\Models\People;
 
 class AdminController extends Controller
-{
+    {
     public function index()
     {
-        $people = People::all(); 
+        $people = People::paginate(5); 
         return view('admin.index', compact('people'));
     }
 
     public function create()
     {
         $users = User::all(); 
-        return view('people.create', compact('users'));
+        return view('admin.create', compact('users'));
     }
 
 
@@ -77,7 +77,7 @@ class AdminController extends Controller
         $person = People::findOrFail($id);
         $person->delete();
     
-        return redirect()->route('people.index')->with('success', 'Data successfully removed.');
+        return redirect()->route('admin.index')->with('success', 'Data successfully removed.');
     }
     
 }

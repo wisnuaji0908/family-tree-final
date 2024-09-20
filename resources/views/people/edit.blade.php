@@ -56,24 +56,23 @@
             transition: all 0.3s ease;
             margin-right: 12px;
             font-size: 0.95rem;
+            color: white; /* Set default text color to white */
         }
 
         .btn.bg-gradient-primary {
-            background: linear-gradient(45deg, #007bff, #0056b3);
-            color: white;
+            background-color: #007bff; /* Blue color for save button */
         }
 
         .btn.bg-gradient-primary:hover {
-            background: linear-gradient(45deg, #0056b3, #003f7f);
+            background-color: #0056b3; /* Darker blue on hover */
         }
 
-        .btn.bg-gradient-success {
-            background: linear-gradient(45deg, #28a745, #218838);
-            color: white;
+        .btn.bg-gradient-danger {
+            background-color: #dc3545; /* Red color for cancel button */
         }
 
-        .btn.bg-gradient-success:hover {
-            background: linear-gradient(45deg, #218838, #1e7e34);
+        .btn.bg-gradient-danger:hover {
+            background-color: #c82333; /* Darker red on hover */
         }
 
         .form-label {
@@ -161,7 +160,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="death_date" class="form-label">Death Date</label>
+                <label for="death_date" class="form-label">Death Date (Optional)</label>
                 <input type="date" class="form-control @error('death_date') is-invalid @enderror" 
                     id="death_date" name="death_date" 
                     value="{{ $person->death_date ? \Carbon\Carbon::parse($person->death_date)->format('Y-m-d') : '' }}" 
@@ -171,16 +170,16 @@
                 @enderror
             </div>
             <div class="text-end">
-                <a href="{{ route('people.index') }}" class="btn bg-gradient-primary">
+                <a href="{{ route('people.index') }}" class="btn bg-gradient-danger" onclick="return confirm('Are you sure you want to cancel? Unsaved changes will be lost.');">
                     <i class="fas fa-times-circle"></i> Cancel
                 </a>
-                <button type="submit" class="btn bg-gradient-success">
+                <button type="submit" class="btn bg-gradient-primary">
                     <i class="fas fa-check-circle"></i> Save
                 </button>
             </div>
         </form>
     </div>
 </div>
-<script src="https://kit.fontawesome.com/a076d05399.js"></script>
-</body>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    </body>
 </html>
