@@ -1,12 +1,12 @@
 <?php
 
-use App\Http\Middleware\ClaimPeopleMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PeopleController;
 use App\Http\Controllers\ParentsController;
 use App\Http\Controllers\CoupleController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Middleware\ClaimPeopleMiddleware;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ForgotPasswordController;
@@ -66,7 +66,7 @@ use App\Http\Controllers\ForgotPasswordController;
 
     Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->middleware('guest')->name('password.store');
     
-    // PARENT
+    // PARENTS
     Route::resource('/parents', ParentsController::class);
     Route::get('/parent', [ParentsController::class, 'index'])->name('parent.index');
 
