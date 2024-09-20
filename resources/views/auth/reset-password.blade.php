@@ -25,6 +25,14 @@
             font-family: "Poppins", sans-serif;
             font-weight: 400;
         }
+        .position-relative .eye-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 1.2em;
+        }
     </style>
 </head>
 <body>
@@ -58,17 +66,19 @@
                                     @enderror
                                 </div>
                                 <!-- Password input -->
-                                <div class="form-floating mb-4">
+                                <div class="form-floating mb-4 position-relative">
                                     <input type="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}" id="floatingPassword" placeholder="Password" name="password" autocomplete="off">
                                     <label for="floatingPassword">Password</label>
+                                    <span class="eye-icon" id="eyeIcon1" onclick="togglePassword('floatingPassword', 'eyeIcon1')">👁️</span>
                                     @error('password')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
                                 {{-- Password Confirmation input --}}
-                                <div class="form-floating mb-4">
-                                    <input type="password" class="form-control {{ $errors->has('password_confirmation') ? 'is-invalid' : '' }}" id="floatingPassword" placeholder="Password Confimation" name="password_confirmation" autocomplete="off">
-                                    <label for="floatingPassword">Password Confirmation</label>
+                                <div class="form-floating mb-4 position-relative">
+                                    <input type="password" class="form-control {{ $errors->has('password_confirmation') ? 'is-invalid' : '' }}" id="floatingPasswordConfirmation" placeholder="Password Confimation" name="password_confirmation" autocomplete="off">
+                                    <label for="floatingPasswordConfirmation">Password Confirmation</label>
+                                    <span class="eye-icon" id="eyeIcon2" onclick="togglePassword('floatingPasswordConfirmation', 'eyeIcon2')">👁️</span>
                                     @error('password_confirmation')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
@@ -85,5 +95,20 @@
         </section>
         <!-- Section: Design Block -->
     </div>    
+    <script>
+        function togglePassword(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const eyeIcon = document.getElementById(iconId);
+
+            // Toggle between 'password' and 'text'
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                eyeIcon.textContent = "🙈";  // Change to monkey covering eyes
+            } else {
+                passwordInput.type = "password";
+                eyeIcon.textContent = "👁️";  // Change to eye icon
+            }
+        }
+    </script>
 </body>
 </html>

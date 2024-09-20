@@ -102,7 +102,7 @@ class PeopleController extends Controller
         return redirect()->route('people.index')->with('success', 'Account claimed successfully.');
     } else {
         // Jika tidak cocok, kembalikan dengan pesan error
-        return redirect()->back()->withErrors(['error' => 'Birth date or Place of birth does not match.']);
+        return redirect()->back()->withErrors(['error' => 'Birth date or Place of birth does not match.'])->withInput();
     }
 }
 

@@ -86,14 +86,14 @@
                     <div class="col-lg-8">
                         <div class="card-body py-5 px-md-5">
                             <div class="text-center mb-4 d-flex justify-content-center align-items-center">
-                                <img src="{{ asset('logo_ft.png') }}" alt="Logo" class="img-fluid me-3" style="max-width: 150px;"> 
+                                <img src="{{ asset('logo_ft.png') }}" alt="Logo" class="img-fluid me-3" style="max-width: 100px;"> 
                                 <h3 class="mb-0">Register</h3>
                             </div>
                             <form action="{{ route('register') }}" method="POST">
                                 @csrf
                                 <!-- Email input -->
                                 <div class="form-floating mb-4">
-                                    <input type="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" autocomplete="off">
+                                    <input type="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" autocomplete="off" value="{{ old('email') }}">
                                     <label for="floatingInput">Email address</label>
                                     @error('email')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -101,19 +101,21 @@
                                 </div>
                                 <!-- Password input -->
                                 <div class="form-floating mb-4 position-relative">
-                                    <input type="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}" id="floatingPassword" placeholder="Password" name="password" autocomplete="off">
-                                    <label for="floatingPassword">Password</label>
+                                    <input type="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}" id="password" placeholder="Password" name="password" autocomplete="off">
+                                    <label for="password">Password</label>
                                     @error('password')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+                                    <span class="eye-icon" id="eyeIconPassword" onclick="togglePassword('password', 'eyeIconPassword')">👁️</span>
                                 </div>
-                                {{-- Password Confirmation input --}}
-                                <div class="form-floating mb-4">
-                                    <input type="password" class="form-control {{ $errors->has('password_confirmation') ? 'is-invalid' : '' }}" id="floatingPassword" placeholder="Password Confimation" name="password_confirmation" autocomplete="off">
-                                    <label for="floatingPassword">Password Confirmation</label>
+                                <!-- Password Confirmation input -->
+                                <div class="form-floating mb-4 position-relative">
+                                    <input type="password" class="form-control {{ $errors->has('password_confirmation') ? 'is-invalid' : '' }}" id="password_confirmation" placeholder="Password Confirmation" name="password_confirmation" autocomplete="off">
+                                    <label for="password_confirmation">Password Confirmation</label>
                                     @error('password_confirmation')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+                                    <span class="eye-icon" id="eyeIconPasswordConfirmation" onclick="togglePassword('password_confirmation', 'eyeIconPasswordConfirmation')">👁️</span>
                                 </div>
                                 <div class="d-grid gap-2">
                                     <input type="submit" value="Sign Up" class="btn btn-primary mb-4">
@@ -129,7 +131,6 @@
         </section>
         <!-- Section: Design Block -->
     </div>    
-
     <script>
         function togglePassword(inputId, iconId) {
             const passwordInput = document.getElementById(inputId);
@@ -142,6 +143,6 @@
                 eyeIcon.textContent = "👁️";
             }
         }
-    </script>
+    </script>    
 </body>
 </html>

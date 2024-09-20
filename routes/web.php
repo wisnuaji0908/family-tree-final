@@ -44,6 +44,13 @@ use App\Http\Controllers\ForgotPasswordController;
         Route::put('/people/{id}', [PeopleController::class, 'update'])->name('people.update');
         Route::delete('/people/{id}', [PeopleController::class, 'destroy'])->name('people.destroy');
         
+        // PARENTS
+        Route::resource('/parents', ParentsController::class);
+        Route::get('/parent', [ParentsController::class, 'index'])->name('parent.index');
+
+        // COUPLE
+        Route::resource('couple', CoupleController::class);
+        Route::get('/couple', [CoupleController::class, 'index'])->name('couple.index');
     });
     
     // AUTH 
@@ -65,12 +72,4 @@ use App\Http\Controllers\ForgotPasswordController;
     })->middleware('guest')->name('password.reset');
 
     Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->middleware('guest')->name('password.store');
-    
-    // PARENTS
-    Route::resource('/parents', ParentsController::class);
-    Route::get('/parent', [ParentsController::class, 'index'])->name('parent.index');
-
-    // COUPLE
-    Route::resource('couple', CoupleController::class);
-    Route::get('/couple', [CoupleController::class, 'index'])->name('couple.index');
    
