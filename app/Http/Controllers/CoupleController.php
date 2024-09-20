@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Couple;
 use App\Models\People;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; // Import Auth untuk mendapatkan user yang sedang login
 
 class CoupleController extends Controller
 {
@@ -42,7 +43,14 @@ class CoupleController extends Controller
             return redirect()->back()->withErrors('This couple is already registered.');
         }
 
-        Couple::create($request->all());
+        // Simpan data pasangan, termasuk user_id yang sedang login
+        Couple::create([
+            'people_id' => $request->people_id,
+            'couple_id' => $request->couple_id,
+            'married_date' => $request->married_date,
+            'divorce_date' => $request->divorce_date,
+            'user_id' => Auth::id(), // Menyimpan ID user yang sedang login
+        ]);
 
         return redirect()->route('couple.index')->with('success', 'Couple created successfully.');
     }
@@ -77,7 +85,14 @@ class CoupleController extends Controller
             return redirect()->back()->withErrors('This couple is already registered.');
         }
 
-        $couple->update($request->all());
+        // Update data pasangan, termasuk user_id yang sedang login
+        $couple->update([
+            'people_id' => $request->people_id,
+            'couple_id' => $request->couple_id,
+            'married_date' => $request->married_date,
+            'divorce_date' => $request->divorce_date,
+            'user_id' => Auth::id(), // Menyimpan ID user yang sedang login
+        ]);
 
         return redirect()->route('couple.index')->with('success', 'Couple updated successfully.');
     }
