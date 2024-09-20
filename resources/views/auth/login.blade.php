@@ -117,7 +117,7 @@
                                     <!-- Checkbox -->
                                     <div class="col-6 d-flex">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="form2Example31" />
+                                            <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked/>
                                             <label class="form-check-label" for="form2Example31"> Remember me </label>
                                         </div>
                                     </div>
