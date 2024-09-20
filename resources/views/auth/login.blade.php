@@ -84,7 +84,7 @@
                     <div class="col-lg-8">
                         <div class="card-body py-5 px-md-5">
                             <div class="text-center mb-4 d-flex justify-content-center align-items-center">
-                                <img src="{{ asset('logo_ft1.png') }}" alt="Logo" class="img-fluid me-3" style="max-width: 100px;"> 
+                                <img src="{{ asset('logo_ft.png') }}" alt="Logo" class="img-fluid me-3" style="max-width: 100px;"> 
                                 <h3 class="mb-0">Login</h3>
                             </div>
                             <form action="{{ route('login') }}" method="POST">

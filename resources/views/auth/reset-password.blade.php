@@ -45,12 +45,15 @@
                         <img src="{{ asset('3.png') }}" alt="Tree Family" class="w-100 rounded-t-5 rounded-tr-lg-0 rounded-bl-lg-5" />
                     </div>
                     <div class="col-lg-8">
+                        
                         <div class="card-body py-5 px-md-5">
                             <form action="{{ route('password.store') }}" method="POST">
                                 @csrf
                                 <input name="token" type="hidden" value="{{ request('token') }}">
-
-                                <h3 class="text-center mb-5">Reset Password</h3>
+                                <div class="text-center mb-4 d-flex justify-content-center align-items-center">
+                                    <img src="{{ asset('logo_ft.png') }}" alt="Logo" class="img-fluid me-3" style="max-width: 100px;"> 
+                                    <h3 class="mb-0">Reset Password</h3>
+                                </div>
                                 {{-- notification success --}}
                                 <div class="form-floating mb-4">
                                     @if($message = session('success'))
