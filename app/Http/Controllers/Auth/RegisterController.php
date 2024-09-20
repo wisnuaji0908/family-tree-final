@@ -29,6 +29,8 @@ class RegisterController extends Controller
 
         // Auth::login($user);
 
-        return to_route('login')->with('success', 'Registration Successfully');
-    }
+        return to_route('login')
+        ->with('success', 'Registration Successfully')
+        ->withInput($request->only('email'));
+        }
 }
