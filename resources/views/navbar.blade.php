@@ -9,14 +9,14 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item" style="margin-right: 20px;"> <!-- Tambahkan jarak -->
-          <a class="nav-link active" aria-current="page" href="{{ route('admin.index') }}">Home</a>
+        <li class="nav-item" style="margin-right: 20px;"> 
+          <a class="nav-link active" aria-current="page" href="{{ route('admin.index') }}">People</a>
         </li>
-        <li class="nav-item" style="margin-right: 20px;"> <!-- Tambahkan jarak -->
-          <a class="nav-link active" href="#">Parent</a>
+        <li class="nav-item" style="margin-right: 20px;"> 
+          <a class="nav-link active" href="{{ route('parent.index') }}">Parent</a>
         </li>
-        <li class="nav-item" style="margin-right: 20px;"> <!-- Tambahkan jarak -->
-          <a class="nav-link active" href="#">Couple</a>
+        <li class="nav-item" style="margin-right: 20px;"> 
+          <a class="nav-link active" href="{{ route('couple.index') }}">Couple</a>
         </li>
         <li class="nav-item">
         <!-- Tombol Logout -->
