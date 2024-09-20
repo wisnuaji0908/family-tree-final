@@ -15,6 +15,7 @@ use App\Http\Controllers\ForgotPasswordController;
         return redirect()->route('login');
     });
 
+    // LOGIN
     Route::get('login', [LoginController::class, 'login'])->name('login');
     Route::post('login', [LoginController::class, 'store']);
 
@@ -25,6 +26,7 @@ use App\Http\Controllers\ForgotPasswordController;
         Route::get('logout', [LogoutController::class, 'logout'])->name('logout');
         Route::post('logout', [LogoutController::class, 'logout']);
 
+        // ADMIN
         Route::resource('admin', AdminController::class);
         Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
         Route::get('/admin/create', [AdminController::class, 'create'])->name('admin.create');
@@ -34,6 +36,7 @@ use App\Http\Controllers\ForgotPasswordController;
         Route::put('/admin/{id}', [AdminController::class, 'update'])->name('admin.update');
         Route::delete('/admin/{id}', [AdminController::class, 'destroy'])->name('admin.destroy');
       
+        // PEOPLE
         Route::get('/people', [PeopleController::class, 'index'])->name('people.index');
         Route::get('/people/create', [PeopleController::class, 'create'])->name('people.create');
         Route::post('/people/store', [PeopleController::class, 'store'])->name('people.store');
@@ -43,28 +46,31 @@ use App\Http\Controllers\ForgotPasswordController;
         
     });
     
+    // AUTH 
     Route::middleware(['auth'])->group(function(){
         Route::get('/people/claim', [PeopleController::class, 'showClaimForm'])->name('people.claim');
         Route::post('/people/claim', [PeopleController::class, 'claim'])->name('people.claim.process');
     });
 
-    // forgot password
+    // FORGOT PASSWORD
     Route::get('/forgot-password', function () {
         return view('auth.forgot-password');
     })->middleware('guest')->name('password.request');
     
     Route::post('forgot-password', [ForgotPasswordController::class, 'forgotPassword'])->name('forgot-password');
     
+    // RESET PASSWORD
     Route::get('/reset-password/{token}', function (string $token) {
         return view('auth.reset-password', ['token' => $token]);
     })->middleware('guest')->name('password.reset');
-    
+
     Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->middleware('guest')->name('password.store');
     
-    // buat nyoba aja, jgn dianggap -----------------------------------------
-    
+    // PARENTS
     Route::resource('/parents', ParentsController::class);
-    // ----------------------------------------------------------------------
+    Route::get('/parent', [ParentsController::class, 'index'])->name('parent.index');
 
-    //couple 
+    // COUPLE
     Route::resource('couple', CoupleController::class);
+    Route::get('/couple', [CoupleController::class, 'index'])->name('couple.index');
+   

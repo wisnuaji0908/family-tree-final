@@ -133,11 +133,11 @@
             </div>
             <div class="mb-3">
                 <label for="married_date" class="form-label">Married Date</label>
-                <input type="date" name="married_date" id="married_date" class="form-control" value="{{ $couple->married_date }}">
+                <input type="date" name="married_date" id="married_date" class="form-control" value="{{ $couple->married_date }}" max="{{ date('Y-m-d') }}">
             </div>
             <div class="mb-3">
                 <label for="divorce_date" class="form-label">Divorce Date (Optional)</label>
-                <input type="date" name="divorce_date" id="divorce_date" class="form-control" value="{{ $couple->divorce_date }}">
+                <input type="date" name="divorce_date" id="divorce_date" class="form-control" value="{{ $couple->divorce_date }}" max="{{ date('Y-m-d') }}">
             </div>
             <div class="text-end">
                 <a href="{{ route('couple.index')}}" class="btn bg-gradient-danger" onclick="return confirm('Are you sure you want to cancel? Unsaved changes will be lost.');">
@@ -151,5 +151,16 @@
     </div>
 </div>
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Dapatkan tanggal hari ini dalam format YYYY-MM-DD
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Atur nilai maksimal (max) pada input married_date dan divorce_date
+        document.getElementById('married_date').setAttribute('max', today);
+        document.getElementById('divorce_date').setAttribute('max', today);
+    });
+</script>
+
 </body>
 </html>

@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Couple</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>Create Couple Admin</title>
+   <!-- Google Font -->
+   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         body {
             background-color: #f5f7fa;
@@ -106,7 +107,7 @@
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="form-container">
-                <h1>Create Couple</h1>
+                <h1>Create Couple Admin</h1>
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <ul class="mb-0">
@@ -160,5 +161,12 @@
 
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('married_date').setAttribute('max', today);
+    document.getElementById('divorce_date').setAttribute('max', today);
+</script>
+
 </body>
 </html>

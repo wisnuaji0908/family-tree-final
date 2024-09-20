@@ -109,7 +109,7 @@
                                     <label for="floatingPassword">Password</label>
                                     @error('password')
                                         <div class="invalid-feedback">{{ $message }}</div>
-                                    @ender
+                                    @enderror
                                 </div>
                                 <!-- 2 column grid layout for inline styling -->
                                 <div class="row mb-4 align-items-center">
