@@ -86,14 +86,14 @@
                     <div class="col-lg-8">
                         <div class="card-body py-5 px-md-5">
                             <div class="text-center mb-4 d-flex justify-content-center align-items-center">
-                                <img src="{{ asset('logo_ft.png') }}" alt="Logo" class="img-fluid me-3" style="max-width: 150px;"> 
+                                <img src="{{ asset('logo_ft.png') }}" alt="Logo" class="img-fluid me-3" style="max-width: 100px;"> 
                                 <h3 class="mb-0">Register</h3>
                             </div>
                             <form action="{{ route('register') }}" method="POST">
                                 @csrf
                                 <!-- Email input -->
                                 <div class="form-floating mb-4">
-                                    <input type="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" autocomplete="off">
+                                    <input type="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" autocomplete="off" value="{{ old('email') }}">
                                     <label for="floatingInput">Email address</label>
                                     @error('email')
                                         <div class="invalid-feedback">{{ $message }}</div>

@@ -119,16 +119,18 @@
                 @endif
                 <div class="form-floating mb-3">
                     <select class="form-select {{ $errors->has('person_id') ? 'is-invalid' : '' }}" id="floatingSelect" aria-label="Floating label select example" name="person_id">
-                      <option selected disabled>Select Person</option>
-                      @foreach ($people as $person)
-                            <option value="{{ $person->id }}">{{ $person->name }}</option>
+                        <option disabled {{ old('person_id') ? '' : 'selected' }}>Select Person</option>
+                        @foreach ($people as $person)
+                            <option value="{{ $person->id }}" {{ old('person_id') == $person->id ? 'selected' : '' }}>
+                                {{ $person->name }}
+                            </option>
                         @endforeach
                     </select>
                     @error('person_id')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                     <label for="floatingSelect">Choose One</label>
-                </div>
+                </div>                
                 <div class="form-floating mb-3">
                     <input type="date" class="form-control {{ $errors->has('birth_date') ? 'is-invalid' : '' }}" id="floatingInput" name="birth_date" value="{{ old('birth_date', request('birth_date')) }}">
                     <label for="floatingInput">Birth Date</label>
