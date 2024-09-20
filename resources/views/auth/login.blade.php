@@ -110,6 +110,7 @@
                                     @error('password')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
+                                    <span class="eye-icon" id="eyeIcon" onclick="togglePassword()">👁️</span> <!-- Tambahkan ikon mata -->
                                 </div>
                                 <!-- 2 column grid layout for inline styling -->
                                 <div class="row mb-4 align-items-center">
@@ -138,19 +139,20 @@
         </section>
         <!-- Section: Design Block -->
     </div> 
-
     <script>
         function togglePassword() {
             const passwordInput = document.getElementById("floatingPassword");
             const eyeIcon = document.getElementById("eyeIcon");
+    
+            // Cek apakah input saat ini tipe 'password'
             if (passwordInput.type === "password") {
-                passwordInput.type = "text";
-                eyeIcon.textContent = "🙈"; 
+                passwordInput.type = "text"; // Ubah tipe menjadi teks
+                eyeIcon.textContent = "🙈";  // Ubah ikon menjadi monyet menutup mata
             } else {
-                passwordInput.type = "password";
-                eyeIcon.textContent = "👁️";
+                passwordInput.type = "password"; // Ubah kembali ke tipe password
+                eyeIcon.textContent = "👁️";  // Ubah ikon kembali ke mata terbuka
             }
         }
-    </script>
+    </script>    
 </body>
 </html>
