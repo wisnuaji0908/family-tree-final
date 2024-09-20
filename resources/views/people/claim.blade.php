@@ -111,7 +111,12 @@
             <form action="{{ route('people.claim.process') }}" method="POST">
                 @csrf
                 <h2 class="text-center">Claim Account</h2>
-                <p class="text-center" style="font-size: 12px;">Please claim your account first.</p>
+                <p class="text-center" style="font-size: 10px;">Please claim your account first.</p>
+                @if ($errors->has('error'))
+                    <div class="alert alert-danger">
+                        {{ $errors->first('error') }}
+                    </div>
+                @endif
                 <div class="form-floating mb-3">
                     <select class="form-select {{ $errors->has('person_id') ? 'is-invalid' : '' }}" id="floatingSelect" aria-label="Floating label select example" name="person_id">
                       <option selected disabled>Select Person</option>
@@ -125,14 +130,14 @@
                     <label for="floatingSelect">Choose One</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="date" class="form-control {{ $errors->has('birth_date') ? 'is-invalid' : '' }}" id="floatingInput" name="birth_date">
+                    <input type="date" class="form-control {{ $errors->has('birth_date') ? 'is-invalid' : '' }}" id="floatingInput" name="birth_date" value="{{ old('birth_date', request('birth_date')) }}">
                     <label for="floatingInput">Birth Date</label>
                 @error('birth_date')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
                 </div>
                 <div class="form-floating mb-3">
-                    <textarea class="form-control {{ $errors->has('place_birth') ? 'is-invalid' : '' }}" placeholder="Enter Your Birth Place" id="floatingTextarea" style="height: 150px;" name="place_birth"></textarea>
+                    <textarea class="form-control {{ $errors->has('place_birth') ? 'is-invalid' : '' }}" placeholder="Enter Your Birth Place" id="floatingTextarea" style="height: 150px;" name="place_birth">{{ old('place_birth', request('place_birth')) }}</textarea>
                     <label for="floatingTextarea">Birth Place</label>
                 @error('place_birth')
                     <div class="invalid-feedback">{{ $message }}</div>
