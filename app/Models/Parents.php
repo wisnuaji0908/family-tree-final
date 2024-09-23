@@ -22,13 +22,8 @@ class Parents extends Model
         return $this->belongsTo(User::class, 'people_id', 'id');
     }
 
-    public function parents() {
-        return $this->hasOne(Parents::class, 'parent_id', 'id');
-    }
-
-    public function parentEntity(): BelongsTo
-    {
-        return $this->belongsTo(Parents::class, 'parent_id', 'id');
+    public function userParent(): BelongsTo {
+        return $this->belongsTo(People::class, 'parent_id', 'id');
     }
 
     public function people(): BelongsTo
