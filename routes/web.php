@@ -3,12 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\PeopleController;
-use App\Http\Controllers\ParentsController;
 use App\Http\Controllers\CoupleController;
+use App\Http\Controllers\ParentsController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Middleware\ClaimPeopleMiddleware;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\CouplePeopleController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ParentsPeopleController;
 use App\Http\Controllers\ForgotPasswordController;
 
     Route::get('/', function () {
@@ -19,13 +21,12 @@ use App\Http\Controllers\ForgotPasswordController;
     Route::get('login', [LoginController::class, 'login'])->name('login');
     Route::post('login', [LoginController::class, 'store']);
 
+    // REGISTER
     Route::get('register', [RegisterController::class, 'register'])->name('register');
     Route::post('register', [RegisterController::class, 'store']);
 
-    Route::middleware(['auth', ClaimPeopleMiddleware::class])->group(function(){
-        Route::get('logout', [LogoutController::class, 'logout'])->name('logout');
-        Route::post('logout', [LogoutController::class, 'logout']);
-
+    // ROLE: ADMIN
+    Route::middleware(['auth', 'can:admin', ClaimPeopleMiddleware::class])->group(function(){
         // ADMIN
         Route::resource('admin', AdminController::class);
         Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
@@ -36,6 +37,18 @@ use App\Http\Controllers\ForgotPasswordController;
         Route::put('/admin/{id}', [AdminController::class, 'update'])->name('admin.update');
         Route::delete('/admin/{id}', [AdminController::class, 'destroy'])->name('admin.destroy');
       
+        // PARENTS
+        Route::resource('/parents', ParentsController::class);
+        Route::get('/parent', [ParentsController::class, 'index'])->name('parent.index');
+
+        // COUPLE
+        Route::resource('couple', CoupleController::class);
+        Route::get('/couple', [CoupleController::class, 'index'])->name('couple.index');
+
+    });
+
+    // ROLE: PEOPLE
+    Route::middleware(['auth','can:people', ClaimPeopleMiddleware::class])->group(function(){
         // PEOPLE
         Route::get('/people', [PeopleController::class, 'index'])->name('people.index');
         Route::get('/people/create', [PeopleController::class, 'create'])->name('people.create');
@@ -45,16 +58,19 @@ use App\Http\Controllers\ForgotPasswordController;
         Route::delete('/people/{id}', [PeopleController::class, 'destroy'])->name('people.destroy');
         
         // PARENTS
-        Route::resource('/parents', ParentsController::class);
-        Route::get('/parent', [ParentsController::class, 'index'])->name('parent.index');
+        Route::resource('/parentspeople', ParentsPeopleController::class);
+        Route::get('/parentpeople', [ParentsPeopleController::class, 'index'])->name('peopleparents.index');
 
         // COUPLE
-        Route::resource('couple', CoupleController::class);
-        Route::get('/couple', [CoupleController::class, 'index'])->name('couple.index');
+        Route::resource('/couplespeople', CouplePeopleController::class);
+        Route::get('/couplepeople', [CouplePeopleController::class, 'index'])->name('peoplecouple.index');
     });
     
     // AUTH 
     Route::middleware(['auth'])->group(function(){
+        Route::get('logout', [LogoutController::class, 'logout'])->name('logout');
+        Route::post('logout', [LogoutController::class, 'logout']);
+
         Route::get('/people/claim', [PeopleController::class, 'showClaimForm'])->name('people.claim');
         Route::post('/people/claim', [PeopleController::class, 'claim'])->name('people.claim.process');
     });

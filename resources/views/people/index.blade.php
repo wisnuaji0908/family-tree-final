@@ -85,7 +85,7 @@
 <body>
 
 <!-- Include Navbar -->
-@include('navbar')
+@include('nav')
 
 <div class="container-fluid py-0"> 
     <div class="row">

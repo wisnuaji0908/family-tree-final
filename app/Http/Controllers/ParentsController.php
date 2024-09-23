@@ -51,24 +51,22 @@ class ParentsController extends Controller
 
         $person = People::find($request->people_id);
         $parent = People::find($request->parent_id);
-
+    
         if ($person && $parent && $person->name === $parent->name) {
             return redirect()->back()->withErrors(['parent_id' => 'Person and Parent names cannot be the same.'])->withInput();
         }
     
-
-        
+        // Create new parent record
         Parents::create([
             'user_id' => Auth::id(), 
             'people_id' => $request->people_id,
             'parent_id' => $request->parent_id,
             'parent' => $request->parent,
         ]);
-        
-
-        
-        return redirect()->route('parents.index')->with('success', 'Parent added successfully.');
+    
+        return redirect()->route('parents.index')->with('success', 'Parent created successfully.');
     }
+    
 
     public function edit($id)
     {
