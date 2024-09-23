@@ -117,7 +117,7 @@
                                 <tbody>
                                     @foreach ($parents as $index => $parent)
                                         <tr>
-                                            <td>{{ $index + 1 }}</td> 
+                                            <td>{{ sprintf('%d.', $index + 1) }}</td>
                                             <td>{{ $parent->people->name ?? 'N/A' }}</td> 
                                             <td>{{ $parent->userParent->name }}</td> 
                                             <td>{{ ucfirst($parent->parent) }}</td> 

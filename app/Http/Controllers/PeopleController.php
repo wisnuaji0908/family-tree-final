@@ -52,20 +52,20 @@ class PeopleController extends Controller
 
 
     public function update(Request $request, $id)
-{
-    $validatedData = $request->validate([
-        'name' => 'required|string|max:255',
-        'gender' => 'required|in:male,female',
-        'place_birth' => 'required|string|max:255',
-        'birth_date' => 'required|date',
-        'death_date' => 'nullable|date|after_or_equal:birth_date',
-    ]);
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'gender' => 'required|in:male,female',
+            'place_birth' => 'required|string|max:255',
+            'birth_date' => 'required|date',
+            'death_date' => 'nullable|date|after_or_equal:birth_date',
+        ]);
 
-    $person = People::findOrFail($id);
-    $person->update($validatedData);
+        $person = People::findOrFail($id);
+        $person->update($validatedData);
 
-    return redirect()->route('people.index')->with('success', 'Data updated successfully.');
-}
+        return redirect()->route('people.index')->with('success', 'Data updated successfully.');
+    }
 
 
     public function destroy($id)
