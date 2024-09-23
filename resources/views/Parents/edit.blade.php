@@ -107,45 +107,58 @@
             <input type="hidden" name="_method" value="PUT">
 
             <h1 class="text-center">Edit Parent</h1>
-            <div class="mb-3">
-                <label for="user_id" class="form-label">User</label>
-                <select name="user_id" id="user_id" class="form-select">
-                    <option value="">Select User</option>
-                    @foreach ($users as $user)
-                        <option value="{{ $user->id }}" {{ $parent->user_id == $user->id ? 'selected' : '' }}>
-                            {{ $user->email }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+            <div class="card-body">
+                <form action="{{ route('parents.update', $parent->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    
+                    <div class="mb-3">
+                        <label for="people_id" class="form-label">Person</label>
+                        <select name="people_id" id="people_id" class="form-select" required>
+                            <option value="">Select Person</option>
+                            @foreach ($people as $person)
+                                <option value="{{ $person->id }}" {{ $parent->people_id == $person->id ? 'selected' : '' }}>
+                                    {{ $person->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-            <div class="mb-3">
-                <label for="people_id" class="form-label">Parent Name</label>
-                <select name="people_id" id="people_id" class="form-select">
-                    <option value="">Select Parent</option>
-                    @foreach ($people as $person)
-                        <option value="{{ $person->id }}" {{ $parent->people_id == $person->id ? 'selected' : '' }}>
-                            {{ $person->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+                    <div class="mb-3">
+                        <label for="parent_id" class="form-label">Parent Name</label>
+                        <select name="parent_id" id="parent_id" class="form-select" required>
+                            <option value="">Select Parent</option>
+                            @foreach ($people as $person)
+                                <option value="{{ $person->id }}" {{ $parent->parent_id == $person->id ? 'selected' : '' }}>
+                                    {{ $person->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-            <div class="mb-3">
-                <label for="parent" class="form-label">Parent Role</label>
-                <select name="parent" id="parent" class="form-select">
-                    <option value="father" {{ $parent->parent == 'father' ? 'selected' : '' }}>Father</option>
-                    <option value="mother" {{ $parent->parent == 'mother' ? 'selected' : '' }}>Mother</option>
-                </select>
-            </div>
+                    <div class="mb-3">
+                        <label for="parent" class="form-label">Parent Role</label>
+                        <select name="parent" id="parent" class="form-select" required>
+                            <option value="father" {{ $parent->parent == 'father' ? 'selected' : '' }}>Father</option>
+                            <option value="mother" {{ $parent->parent == 'mother' ? 'selected' : '' }}>Mother</option>
+                        </select>
+                    </div>
 
-            <div class="text-end">
-                <a href="{{ route('parents.index') }}" class="btn bg-gradient-danger" onclick="return confirm('Are you sure you want to cancel? Unsaved changes will be lost.');">
-                    Cancel
-                </a>
-                <button type="submit" class="btn bg-gradient-primary">
-                    Save
-                </button>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success">Save</button>
+                        <a href="/parents" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
             </div>
         </form>
     </div>

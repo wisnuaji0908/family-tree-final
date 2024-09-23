@@ -16,8 +16,10 @@ return new class extends Migration
         Schema::create('parents', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class, 'user_id')->nullable()->constrained('users')->cascadeOnDelete();
-            $table->foreignIdFor(People::class, 'people_id')->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(Parents::class, 'parent_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(People::class, 'people_id')->constrained('people')->cascadeOnDelete();
+    
+    // Relasi parent_id ke tabel people, bukan ke parents
+            $table->foreignIdFor(People::class, 'parent_id')->nullable()->constrained('people')->cascadeOnDelete();
             $table->enum('parent', ['father', 'mother']);
             $table->timestamps();
         });

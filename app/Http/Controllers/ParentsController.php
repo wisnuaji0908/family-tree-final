@@ -1,18 +1,19 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Parents;
 use App\Models\User;
 use App\Models\People;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class ParentsController extends Controller
 {
     public function index()
     {
-        // Mengambil semua data parents dan memuat relasi user, people, dan parentEntity
-        $parents = Parents::with(['user', 'people', 'parentEntity'])->get();
+        // Mengambil semua data parents dan memuat relasi user, people, dan parent
+        $parents = Parents::with(['user', 'people', 'userParent'])->get();
         return view('parents.index', compact('parents'));
     }
 
@@ -28,15 +29,32 @@ class ParentsController extends Controller
     {
         // Validasi input
         $request->validate([
-            'id' => 'nullable|exists:id',
-            'user_id' => 'nullable|exists:users,id', // User_id bisa kosong
-            'people_id' => 'required|exists:people,id',
-            'parent_id' => 'nullable|exists:parents,id', // Parent_id bisa kosong
+            'user_id' => 'nullable|exists:users,id', 
+            'people_id' => 'required|exists:people,id|unique:parents,people_id',
+            'parent_id' => 'nullable|exists:people,id|different:people_id',
             'parent' => 'required|in:father,mother',
         ]);
 
-        // Buat data baru
-        Parents::create($request->only(['user_id', 'people_id', 'parent_id', 'parent']));
+
+        // Cek apakah nama person dan parent sama
+        $person = People::find($request->people_id);
+        $parent = People::find($request->parent_id);
+
+        if ($person && $parent && $person->name === $parent->name) {
+            return redirect()->back()->withErrors(['parent_id' => 'Person and Parent names cannot be the same.'])->withInput();
+        }
+    
+
+        
+        Parents::create([
+            'user_id' => Auth::id(), // Menambahkan ID user yang sedang login
+            'people_id' => $request->people_id,
+            'parent_id' => $request->parent_id,
+            'parent' => $request->parent,
+        ]);
+        
+
+        
         return redirect()->route('parents.index')->with('success', 'Parent added successfully.');
     }
 
@@ -46,38 +64,56 @@ class ParentsController extends Controller
         $users = User::all();
         $people = People::all();
         return view('parents.edit', compact('parent', 'users', 'people'));
+    
     }
+
 
     public function update(Request $request, $id)
     {
-            // Validasi input
+        // Validasi input
         $request->validate([
             'user_id' => 'nullable|exists:users,id', 
-            'people_id' => 'required|exists:people,id',
-            'parent_id' => 'nullable|exists:parents,id', 
+            'people_id' => 'required|exists:people,id|unique:parents,people_id,' . $id, 
+            'parent_id' => 'nullable|exists:people,id|different:people_id', // Validasi different
             'parent' => 'required|in:father,mother',
-         ]);
+            
+        ]);
 
-            // Update data
+
+        // Cek apakah nama person dan parent sama
+        $person = People::find($request->people_id);
+        $parent = People::find($request->parent_id);
+
+        if ($person && $parent && $person->name === $parent->name) {
+            return redirect()->back()->withErrors(['parent_id' => 'Person and Parent names cannot be the same.'])->withInput();
+        }
+
+
+
+
+
         $parent = Parents::findOrFail($id);
-        $parent->update($request->only(['user_id', 'people_id', 'parent_id', 'parent']));
+
+        $parent->update([
+            'user_id' => Auth::id(), // Memperbarui ID user dengan ID pengguna yang sedang login
+            'people_id' => $request->people_id,
+            'parent_id' => $request->parent_id,
+            'parent' => $request->parent,
+        ]);
+        
+
+        
             
         return redirect()->route('parents.index')->with('success', 'Parent updated successfully.');
     }
 
-
     public function destroy($id)
     {
-        // Validasi: Pastikan parent dengan ID tersebut ada
         $parent = Parents::find($id);
-
         if (!$parent) {
             return redirect()->route('parents.index')->with('error', 'Parent not found.');
         }
-
-        // Hapus data
         $parent->delete();
-        
         return redirect()->route('parents.index')->with('success', 'Data successfully removed.');
     }
 }
