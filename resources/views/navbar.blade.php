@@ -27,22 +27,13 @@
 
         </li>
         <script>
-    // Menunggu sampai semua konten di halaman dimuat
     document.addEventListener('DOMContentLoaded', function() {
-        // Menangkap tombol logout
         const logoutButton = document.querySelector('#logoutButton');
-        // Menangkap form logout
         const logoutForm = document.querySelector('#logoutForm');
-
-        // Jika tombol logout ada di halaman
         if (logoutButton) {
-            // Menambahkan event listener untuk klik pada tombol logout
             logoutButton.addEventListener('click', function(event) {
-                // Menampilkan konfirmasi
                 const confirmation = confirm('Are you sure you want to logout?');
-                // Jika pengguna mengkonfirmasi
                 if (confirmation) {
-                    // Kirim form logout
                     logoutForm.submit(); 
                 }
             });

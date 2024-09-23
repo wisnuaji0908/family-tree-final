@@ -63,7 +63,7 @@
     }
 
     .btn.bg-gradient-primary {
-        background: linear-gradient(45deg, #dc3545, #c82333); /* Merah untuk Cancel */
+        background: linear-gradient(45deg, #dc3545, #c82333);
         color: white;
     }
 
@@ -72,7 +72,7 @@
     }
 
     .btn.bg-gradient-success {
-        background: linear-gradient(45deg, #007bff, #0056b3); /* Biru untuk Save */
+        background: linear-gradient(45deg, #007bff, #0056b3); 
         color: white;
     }
 
@@ -92,12 +92,10 @@
         color: #dc3545;
     }
 
-    /* Hover effect for input */
     .form-control:hover, .form-select:hover {
         border-color: #007bff;
     }
 
-    /* Smooth transition for all elements */
     * {
         transition: all 0.3s ease;
     }

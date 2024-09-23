@@ -20,23 +20,28 @@ class PeopleController extends Controller
     {
         $users = User::all(); 
         return view('people.create', compact('users'));
+        
     }
 
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'gender' => 'required|string',
             'place_birth' => 'required|string|max:255',
             'birth_date' => 'required|date',
             'death_date' => 'nullable|date',
         ]);
-
-        People::create($request->all());
-
+    
+        // Add the user_id after validation
+        $validatedData['user_id'] = Auth::id();
+    
+        People::create($validatedData);
+    
         return redirect()->route('people.index')->with('success', 'Person added successfully.');
     }
+    
 
     public function edit($id)
     {
@@ -47,19 +52,21 @@ class PeopleController extends Controller
 
 
     public function update(Request $request, $id)
-    {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'gender' => 'required|in:male,female',
-            'place_birth' => 'required|string|max:255',
-            'birth_date' => 'required|date',
-            'death_date' => 'nullable|date|after_or_equal:birth_date',
-        ]);
+{
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'gender' => 'required|in:male,female',
+        'place_birth' => 'required|string|max:255',
+        'birth_date' => 'required|date',
+        'death_date' => 'nullable|date|after_or_equal:birth_date',
+    ]);
 
-        $person = People::findOrFail($id);
-        $person->update($validatedData);
-        return redirect()->route('people.index')->with('success', 'Data updated successfully.');
-    }
+    $person = People::findOrFail($id);
+    $person->update($validatedData);
+
+    return redirect()->route('people.index')->with('success', 'Data updated successfully.');
+}
+
 
     public function destroy($id)
     {
@@ -81,30 +88,28 @@ class PeopleController extends Controller
     }
 
     public function claim(Request $request)
-{
-    // Validasi input
-    $request->validate([
-        'person_id' => 'required|exists:people,id',
-        'birth_date' => 'required|date',
-        'place_birth' => 'required|string|max:255', // Ubah max menjadi lebih kecil jika perlu
-    ]);
+    {
+        // Validasi input
+        $request->validate([
+            'person_id' => 'required|exists:people,id',
+            'birth_date' => 'required|date',
+            'place_birth' => 'required|string|max:255', 
+        ]);
 
-    // Mencari orang berdasarkan ID dan memastikan user_id belum diisi
-    $person = People::where('id', $request->person_id)
-                    ->whereNull('user_id') // Pastikan user belum mengklaim
-                    ->firstOrFail();
+        // Mencari orang berdasarkan ID dan memastikan user_id belum diisi
+        $person = People::where('id', $request->person_id)
+                        ->whereNull('user_id') // Pastikan user belum mengklaim
+                        ->firstOrFail();
 
-    // Cek kecocokan tanggal lahir dan tempat lahir
-    if ($person->birth_date == $request->birth_date && $person->place_birth === $request->place_birth) {
-        // Update user_id jika klaim berhasil
-        $person->update(['user_id' => auth()->user()->id]);
+        // Cek kecocokan tanggal lahir dan tempat lahir
+        if ($person->birth_date == $request->birth_date && $person->place_birth === $request->place_birth) {
+            // Update user_id jika klaim berhasil
+            $person->update(['user_id' => auth()->user()->id]);
 
-        return redirect()->route('people.index')->with('success', 'Account claimed successfully.');
-    } else {
-        // Jika tidak cocok, kembalikan dengan pesan error
-        return redirect()->back()->withErrors(['error' => 'Birth date or Place of birth does not match.'])->withInput();
+            return redirect()->route('people.index')->with('success', 'Account claimed successfully.');
+        } else {
+            // Jika tidak cocok, kembalikan dengan pesan error
+            return redirect()->back()->withErrors(['error' => 'Birth date or Place of birth does not match.'])->withInput();
+        }
     }
-}
-
-    
 }

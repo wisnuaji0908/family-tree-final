@@ -100,6 +100,33 @@
         * {
             transition: all 0.3s ease;
         }
+
+        /* Alert styles */
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            margin-top: 20px;
+        }
+
+        .alert ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .alert li {
+            list-style-type: disc;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
     </style>
 </head>
 <body>

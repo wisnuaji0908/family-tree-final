@@ -12,14 +12,13 @@ class ParentsController extends Controller
 {
     public function index()
     {
-        // Mengambil semua data parents dan memuat relasi user, people, dan parent
-        $parents = Parents::with(['user', 'people', 'userParent'])->get();
+        $parents = Parents::with(['user', 'people', 'userParent'])->paginate(5); 
         return view('parents.index', compact('parents'));
     }
+    
 
     public function create()
     {
-        // Ambil data user dan people untuk keperluan form
         $users = User::all();
         $people = People::all();
         return view('parents.create', compact('users', 'people'));
@@ -36,7 +35,6 @@ class ParentsController extends Controller
         ]);
 
 
-        // Cek apakah nama person dan parent sama
         $person = People::find($request->people_id);
         $parent = People::find($request->parent_id);
 
@@ -47,7 +45,7 @@ class ParentsController extends Controller
 
         
         Parents::create([
-            'user_id' => Auth::id(), // Menambahkan ID user yang sedang login
+            'user_id' => Auth::id(), 
             'people_id' => $request->people_id,
             'parent_id' => $request->parent_id,
             'parent' => $request->parent,
@@ -67,20 +65,17 @@ class ParentsController extends Controller
     
     }
 
-
     public function update(Request $request, $id)
     {
         // Validasi input
         $request->validate([
             'user_id' => 'nullable|exists:users,id', 
             'people_id' => 'required|exists:people,id|unique:parents,people_id,' . $id, 
-            'parent_id' => 'nullable|exists:people,id|different:people_id', // Validasi different
+            'parent_id' => 'nullable|exists:people,id|different:people_id', 
             'parent' => 'required|in:father,mother',
             
         ]);
 
-
-        // Cek apakah nama person dan parent sama
         $person = People::find($request->people_id);
         $parent = People::find($request->parent_id);
 
@@ -88,14 +83,10 @@ class ParentsController extends Controller
             return redirect()->back()->withErrors(['parent_id' => 'Person and Parent names cannot be the same.'])->withInput();
         }
 
-
-
-
-
         $parent = Parents::findOrFail($id);
 
         $parent->update([
-            'user_id' => Auth::id(), // Memperbarui ID user dengan ID pengguna yang sedang login
+            'user_id' => Auth::id(),
             'people_id' => $request->people_id,
             'parent_id' => $request->parent_id,
             'parent' => $request->parent,

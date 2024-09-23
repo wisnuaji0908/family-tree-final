@@ -59,21 +59,21 @@
         }
 
         .btn.bg-gradient-danger {
-            background: linear-gradient(45deg, #dc3545, #c82333); /* Warna merah */
+            background: linear-gradient(45deg, #dc3545, #c82333); 
             color: white;
         }
 
         .btn.bg-gradient-danger:hover {
-            background: linear-gradient(45deg, #c82333, #bd2130); /* Warna merah lebih gelap */
+            background: linear-gradient(45deg, #c82333, #bd2130);
         }
 
         .btn.bg-gradient-primary {
-            background: linear-gradient(45deg, #007bff, #0056b3); /* Warna biru */
+            background: linear-gradient(45deg, #007bff, #0056b3);
             color: white;
         }
 
         .btn.bg-gradient-primary:hover {
-            background: linear-gradient(45deg, #0056b3, #003f7f); /* Warna biru lebih gelap */
+            background: linear-gradient(45deg, #0056b3, #003f7f); 
         }
 
         .form-label {

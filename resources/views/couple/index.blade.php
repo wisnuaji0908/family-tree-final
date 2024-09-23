@@ -146,6 +146,10 @@
         </div>
     </div>
 
+     <div class="d-flex justify-content-center mt-4">
+        {{ $couple->links('pagination::bootstrap-4') }}
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

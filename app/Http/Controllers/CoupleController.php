@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Couple;
 use App\Models\People;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth; // Import Auth untuk mendapatkan user yang sedang login
+use Illuminate\Support\Facades\Auth; 
 
 class CoupleController extends Controller
 {
     public function index()
     {
-        $couple = Couple::with('people')->get();
+        $couple = Couple::with('people')->paginate(5); 
         return view('couple.index', compact('couple'));
     }
 
@@ -43,13 +43,12 @@ class CoupleController extends Controller
             return redirect()->back()->withErrors('This couple is already registered.');
         }
 
-        // Simpan data pasangan, termasuk user_id yang sedang login
         Couple::create([
+            'user_id' => Auth::id(),
             'people_id' => $request->people_id,
             'couple_id' => $request->couple_id,
             'married_date' => $request->married_date,
             'divorce_date' => $request->divorce_date,
-            'user_id' => Auth::id(), // Menyimpan ID user yang sedang login
         ]);
 
         return redirect()->route('couple.index')->with('success', 'Couple created successfully.');
@@ -70,7 +69,6 @@ class CoupleController extends Controller
             'divorce_date' => 'nullable|date|after_or_equal:married_date',
         ]);
 
-        // Cek apakah pasangan sudah ada di database (selain pasangan yang sedang diedit)
         $existingCouple = Couple::where(function($query) use ($request, $couple) {
             $query->where('people_id', $request->people_id)
                   ->where('couple_id', $request->couple_id)
@@ -85,13 +83,12 @@ class CoupleController extends Controller
             return redirect()->back()->withErrors('This couple is already registered.');
         }
 
-        // Update data pasangan, termasuk user_id yang sedang login
         $couple->update([
+            'user_id' => Auth::id(), 
             'people_id' => $request->people_id,
             'couple_id' => $request->couple_id,
             'married_date' => $request->married_date,
             'divorce_date' => $request->divorce_date,
-            'user_id' => Auth::id(), // Menyimpan ID user yang sedang login
         ]);
 
         return redirect()->route('couple.index')->with('success', 'Couple updated successfully.');

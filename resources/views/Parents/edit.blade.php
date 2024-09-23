@@ -59,21 +59,21 @@
         }
 
         .btn.bg-gradient-danger {
-            background: linear-gradient(45deg, #dc3545, #c82333); /* Warna merah */
+            background: linear-gradient(45deg, #dc3545, #c82333); 
             color: white;
         }
 
         .btn.bg-gradient-danger:hover {
-            background: linear-gradient(45deg, #c82333, #bd2130); /* Warna merah lebih gelap */
+            background: linear-gradient(45deg, #c82333, #bd2130); 
         }
 
         .btn.bg-gradient-primary {
-            background: linear-gradient(45deg, #007bff, #0056b3); /* Warna biru */
+            background: linear-gradient(45deg, #007bff, #0056b3); 
             color: white;
         }
 
         .btn.bg-gradient-primary:hover {
-            background: linear-gradient(45deg, #0056b3, #003f7f); /* Warna biru lebih gelap */
+            background: linear-gradient(45deg, #0056b3, #003f7f); 
         }
 
         .form-label {
@@ -88,12 +88,10 @@
             color: #dc3545;
         }
 
-        /* Hover effect for input */
         .form-control:hover, .form-select:hover {
             border-color: #007bff;
         }
 
-        /* Smooth transition for all elements */
         * {
             transition: all 0.3s ease;
         }
@@ -144,24 +142,19 @@
                         </select>
                     </div>
 
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-success">Save</button>
-                        <a href="/parents" class="btn btn-secondary">Cancel</a>
+                    <div class="text-end">
+                        <a href="{{ route('parents.index') }}" class="btn bg-gradient-danger" onclick="return confirm('Are you sure you want to cancel? Unsaved changes will be lost.');">
+                            <i class="fas fa-times-circle"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn bg-gradient-primary">
+                            <i class="fas fa-check-circle"></i> Save
+                        </button>
                     </div>
                 </form>
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
             </div>
         </form>
     </div>
 </div>
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
 </body>
 </html>
