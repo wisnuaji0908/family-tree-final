@@ -35,6 +35,20 @@ class ParentsController extends Controller
         ]);
 
 
+            // Cek apakah pasangan sudah ada di database (dalam urutan apapun)
+        $existingParent = Parents::where(function($query) use ($request) {
+            $query->where('people_id', $request->people_id)
+                ->where('parent_id', $request->parent_id);
+        })->orWhere(function($query) use ($request) {
+            $query->where('people_id', $request->parent_id)
+                ->where('parent_id', $request->people_id);
+        })->first();
+
+        if ($existingParent) {
+            return redirect()->back()->withErrors('This parent combination is already registered.')->withInput();
+        }
+
+
         $person = People::find($request->people_id);
         $parent = People::find($request->parent_id);
 
@@ -65,17 +79,30 @@ class ParentsController extends Controller
     
     }
 
-    public function update(Request $request, $id)
+        public function update(Request $request, $id)
     {
         // Validasi input
         $request->validate([
-            'user_id' => 'nullable|exists:users,id', 
+            'user_id' => 'nullable|exists:users,id',
             'people_id' => 'required|exists:people,id|unique:parents,people_id,' . $id, 
-            'parent_id' => 'nullable|exists:people,id|different:people_id', 
+            'parent_id' => 'nullable|exists:people,id|different:people_id',
             'parent' => 'required|in:father,mother',
-            
         ]);
 
+        // Cek apakah pasangan sudah ada di database (kecuali record yang sedang di-update)
+        $existingParent = Parents::where(function($query) use ($request) {
+            $query->where('people_id', $request->people_id)
+                ->where('parent_id', $request->parent_id);
+        })->orWhere(function($query) use ($request) {
+            $query->where('people_id', $request->parent_id)
+                ->where('parent_id', $request->people_id); // Cek urutan terbalik
+        })->where('id', '!=', $id)->first();
+
+        if ($existingParent) {
+            return redirect()->back()->withErrors('This parent combination is already registered.')->withInput();
+        }
+
+        // Cek apakah nama person dan parent_name sama atau ditukar
         $person = People::find($request->people_id);
         $parent = People::find($request->parent_id);
 
@@ -83,20 +110,20 @@ class ParentsController extends Controller
             return redirect()->back()->withErrors(['parent_id' => 'Person and Parent names cannot be the same.'])->withInput();
         }
 
-        $parent = Parents::findOrFail($id);
+        // Update data jika validasi lolos
+        $parentData = Parents::findOrFail($id);
 
-        $parent->update([
+        $parentData->update([
             'user_id' => Auth::id(),
             'people_id' => $request->people_id,
             'parent_id' => $request->parent_id,
             'parent' => $request->parent,
         ]);
-        
 
-        
-            
         return redirect()->route('parents.index')->with('success', 'Parent updated successfully.');
     }
+
+            
 
     public function destroy($id)
     {
