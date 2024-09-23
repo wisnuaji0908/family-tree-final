@@ -69,7 +69,11 @@
             <h1>403</h1>
             <h2>Forbidden</h2>
             <p>Sorry, you don't have permission to access this page.</p>
-            <a href="{{ route('people.index') }}">Go Back to Homepage</a> 
+            @if (auth()->user()->role === 'admin')
+                <a href="{{ route('admin.index') }}">Go Back to Homepage</a>
+            @else
+                <a href="{{ route('people.index') }}">Go Back to Homepge</a>
+            @endif
         </div>
     </body>
 </html>
