@@ -6,127 +6,90 @@
     <title>Create Couple People</title>
    <!-- Google Font -->
    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f5f7fa;
-            font-family: 'Poppins', sans-serif;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0;
-            margin: 0;
-            overflow: hidden;
-        }
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-        .container-fluid {
-            width: 100%;
-            padding: 0;
-        }
+   <style>
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Poppins', sans-serif;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        font-size: 0.9rem; 
+    }
 
-        .form-container {
-            background-color: white;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
-            max-width: 700px;
-            width: 100%;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
+    form {
+        background-color: white;
+        border-radius: 12px;
+        padding: 30px; 
+        box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+        max-width: 700px;
+        width: 100%;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 
-        .form-control, .form-select {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 6px;
-            border: 1px solid #ced4da;
-            font-size: 0.95rem;
-        }
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 8px; 
+        display: inline-block;
+    }
 
-        .form-control:focus, .form-select:focus {
-            border-color: #007bff;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
-        }
+    .form-control, .form-select {
+        font-size: 0.85rem; 
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+    }
 
-        .btn {
-            border-radius: 6px;
-            padding: 12px 24px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            margin-right: 12px;
-            font-size: 0.95rem;
-        }
+    .btn {
+        font-size: 0.90rem; 
+        border-radius: 6px;
+        padding: 12px 24px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-right: 12px;
+    }
 
-        .btn.bg-gradient-primary {
-            background: linear-gradient(45deg, #007bff, #0056b3);
-            color: white;
-        }
+    .btn.bg-gradient-primary {
+        background: linear-gradient(45deg, #007bff, #0056b3);
+        color: white;
+    }
 
-        .btn.bg-gradient-primary:hover {
-            background: linear-gradient(45deg, #0056b3, #003f7f);
-        }
+    .btn.bg-gradient-primary:hover {
+        background: linear-gradient(45deg, #0056b3, #003f7f);
+    }
 
-        .btn.bg-gradient-danger {
-            background: linear-gradient(45deg, #dc3545, #c82333);
-            color: white;
-        }
+    .btn.bg-gradient-danger {
+        background: linear-gradient(45deg, #dc3545, #c82333);
+        color: white;
+    }
 
-        .btn.bg-gradient-danger:hover {
-            background: linear-gradient(45deg, #c82333, #bd2130);
-        }
+    .btn.bg-gradient-danger:hover {
+        background: linear-gradient(45deg, #c82333, #bd2130);
+    }
 
-        .form-label {
-            font-weight: 500;
-            margin-bottom: 8px;
-            display: inline-block;
-            font-size: 1rem;
-        }
+    .form-control:hover, .form-select:hover {
+        border-color: #007bff;
+    }
 
-        .invalid-feedback {
-            font-size: 0.85rem;
-            color: #dc3545;
-        }
+    * {
+        transition: all 0.3s ease;
+    }
 
-        /* Hover effect for input */
-        .form-control:hover, .form-select:hover {
-            border-color: #007bff;
-        }
+    h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    }
 
-        /* Smooth transition for all elements */
-        * {
-            transition: all 0.3s ease;
-        }
-
-        /* Alert styles */
-        .alert {
-            padding: 15px;
-            border-radius: 6px;
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            margin-top: 20px;
-        }
-
-        .alert ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-
-        .alert li {
-            list-style-type: disc;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-        }
-
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border-color: #f5c6cb;
-        }
     </style>
 </head>
 <body>
@@ -134,7 +97,8 @@
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="form-container">
-                <h1>Create Couple Admin</h1>
+                <h1 class="text-center">Create Couple</h1>
+                <p class="text-center" style="font-size: 1rem; margin-bottom: 20px;">Silakan isi informasi pasangan di bawah ini:</p> <!-- Tambahkan teks di sini dengan gaya -->
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <ul class="mb-0">

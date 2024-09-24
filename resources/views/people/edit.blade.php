@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit People</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
     <style>
         body {
             background-color: #f5f7fa;
@@ -56,23 +58,23 @@
             transition: all 0.3s ease;
             margin-right: 12px;
             font-size: 0.95rem;
-            color: white; /* Set default text color to white */
+            color: white; 
         }
 
         .btn.bg-gradient-primary {
-            background-color: #007bff; /* Blue color for save button */
+            background-color: #007bff; 
         }
 
         .btn.bg-gradient-primary:hover {
-            background-color: #0056b3; /* Darker blue on hover */
+            background-color: #0056b3; 
         }
 
         .btn.bg-gradient-danger {
-            background-color: #dc3545; /* Red color for cancel button */
+            background-color: #dc3545; 
         }
 
         .btn.bg-gradient-danger:hover {
-            background-color: #c82333; /* Darker red on hover */
+            background-color: #c82333;
         }
 
         .form-label {
@@ -87,12 +89,10 @@
             color: #dc3545;
         }
 
-        /* Hover effect for input */
         .form-control:hover, .form-select:hover {
             border-color: #007bff;
         }
 
-        /* Smooth transition for all elements */
         * {
             transition: all 0.3s ease;
         }

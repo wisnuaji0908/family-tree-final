@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Parent</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
     <style>
         body {
             background-color: #f5f7fa;
@@ -104,7 +106,7 @@
             @csrf
             <input type="hidden" name="_method" value="PUT">
 
-            <h1 class="text-center">Edit Parent</h1>
+            <h1 class="text-center">Edit Parent Admin</h1>
             <div class="card-body">
                 <form action="{{ route('parents.update', $parent->id) }}" method="POST">
                     @csrf

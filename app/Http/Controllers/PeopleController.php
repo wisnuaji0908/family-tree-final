@@ -27,6 +27,7 @@ class PeopleController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
+            'user_id' => Auth::id(), 
             'name' => 'required|string|max:255',
             'gender' => 'required|string',
             'place_birth' => 'required|string|max:255',
@@ -54,6 +55,7 @@ class PeopleController extends Controller
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
+            'user_id' => Auth::id(), 
             'name' => 'required|string|max:255',
             'gender' => 'required|in:male,female',
             'place_birth' => 'required|string|max:255',
