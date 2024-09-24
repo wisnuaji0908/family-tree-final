@@ -110,7 +110,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('couplespeople.store') }}" method="POST">
+                <form action="{{ route('peoplecouple.store') }}" method="POST">
                     @csrf
                     <div class="mb-3">
                         <label for="people_id" class="form-label">Person</label>

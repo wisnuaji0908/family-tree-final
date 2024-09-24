@@ -102,7 +102,7 @@
 <body>
 <div class="container-fluid">
     <div class="card">
-        <form action="{{ route('couplespeople.update', $couple->id) }}" method="POST">
+        <form action="{{ route('peoplecouple.update', $couple->id) }}" method="POST">
             @csrf
             @method('PUT')
             <h1 class="text-center">Edit Couple</h1>

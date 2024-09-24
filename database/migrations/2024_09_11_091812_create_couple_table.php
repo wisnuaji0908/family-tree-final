@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class, 'user_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->foreignIdFor(People::class, 'people_id')->constrained('people')->cascadeOnDelete();
-            $table->foreignId('couple_id')->nullable()->constrained('people')->cascadeOnDelete();
+            $table->foreignId('couple_id')->nullable()->constrained('people')->references('id')->cascadeOnDelete();
             $table->date('married_date')->nullable();
             $table->date('divorce_date')->nullable();
             $table->timestamps();
