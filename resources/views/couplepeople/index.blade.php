@@ -94,7 +94,7 @@
                 <div class="card my-2">
                     <div class="card-header pb-0">
                         <h5 class="mb-0" style="font-size: 20px;">Couple List</h5> 
-                        <a href="{{ route('couplespeople.create') }}" class="btn btn-add">
+                        <a href="{{ route('peoplecouple.create') }}" class="btn btn-add">
                             <span class="btn-add-icon"></span> [+] Add Couple
                         </a>
                     </div>
@@ -119,16 +119,16 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($couple as $index => $coupleData)
+                                        @foreach ($couple as $index => $couplesperson)
                                             <tr>
                                                 <td>{{ $index + 1 }}.</td> 
-                                                <td>{{ $coupleData->people->name }}</td>
-                                                <td>{{ $coupleData->partner->name }}</td>
-                                                <td>{{ $coupleData->married_date }}</td>
-                                                <td>{{ $coupleData->divorce_date ?? '-' }}</td>
+                                                <td>{{ $couplesperson->people->name }}</td>
+                                                <td>{{ $couplesperson->partner->name }}</td>
+                                                <td>{{ $couplesperson->married_date }}</td>
+                                                <td>{{ $couplesperson->divorce_date ?? '-' }}</td>
                                                 <td class="text-center action-buttons">
-                                                    <a href="{{ route('couplespeople.edit', $coupleData->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
-                                                    <form action="{{ route('couplespeople.destroy', $coupleData->id) }}" method="POST" class="d-inline">
+                                                    <a href="{{ route('peoplecouple.edit', $couplesperson->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
+                                                    <form action="{{ route('peoplecouple.destroy', $couplesperson->id) }}" method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>

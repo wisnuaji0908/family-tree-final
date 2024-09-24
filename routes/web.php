@@ -62,14 +62,18 @@ use App\Http\Controllers\ForgotPasswordController;
         Route::get('/parentpeople', [ParentsPeopleController::class, 'index'])->name('peopleparents.index');
 
         // COUPLE
-        Route::resource('/couplespeople', CouplePeopleController::class);
         Route::get('/couplepeople', [CouplePeopleController::class, 'index'])->name('peoplecouple.index');
+        Route::get('/couplepeople/create', [CouplePeopleController::class, 'create'])->name('peoplecouple.create');
+        Route::post('/couplepeople/store', [CouplePeopleController::class, 'store'])->name('peoplecouple.store');
+        Route::get('/couplepeople/{couplesperson}/edit', [CouplePeopleController::class, 'edit'])->name('peoplecouple.edit');
+        Route::put('/couplepeople/{couplesperson}', [CouplePeopleController::class, 'update'])->name('peoplecouple.update');
+        Route::delete('/couplepeople/{couplesperson}', [CouplePeopleController::class, 'destroy'])->name('peoplecouple.destroy');
+
     });
     
     // AUTH 
     Route::middleware(['auth'])->group(function(){
-        Route::get('logout', [LogoutController::class, 'logout'])->name('logout');
-        Route::post('logout', [LogoutController::class, 'logout']);
+        Route::post('logout', [LogoutController::class, 'logout'])->name('logout');
 
         Route::get('/people/claim', [PeopleController::class, 'showClaimForm'])->name('people.claim');
         Route::post('/people/claim', [PeopleController::class, 'claim'])->name('people.claim.process');
