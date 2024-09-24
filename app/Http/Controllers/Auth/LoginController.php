@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;    
@@ -30,10 +31,18 @@ class LoginController extends Controller
         }
 
 
+        $emailExists = User::where('email', $request->email)->exists();
+
+    if ($emailExists) {
+        return back()->withErrors([
+            'password' => 'The password is incorrect.',
+        ])->onlyInput('password')->withInput($request->only('email'));
+    } else {
         return back()->withErrors([
             'email' => 'The Email do not match our records.',
-            'password' => 'The password is incorrect.',
-        ])->onlyInput('email', 'password');
+        ])->onlyInput('email')->withInput($request->only('email'));
+    }
+
 
     }
 }
