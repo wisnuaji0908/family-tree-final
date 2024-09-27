@@ -153,6 +153,7 @@
                     <div class="mb-3">
                         <label for="people_id" class="form-label">Person</label>
                         <select name="people_id" id="people_id" class="form-select" required>
+                        <option value="" disabled selected>Select Person</option>
                             @foreach($people as $person)
                                 <option value="{{ $person->id }}">{{ $person->name }}</option>
                             @endforeach
@@ -161,6 +162,7 @@
                     <div class="mb-3">
                         <label for="couple_id" class="form-label">Partner</label>
                         <select name="couple_id" id="couple_id" class="form-select" required>
+                        <option value="" disabled selected>Select Partner</option>
                             @foreach($people as $person)
                                 <option value="{{ $person->id }}">{{ $person->name }}</option>
                             @endforeach

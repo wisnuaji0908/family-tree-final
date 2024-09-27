@@ -93,7 +93,7 @@
     </style>
 </head>
 <body>
-    <!-- Include Navbar -->
+
     @include('nav')
 
     <div class="container-fluid py-0"> 
@@ -107,12 +107,26 @@
                         </a>
                     </div>
                     <div class="card-body">
+                        <!-- Success Message -->
                         @if ($message = Session::get('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 {{ $message }}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         @endif
+
+                        <!-- Error Messages -->
+                        @if ($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+                        
                         <div class="card-body px-0 pb-2">
                             <div class="table-responsive p-0">
                                 <table class="table align-items-center mb-0" id="datatable">
@@ -148,15 +162,18 @@
                                 </table>
                             </div>
                         </div>
+
+                        <!-- Pagination Links -->
+                        <div class="d-flex justify-content-center mt-4">
+                            {{ $couple->links('pagination::bootstrap-4') }}
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-     <div class="d-flex justify-content-center mt-4">
-        {{ $couple->links('pagination::bootstrap-4') }}
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
