@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class, 'user_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->foreignIdFor(People::class, 'people_id')->constrained('people')->cascadeOnDelete();
-    
     // Relasi parent_id ke tabel people, bukan ke parents
             $table->foreignIdFor(People::class, 'parent_id')->nullable()->constrained('people')->cascadeOnDelete();
             $table->enum('parent', ['father', 'mother']);

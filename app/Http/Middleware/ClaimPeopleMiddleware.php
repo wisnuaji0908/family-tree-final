@@ -17,7 +17,7 @@ class ClaimPeopleMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         // Periksa apakah pengguna sudah login dan memiliki people_id
-        if (auth()->check() && auth()->user()->role =='people' && is_null(User::where('id', request()->user()->id)->whereHas('people')->first())) {
+        if (auth()->check() && auth()->user()->role =='people' && User::where('id', request()->user()->id)->whereNull('people_id')->exists()) {
             // Jika belum ada people_id, arahkan ke halaman klaim
             return redirect('/people/claim')->with('message', 'Please claim your account first.');
         }

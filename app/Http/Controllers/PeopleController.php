@@ -80,11 +80,11 @@ class PeopleController extends Controller
 
     public function showClaimForm()
     {   
-        if (User::where('id', request()->user()->id)->whereHas('people')->first()) {
+        if (User::where('id', request()->user()->id)->whereNotNull('people_id')->first()) {
             abort(403); 
         }
 
-        $people = People::whereNull('user_id')->get(); 
+        $people = People::get(); 
 
         return view('people.claim', compact('people'));
     }
@@ -92,21 +92,19 @@ class PeopleController extends Controller
     public function claim(Request $request)
     {
         // Validasi input
-        $request->validate([
-            'person_id' => 'required|exists:people,id',
-            'birth_date' => 'required|date',
-            'place_birth' => 'required|string|max:255', 
-        ]);
+        // $request->validate([
+        //     'person_id' => 'required|exists:people,id',
+        //     'birth_date' => 'required|date',
+        //     'place_birth' => 'required|string|max:255', 
+        // ]);
 
         // Mencari orang berdasarkan ID dan memastikan user_id belum diisi
         $person = People::where('id', $request->person_id)
-                        ->whereNull('user_id') // Pastikan user belum mengklaim
                         ->firstOrFail();
 
         // Cek kecocokan tanggal lahir dan tempat lahir
         if ($person->birth_date == $request->birth_date && $person->place_birth === $request->place_birth) {
-            // Update user_id jika klaim berhasil
-            $person->update(['user_id' => auth()->user()->id]);
+            User::where('id', request()->user()->id)->update(['people_id' => $person->id]);
 
             return redirect()->route('people.index')->with('success', 'Account claimed successfully.');
         } else {
