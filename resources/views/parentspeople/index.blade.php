@@ -123,7 +123,7 @@
                                 <tbody>
                                     @foreach ($parents as $index => $parent)
                                         <tr>
-                                            <td>{{ ($index->currentPage() - 1) * $index->perPage() + $i + 1 }}.</td>
+                                            <td>{{ ($parents->currentPage() - 1) * $parents->perPage() + $index + 1 }}.</td>
                                             <td>{{ $parent->people->name ?? 'N/A' }}</td> 
                                             <td>{{ $parent->userParent->name }}</td> 
                                             <td>{{ ucfirst($parent->parent) }}</td> 
