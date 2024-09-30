@@ -150,7 +150,7 @@
                                 @else
                                     @foreach ($people as $i => $data)
                                         <tr>
-                                            <td>{{ sprintf('%d.', $i + 1) }}</td>
+                                            <td>{{ ($people->currentPage() - 1) * $people->perPage() + $i + 1 }}.</td>
                                             <td>{{ $data->name }}</td>
                                             <td>{{ $data->gender }}</td>
                                             <td>{{ $data->place_birth }}</td>

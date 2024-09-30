@@ -130,7 +130,7 @@
                                     <tbody>
                                         @foreach ($couple as $index => $coupleData)
                                             <tr>
-                                                <td>{{ $index + 1 }}.</td> 
+                                                <td>{{ ($couple->currentPage() - 1) * $couple->perPage() + $index + 1 }}.</td>
                                                 <td>{{ $coupleData->people->name }}</td>
                                                 <td>{{ $coupleData->partner->name }}</td>
                                                 <td>{{ $coupleData->married_date }}</td>

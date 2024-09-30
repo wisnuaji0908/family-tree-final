@@ -1,18 +1,18 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Auth; 
 use App\Models\User; 
 use App\Models\People;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 
 class PeopleController extends Controller
 {
     public function index()
     {
-        $people = People::paginate(5);
+        $user = request()->user();
+        $people = People::query()->where('user_id', $user->id)->paginate(5);
         return view('people.index', compact('people'));
     }
 
@@ -23,26 +23,25 @@ class PeopleController extends Controller
         
     }
 
-
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'user_id' => Auth::id(), 
+        $request->validate([
             'name' => 'required|string|max:255',
             'gender' => 'required|string',
             'place_birth' => 'required|string|max:255',
             'birth_date' => 'required|date',
             'death_date' => 'nullable|date',
         ]);
-    
-        // Add the user_id after validation
-        $validatedData['user_id'] = Auth::id();
-    
-        People::create($validatedData);
-    
+
+        $userId = Auth::id();
+        $data = $request->all();
+        $data['user_id'] = $userId;
+
+        People::create($data);
+
         return redirect()->route('people.index')->with('success', 'Person added successfully.');
     }
-    
+
 
     public function edit($id)
     {
@@ -55,7 +54,7 @@ class PeopleController extends Controller
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'user_id' => Auth::id(), 
+            'user_id' => 'nullable|exists:users,id',
             'name' => 'required|string|max:255',
             'gender' => 'required|in:male,female',
             'place_birth' => 'required|string|max:255',
@@ -91,12 +90,23 @@ class PeopleController extends Controller
 
     public function claim(Request $request)
     {
-        // Validasi input
         $request->validate([
             'person_id' => 'required|exists:people,id',
             'birth_date' => 'required|date',
             'place_birth' => 'required|string|max:255', 
         ]);
+
+        // $user = request()->user();
+
+        // $user->people()->create([
+        //     'name' => $request->name,
+        //     'gender' => $request->gender,
+        //     'birth_date' => $request->birth_date,
+        //     'place_birth' => $request->place_birth,
+        // ]);
+
+        //     return redirect()->route('people.index')->with('success', 'Account claimed successfully.');
+
 
         // Mencari orang berdasarkan ID dan memastikan user_id belum diisi
         $person = People::where('id', $request->person_id)

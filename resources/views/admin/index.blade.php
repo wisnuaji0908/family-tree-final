@@ -91,6 +91,9 @@
             align-items: center;
             font-size: 15px; 
         }
+        .search-container {
+            margin-bottom: 20px; 
+        }
 
     </style>
 </head>
@@ -110,6 +113,11 @@
                         </a>
                     </div>
                     <div class="card-body">
+                    <form method="GET" action="{{ route('admin.index') }}" class="mb-3">
+                    <div class="input-group mb-3" style="width: 600px; margin: 0 auto;">
+                        <input type="text" name="query" class="form-control" placeholder="Search..." value="{{ request()->input('query') }}" style="border-radius: 10px 0 0 10px;">
+                        <button class="btn btn-outline-success" type="submit" style="border-radius: 0 10px 10px 0; background-color: #51A783; color: white;">Search</button>
+                    </div>
                         @if ($message = Session::get('data_added'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 {{ $message }} Table data successfully added.
@@ -137,7 +145,7 @@
                                     @else
                                         @foreach ($people as $i => $data)
                                             <tr>
-                                                <td>{{ sprintf('%d.', $i + 1) }}</td>
+                                                <td>{{ ($people->currentPage() - 1) * $people->perPage() + $i + 1 }}.</td>
                                                 <td>{{ $data->name }}</td>
                                                 <td>{{ $data->gender }}</td>
                                                 <td>{{ $data->place_birth }}</td>

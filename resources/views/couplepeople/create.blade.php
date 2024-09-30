@@ -97,8 +97,6 @@
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="form-container">
-                <h1 class="text-center">Create Couple</h1>
-                <p class="text-center" style="font-size: 1rem; margin-bottom: 20px;">Silakan isi informasi pasangan di bawah ini:</p> <!-- Tambahkan teks di sini dengan gaya -->
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <ul class="mb-0">
@@ -109,8 +107,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
-
                 <form action="{{ route('peoplecouple.store') }}" method="POST">
+                <h1 class="text-center">Create Couple</h1>
                     @csrf
                     <div class="mb-3">
                         <label for="people_id" class="form-label">Person</label>

@@ -132,7 +132,7 @@
                     <label for="floatingSelect">Choose One</label>
                 </div>                
                 <div class="form-floating mb-3">
-                    <input type="date" class="form-control {{ $errors->has('birth_date') ? 'is-invalid' : '' }}" id="floatingInput" name="birth_date" value="{{ old('birth_date', request('birth_date')) }}">
+                    <input type="date" class="form-control {{ $errors->has('birth_date') ? 'is-invalid' : '' }}" id="floatingInput" name="birth_date" value="{{ old('birth_date', request('birth_date')) }}" max="{{ date('Y-m-d') }}">
                     <label for="floatingInput">Birth Date</label>
                 @error('birth_date')
                     <div class="invalid-feedback">{{ $message }}</div>
