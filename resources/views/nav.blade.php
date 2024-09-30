@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-    <a class="navbar-brand ps-3">
+    <a class="navbar-brand ps-3" href="{{ route('people.index') }}">
       <img src="{{ asset('logo_ft.png') }}" alt="Logo" style="width: 100px; height: auto;">
     </a>
     <a class="navbar-brand" style="margin-left: 10px;">Family Tree</a>
