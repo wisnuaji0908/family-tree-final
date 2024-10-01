@@ -94,6 +94,7 @@
     </style>
 </head>
 <body>
+    
 
     <!-- Include Navbar -->
     @include('nav')
@@ -108,6 +109,28 @@
                             [+] Add Parent
                         </a>
                     </div>
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    @if(session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <div class="card-body">
                         <div class="table-responsive p-0 mt-3">
                             <table class="table align-items-center mb-0" id="datatable">
@@ -128,16 +151,21 @@
                                             <td>{{ $parent->userParent->name }}</td> 
                                             <td>{{ ucfirst($parent->parent) }}</td> 
                                             <td class="text-center action-buttons">
-                                                <a href="{{ route('parentspeople.edit', $parent->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
-                                                <form action="{{ route('parentspeople.destroy', $parent->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
-                                                </form>
+                                                @if(auth()->user()->id === $parent->user_id)
+                                                    <a href="{{ route('parentspeople.edit', $parent->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
+                                                    <form action="{{ route('parentspeople.destroy', $parent->id) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
+                                                    </form>
+                                                @else
+                                                    <span class="text-muted">No actions available</span>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
-                                </tbody>    
+                                </tbody>
+
                             </table>
                         </div>
                     </div>

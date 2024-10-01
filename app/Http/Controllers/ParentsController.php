@@ -90,18 +90,23 @@ class ParentsController extends Controller
         // Ambil data parent yang sedang diupdate
         $parentData = Parents::findOrFail($id);
 
-        // Cek apakah nama person dan parent sama (larangan menggunakan nama yang sama)
-        $person = People::find($request->people_id); // Nama person yang sedang diedit
-        $parent = People::find($request->parent_id); // Nama parent yang sedang ingin di-update
+        // Cek apakah role parent (father/mother) diubah
+        if ($parentData->parent !== $request->parent) {
+            return redirect()->back()->withErrors(['parent' => 'Parent role cannot be changed from ' . $parentData->parent . ' to ' . $request->parent . '.'])->withInput();
+        }
+
+        // Cek apakah nama person dan parent sama
+        $person = People::find($request->people_id);
+        $parent = People::find($request->parent_id);
 
         if ($person && $parent && $person->name === $parent->name) {
             return redirect()->back()->withErrors(['parent_id' => 'Person and Parent names cannot be the same.'])->withInput();
         }
 
-        // Cek apakah orang tua (father atau mother) sudah ada di database, kecuali record yang sedang di-update
+        // Cek apakah kombinasi parent sudah ada di database, kecuali record yang sedang di-update
         $existingParent = Parents::where('people_id', $request->people_id)
             ->where('parent_id', $request->parent_id)
-            ->where('id', '!=', $id) // Kecualikan parent yang sedang di-update
+            ->where('id', '!=', $id) 
             ->first();
 
         if ($existingParent) {
