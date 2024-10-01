@@ -136,7 +136,6 @@
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="form-container">
-                <h1 class="text-center">Create Couple</h1>
                 @if ($errors->any())
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <ul class="mb-0">
