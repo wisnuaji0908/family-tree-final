@@ -118,12 +118,12 @@
                         <input type="text" name="query" class="form-control" placeholder="Search..." value="{{ request()->input('query') }}" style="border-radius: 10px 0 0 10px;">
                         <button class="btn btn-outline-success" type="submit" style="border-radius: 0 10px 10px 0; background-color: #51A783; color: white;">Search</button>
                     </div>
-                        @if ($message = Session::get('data_added'))
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                {{ $message }} Table data successfully added.
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        @endif
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
                         <div class="table-responsive p-0 mt-3">
                             <table class="table align-items-center mb-0" id="datatable">
                                 <thead>
