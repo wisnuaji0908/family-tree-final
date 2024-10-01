@@ -93,7 +93,7 @@
     </style>
 </head>
 <body>
-    <!-- Include Navbar -->
+
     @include('nav')
 
     <div class="container-fluid py-0"> 
@@ -107,12 +107,26 @@
                         </a>
                     </div>
                     <div class="card-body">
+                        <!-- Success Message -->
                         @if ($message = Session::get('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 {{ $message }}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         @endif
+
+                        <!-- Error Messages -->
+                        @if ($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+                        
                         <div class="card-body px-0 pb-2">
                             <div class="table-responsive p-0">
                                 <table class="table align-items-center mb-0" id="datatable">
@@ -135,12 +149,16 @@
                                                 <td>{{ $couplesperson->married_date }}</td>
                                                 <td>{{ $couplesperson->divorce_date ?? '-' }}</td>
                                                 <td class="text-center action-buttons">
+                                                @if(auth()->user()->id === $couplesperson->user_id)
                                                     <a href="{{ route('peoplecouple.edit', $couplesperson->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
                                                     <form action="{{ route('peoplecouple.destroy', $couplesperson->id) }}" method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
                                                     </form>
+                                                @else
+                                                    <span class="text-muted">No actions available</span>
+                                                @endif
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -148,15 +166,18 @@
                                 </table>
                             </div>
                         </div>
+
+                        <!-- Pagination Links -->
+                        <div class="d-flex justify-content-center mt-4">
+                            {{ $couple->links('pagination::bootstrap-4') }}
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-     <div class="d-flex justify-content-center mt-4">
-        {{ $couple->links('pagination::bootstrap-4') }}
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
