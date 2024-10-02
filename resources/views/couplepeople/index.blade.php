@@ -141,35 +141,35 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($couple as $index => $couplesperson)
-                                            <tr>
-                                                <td>{{ $index + 1 }}.</td> 
-                                                <td>{{ $couplesperson->people->name }}</td>
-                                                <td>{{ $couplesperson->partner->name }}</td>
-                                                <td>{{ $couplesperson->married_date }}</td>
-                                                <td>{{ $couplesperson->divorce_date ?? '-' }}</td>
-                                                <td class="text-center action-buttons">
-                                                @if(auth()->user()->id === $couplesperson->user_id)
-                                                    <a href="{{ route('peoplecouple.edit', $couplesperson->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
-                                                    <form action="{{ route('peoplecouple.destroy', $couplesperson->id) }}" method="POST" class="d-inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
-                                                    </form>
-                                                @else
-                                                    <span class="text-muted">No actions available</span>
-                                                @endif
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
+    @foreach ($coupleperson as $index => $couplesperson)
+        <tr>
+            <td>{{ $index + 1 }}.</td> 
+            <td>{{ $couplesperson->people->name }}</td>
+            <td>{{ $couplesperson->partner->name }}</td>
+            <td>{{ $couplesperson->married_date }}</td>
+            <td>{{ $couplesperson->divorce_date ?? '-' }}</td>
+            <td class="text-center action-buttons">
+            @if(auth()->user()->id === $couplesperson->user_id)
+                <a href="{{ route('peoplecouple.edit', $couplesperson->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
+                <form action="{{ route('peoplecouple.destroy', $couplesperson->id) }}" method="POST" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
+                </form>
+            @else
+                <span class="text-muted">No actions available</span>
+            @endif
+            </td>
+        </tr>
+    @endforeach
+</tbody>
                                 </table>
                             </div>
                         </div>
 
                         <!-- Pagination Links -->
                         <div class="d-flex justify-content-center mt-4">
-                            {{ $couple->links('pagination::bootstrap-4') }}
+                        {{ $coupleperson->links('pagination::bootstrap-4') }}
                         </div>
 
                     </div>

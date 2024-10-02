@@ -14,17 +14,21 @@ class CouplePeopleController extends Controller
      */
     public function index()
     {
-        $couplesperson = Couple::with('people')->paginate(5); 
-        $couple = Couple::with('people')->paginate(5); 
-        return view('couplepeople.index', compact('couplesperson', 'couple'));
+    $loggedInUser = Auth::id();
+    $claimedPersonId = Auth::user()->people_id; 
+    
+    $coupleperson = Couple::with(['people', 'partner'])
+        ->where('people_id', $claimedPersonId)
+        ->orWhere('couple_id', $claimedPersonId)
+        ->paginate(5);
+
+        return view('couplepeople.index', compact('coupleperson'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $people = People::all();
+
         return view('couplepeople.create', compact('people'));
     }
 
@@ -34,19 +38,19 @@ class CouplePeopleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'people_id' => 'required|exists:people,id',
             'couple_id' => 'required|exists:people,id|different:people_id',
             'married_date' => 'required|date',
             'divorce_date' => 'nullable|date|after_or_equal:married_date',
         ]);
 
-        // Cek apakah pasangan sudah ada di database
-        $existingCouple = Couple::where(function($query) use ($request) {
-            $query->where('people_id', $request->people_id)
+        $claimedPersonId = Auth::user()->people_id;
+
+        $existingCouple = Couple::where(function($query) use ($claimedPersonId, $request) {
+            $query->where('people_id', $claimedPersonId)
                   ->where('couple_id', $request->couple_id);
-        })->orWhere(function($query) use ($request) {
+        })->orWhere(function($query) use ($claimedPersonId, $request) {
             $query->where('people_id', $request->couple_id)
-                  ->where('couple_id', $request->people_id);
+                  ->where('couple_id', $claimedPersonId);
         })->first();
 
         if ($existingCouple) {
@@ -54,8 +58,8 @@ class CouplePeopleController extends Controller
         }
 
         Couple::create([
-            'user_id' => Auth::id(), // Simpan user_id dari user yang membuat pasangan
-            'people_id' => $request->people_id,
+            'user_id' => Auth::id(), 
+            'people_id' => $claimedPersonId, 
             'couple_id' => $request->couple_id,
             'married_date' => $request->married_date,
             'divorce_date' => $request->divorce_date,
@@ -69,13 +73,13 @@ class CouplePeopleController extends Controller
      */
     public function edit(Couple $couplesperson)
     {
-        // Hanya user yang membuat data yang bisa mengedit
         if ($couplesperson->user_id !== Auth::id()) {
             return redirect()->route('peoplecouple.index')->withErrors('You do not have permission to edit this data.');
         }
 
         $people = People::all();
         $couple = $couplesperson;
+
         return view('couplepeople.edit', compact('couple', 'people'));
     }
 
@@ -84,26 +88,25 @@ class CouplePeopleController extends Controller
      */
     public function update(Request $request, Couple $couplesperson)
     {
-        // Cek apakah user yang login adalah pemilik data
         if ($couplesperson->user_id !== Auth::id()) {
             return redirect()->route('peoplecouple.index')->withErrors('You do not have permission to update this data.');
         }
 
         $request->validate([
-            'people_id' => 'required|exists:people,id',
             'couple_id' => 'required|exists:people,id|different:people_id',
             'married_date' => 'required|date',
             'divorce_date' => 'nullable|date|after_or_equal:married_date',
         ]);
 
-        // Cek jika pasangan sudah ada
-        $existingCouple = Couple::where(function($query) use ($request, $couplesperson) {
-            $query->where('people_id', $request->people_id)
+        $claimedPersonId = Auth::user()->people_id;
+
+        $existingCouple = Couple::where(function($query) use ($claimedPersonId, $request, $couplesperson) {
+            $query->where('people_id', $claimedPersonId)
                   ->where('couple_id', $request->couple_id)
                   ->where('id', '!=', $couplesperson->id);
-        })->orWhere(function($query) use ($request, $couplesperson) {
+        })->orWhere(function($query) use ($claimedPersonId, $request, $couplesperson) {
             $query->where('people_id', $request->couple_id)
-                  ->where('couple_id', $request->people_id)
+                  ->where('couple_id', $claimedPersonId)
                   ->where('id', '!=', $couplesperson->id);
         })->first();
 
@@ -111,10 +114,8 @@ class CouplePeopleController extends Controller
             return redirect()->back()->withErrors('This couple is already registered.');
         }
 
-        // Update pasangan
         $couplesperson->update([
-            'user_id' => Auth::id(), 
-            'people_id' => $request->people_id,
+            'people_id' => $claimedPersonId, 
             'couple_id' => $request->couple_id,
             'married_date' => $request->married_date,
             'divorce_date' => $request->divorce_date,
@@ -128,7 +129,6 @@ class CouplePeopleController extends Controller
      */
     public function destroy(Couple $couplesperson)
     {
-        // Hanya user yang membuat data yang bisa menghapus
         if ($couplesperson->user_id !== Auth::id()) {
             return redirect()->route('peoplecouple.index')->withErrors('You do not have permission to delete this data.');
         }
