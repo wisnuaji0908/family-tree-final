@@ -138,12 +138,16 @@
                                                     {{ $coupleData->divorce_date ?? 'Divorce Date Not Provided' }}
                                                 </td>
                                                 <td class="text-center action-buttons">
+                                                @if(auth()->user()->id === $coupleData->user_id)
                                                     <a href="{{ route('couple.edit', $coupleData->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
                                                     <form action="{{ route('couple.destroy', $coupleData->id) }}" method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
                                                     </form>
+                                                @else
+                                                    <span class="text-muted">No actions available</span>
+                                                @endif
                                                 </td>
                                             </tr>
                                         @endforeach

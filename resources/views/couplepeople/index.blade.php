@@ -144,13 +144,15 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($couple as $index => $couplesperson)
+                                        @foreach ($coupleperson as $index => $couplesperson)
                                             <tr>
                                                 <td>{{ $index + 1 }}.</td> 
                                                 <td>{{ $couplesperson->people->name }}</td>
                                                 <td>{{ $couplesperson->partner->name }}</td>
                                                 <td>{{ $couplesperson->married_date }}</td>
-                                                <td>{{ $couplesperson->divorce_date ?? '-' }}</td>
+                                                <td class="{{ $couplesperson->divorce_date ? '' : 'text-danger' }}">
+                                                    {{ $couplesperson->divorce_date ?? 'Divorce Date Not Provided' }}
+                                                </td>
                                                 <td class="text-center action-buttons">
                                                 @if(auth()->user()->id === $couplesperson->user_id)
                                                     <a href="{{ route('peoplecouple.edit', $couplesperson->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
@@ -172,7 +174,7 @@
 
                         <!-- Pagination Links -->
                         <div class="d-flex justify-content-center mt-4">
-                            {{ $couple->links('pagination::bootstrap-4') }}
+                        {{ $coupleperson->links('pagination::bootstrap-4') }}
                         </div>
 
                     </div>
