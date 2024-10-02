@@ -144,7 +144,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($couple as $index => $couplesperson)
+                                        @foreach ($coupleperson as $index => $couplesperson)
                                             <tr>
                                                 <td>{{ $index + 1 }}.</td> 
                                                 <td>{{ $couplesperson->people->name }}</td>
@@ -174,7 +174,7 @@
 
                         <!-- Pagination Links -->
                         <div class="d-flex justify-content-center mt-4">
-                            {{ $couple->links('pagination::bootstrap-4') }}
+                        {{ $coupleperson->links('pagination::bootstrap-4') }}
                         </div>
 
                     </div>
