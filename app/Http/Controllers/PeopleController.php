@@ -20,7 +20,7 @@ class PeopleController extends Controller
     {
         $users = User::all(); 
         return view('people.create', compact('users'));
-        
+    
     }
 
 
@@ -92,14 +92,15 @@ class PeopleController extends Controller
     public function claim(Request $request)
     {
         // Validasi input
-        // $request->validate([
-        //     'person_id' => 'required|exists:people,id',
-        //     'birth_date' => 'required|date',
-        //     'place_birth' => 'required|string|max:255', 
-        // ]);
+        $request->validate([
+            'person_id' => 'required|exists:people,id',
+            'birth_date' => 'required|date',
+            'place_birth' => 'required|string|max:255', 
+        ]);
 
         // Mencari orang berdasarkan ID dan memastikan user_id belum diisi
         $person = People::where('id', $request->person_id)
+                        ->whereNotNull('people_id')
                         ->firstOrFail();
 
         // Cek kecocokan tanggal lahir dan tempat lahir
