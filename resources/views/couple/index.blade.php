@@ -34,7 +34,7 @@
             font-size: 16px; 
         }
         .btn-add {
-            background-color: #007bff; 
+            background-color: #0056b3; 
             border: none;
             padding: 10px 35px; 
             font-size: 15px; 
@@ -46,10 +46,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 30px; 
+            margin-bottom: 15px; 
         }
         .btn-edit {
-            background-color: #007bff; 
+            background-color: #f0ad4e; 
             color: white;
             font-size: 15px; 
         }
@@ -134,7 +134,9 @@
                                                 <td>{{ $coupleData->people->name }}</td>
                                                 <td>{{ $coupleData->partner->name }}</td>
                                                 <td>{{ $coupleData->married_date }}</td>
-                                                <td>{{ $coupleData->divorce_date ?? '-' }}</td>
+                                                <td class="{{ $coupleData->divorce_date ? '' : 'text-danger' }}">
+                                                    {{ $coupleData->divorce_date ?? 'Divorce Date Not Provided' }}
+                                                </td>
                                                 <td class="text-center action-buttons">
                                                     <a href="{{ route('couple.edit', $coupleData->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
                                                     <form action="{{ route('couple.destroy', $coupleData->id) }}" method="POST" class="d-inline">

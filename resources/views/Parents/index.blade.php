@@ -35,7 +35,7 @@
             font-size: 16px; 
         }
         .btn-add {
-            background-color: #007bff; 
+            background-color: #0056b3; 
             border: none;
             padding: 10px 35px; 
             font-size: 15px; 
@@ -47,10 +47,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 30px; 
+            margin-bottom: 15px; 
         }
         .btn-edit {
-            background-color: #007bff; 
+            background-color: #f0ad4e; 
             color: white;
             font-size: 15px; 
         }

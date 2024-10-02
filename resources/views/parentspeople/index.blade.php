@@ -34,7 +34,7 @@
             font-size: 16px; 
         }
         .btn-add {
-            background-color: #007bff; 
+            background-color: #0056b3; 
             border: none;
             padding: 10px 35px; 
             font-size: 15px; 
@@ -46,10 +46,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 30px; 
+            margin-bottom: 15px; 
         }
         .btn-edit {
-            background-color: #007bff; 
+            background-color: #f0ad4e; 
             color: white;
             font-size: 15px; 
         }
@@ -59,18 +59,18 @@
             font-size: 15px;
         }
         .table {
-            margin: 0 20px;
-            max-width: 95%; 
-            margin-left: auto;
-            margin-right: auto; 
+            margin: 0 auto; /* Rata tengah */
             border-collapse: collapse;
             font-size: 15px;
+            width: 95%; /* Lebar tabel */
         }
+
         th, td {
             text-align: left;
-            padding: 10px; 
+            padding: 12px; /* Tingkatkan padding untuk konsistensi */
             border-bottom: 1px solid #dee2e6;
         }
+
         th {
             background-color: #51A783;
             color: white;
@@ -89,6 +89,9 @@
             justify-content: center;
             align-items: center;
             font-size: 15px; 
+        }
+        .search-container {
+            margin-bottom: 20px; 
         }
 
     </style>

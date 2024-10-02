@@ -143,14 +143,12 @@
         function togglePassword() {
             const passwordInput = document.getElementById("floatingPassword");
             const eyeIcon = document.getElementById("eyeIcon");
-    
-            // Cek apakah input saat ini tipe 'password'
             if (passwordInput.type === "password") {
-                passwordInput.type = "text"; // Ubah tipe menjadi teks
-                eyeIcon.textContent = "🙈";  // Ubah ikon menjadi monyet menutup mata
+                passwordInput.type = "text"; 
+                eyeIcon.textContent = "🙈"; 
             } else {
-                passwordInput.type = "password"; // Ubah kembali ke tipe password
-                eyeIcon.textContent = "👁️";  // Ubah ikon kembali ke mata terbuka
+                passwordInput.type = "password";
+                eyeIcon.textContent = "👁️";  
             }
         }
     </script>    
