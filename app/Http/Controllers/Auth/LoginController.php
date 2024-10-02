@@ -20,6 +20,7 @@ class LoginController extends Controller
             'email'=>['required', 'email'],
             'password'=>['required'],
         ]);
+
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
@@ -33,16 +34,15 @@ class LoginController extends Controller
 
         $emailExists = User::where('email', $request->email)->exists();
 
-    if ($emailExists) {
-        return back()->withErrors([
-            'password' => 'The password is incorrect.',
-        ])->onlyInput('password')->withInput($request->only('email'));
-    } else {
-        return back()->withErrors([
-            'email' => 'The Email do not match our records.',
-        ])->onlyInput('email')->withInput($request->only('email'));
-    }
-
+        if ($emailExists) {
+            return back()->withErrors([
+                'password' => 'The password is incorrect.',
+            ])->onlyInput('password')->withInput($request->only('email'));
+        } else {
+            return back()->withErrors([
+                'email' => 'The Email do not match our records.',
+            ])->onlyInput('email')->withInput($request->only('email'));
+        }
 
     }
 }
