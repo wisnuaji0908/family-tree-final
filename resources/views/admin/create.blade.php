@@ -145,7 +145,7 @@
                     });
                 </script>
                 <div class="mb-3">
-                    <label for="death_date" class="form-label">Death Date</label>
+                    <label for="death_date" class="form-label">Death Date (Optional)</label>
                     <input type="date" 
                         class="form-control @error('death_date') is-invalid @enderror" 
                         id="death_date" name="death_date" 

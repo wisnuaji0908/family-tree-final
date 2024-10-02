@@ -129,7 +129,7 @@
                     @enderror
                 </div>
                 <div class="mb-3">
-                    <label for="birth_date" class="form-label">Birth Date</label>
+                    <label for="birth_date" class="form-label">Birth Date (Optional)</label>
                     <input type="date" 
                         class="form-control @error('birth_date') is-invalid @enderror" 
                         id="birth_date" name="birth_date" 

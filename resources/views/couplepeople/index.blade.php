@@ -33,7 +33,7 @@
             font-size: 16px; 
         }
         .btn-add {
-            background-color: #007bff; 
+            background-color: #0056b3; 
             border: none;
             padding: 10px 35px; 
             font-size: 15px; 
@@ -45,10 +45,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 30px; 
+            margin-bottom: 15px; 
         }
         .btn-edit {
-            background-color: #007bff; 
+            background-color: #f0ad4e; 
             color: white;
             font-size: 15px; 
         }
@@ -58,18 +58,18 @@
             font-size: 15px;
         }
         .table {
-            margin: 0 20px;
-            max-width: 95%; 
-            margin-left: auto;
-            margin-right: auto; 
+            margin: 0 auto; /* Rata tengah */
             border-collapse: collapse;
             font-size: 15px;
+            width: 95%; /* Lebar tabel */
         }
+
         th, td {
             text-align: left;
-            padding: 10px; 
+            padding: 12px; /* Tingkatkan padding untuk konsistensi */
             border-bottom: 1px solid #dee2e6;
         }
+
         th {
             background-color: #51A783;
             color: white;
@@ -89,11 +89,14 @@
             align-items: center;
             font-size: 15px; 
         }
+        .search-container {
+            margin-bottom: 20px; 
+        }
 
     </style>
 </head>
 <body>
-    <!-- Include Navbar -->
+
     @include('nav')
 
     <div class="container-fluid py-0"> 
@@ -107,12 +110,26 @@
                         </a>
                     </div>
                     <div class="card-body">
+                        <!-- Success Message -->
                         @if ($message = Session::get('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 {{ $message }}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         @endif
+
+                        <!-- Error Messages -->
+                        @if ($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
+                        
                         <div class="card-body px-0 pb-2">
                             <div class="table-responsive p-0">
                                 <table class="table align-items-center mb-0" id="datatable">
@@ -135,12 +152,16 @@
                                                 <td>{{ $couplesperson->married_date }}</td>
                                                 <td>{{ $couplesperson->divorce_date ?? '-' }}</td>
                                                 <td class="text-center action-buttons">
+                                                @if(auth()->user()->id === $couplesperson->user_id)
                                                     <a href="{{ route('peoplecouple.edit', $couplesperson->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
                                                     <form action="{{ route('peoplecouple.destroy', $couplesperson->id) }}" method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
                                                     </form>
+                                                @else
+                                                    <span class="text-muted">No actions available</span>
+                                                @endif
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -148,15 +169,18 @@
                                 </table>
                             </div>
                         </div>
+
+                        <!-- Pagination Links -->
+                        <div class="d-flex justify-content-center mt-4">
+                            {{ $couple->links('pagination::bootstrap-4') }}
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-     <div class="d-flex justify-content-center mt-4">
-        {{ $couple->links('pagination::bootstrap-4') }}
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

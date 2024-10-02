@@ -35,7 +35,7 @@
             font-size: 16px; 
         }
         .btn-add {
-            background-color: #007bff; 
+            background-color: #0056b3; 
             border: none;
             padding: 10px 35px; 
             font-size: 15px; 
@@ -47,10 +47,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 30px; 
+            margin-bottom: 15px; 
         }
         .btn-edit {
-            background-color: #007bff; 
+            background-color: #f0ad4e; 
             color: white;
             font-size: 15px; 
         }
@@ -124,7 +124,7 @@
                                 <tbody>
                                     @foreach ($parents as $index => $parent)
                                         <tr>
-                                            <td>{{ sprintf('%d.', $index + 1) }}</td>
+                                        <td>{{ ($parents->currentPage() - 1) * $parents->perPage() + $index + 1 }}.</td>
                                             <td>{{ $parent->people->name ?? 'N/A' }}</td> 
                                             <td>{{ $parent->userParent->name }}</td> 
                                             <td>{{ ucfirst($parent->parent) }}</td> 
