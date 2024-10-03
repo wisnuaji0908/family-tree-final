@@ -146,24 +146,38 @@
                                 <tbody>
                                     @foreach ($parents as $index => $parent)
                                         <tr>
+                                            <!-- Mengatur nomor urut tabel berdasarkan pagination -->
                                             <td>{{ ($parents->currentPage() - 1) * $parents->perPage() + $index + 1 }}.</td>
+                                            
+                                            <!-- Menampilkan nama 'Person' -->
                                             <td>{{ $parent->people->name ?? 'N/A' }}</td> 
+                                            
+                                            <!-- Menampilkan nama 'Parent' -->
                                             <td>{{ $parent->userParent->name }}</td> 
+                                            
+                                            <!-- Menampilkan role (misalnya 'Father' atau 'Mother') -->
                                             <td>{{ ucfirst($parent->parent) }}</td> 
+                                            
+                                            <!-- Kolom untuk aksi edit dan delete -->
                                             <td class="text-center action-buttons">
                                                 @if(auth()->user()->id === $parent->user_id)
+                                                    <!-- Tampilkan tombol edit dan delete jika user yang login adalah pembuat data -->
                                                     <a href="{{ route('parentspeople.edit', $parent->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
+                                                    
                                                     <form action="{{ route('parentspeople.destroy', $parent->id) }}" method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
                                                     </form>
                                                 @else
+                                                    <!-- Jika user login bukan pembuat data, tampilkan pesan -->
                                                     <span class="text-muted">No actions available</span>
                                                 @endif
                                             </td>
                                         </tr>
                                     @endforeach
+
+
                                 </tbody>
 
                             </table>

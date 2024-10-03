@@ -15,8 +15,17 @@ class ParentsPeopleController extends Controller
      */
     public function index()
     {
-        $parents = Parents::with(['user', 'people', 'userParent'])->paginate(5); 
-        return view('parentspeople.index', compact('parents'));
+        $loggedInUser = Auth::id(); // Mendapatkan ID user yang login
+        $claimedPersonId = Auth::user()->people_id; // Mendapatkan ID people dari user yang login
+
+        // Mengambil semua data parents terkait dengan user yang login (baik sebagai person atau parent)
+        $parents = Parents::with(['user', 'people', 'userParent'])
+            ->where('people_id', $claimedPersonId)
+            ->orWhere('parent_id', $claimedPersonId)
+            ->paginate(5);
+
+        // Mengirimkan juga loggedInUser agar bisa dibandingkan di view
+        return view('parentspeople.index', compact('parents', 'loggedInUser'));
     }
 
     /**
@@ -37,25 +46,41 @@ class ParentsPeopleController extends Controller
         // Validasi input
         $request->validate([
             'user_id' => 'nullable|exists:users,id', 
-            'people_id' => 'required|exists:people,id|unique:parents,people_id',
+            'people_id' => 'required|exists:people,id',
             'parent_id' => 'nullable|exists:people,id|different:people_id',
             'parent' => 'required|in:father,mother',
         ]);
 
+        // Cek apakah person sudah punya dua parent
+        $existingParentsCount = Parents::where('people_id', $request->people_id)->count();
+        if ($existingParentsCount >= 2) {
+            return redirect()->back()->withErrors(['people_id' => 'This person already has two parents.'])->withInput();
+        }
+
+        // Cek apakah person sudah punya parent dengan role yang sama (mother/father)
+        $existingParentWithSameRole = Parents::where('people_id', $request->people_id)
+            ->where('parent', $request->parent)
+            ->first();
+
+        if ($existingParentWithSameRole) {
+            return redirect()->back()->withErrors(['parent' => 'This person already has a ' . $request->parent . '.'])->withInput();
+        }
+
+        // Cek apakah nama person dan parent sama
         $person = People::find($request->people_id);
         $parent = People::find($request->parent_id);
-
         if ($person && $parent && $person->name === $parent->name) {
-            return redirect()->back()->withErrors(['parent_id' => 'Person and Parent names cannot be the same.'])->withInput();
-        }
-    
-        Parents::create([
-            'user_id' => Auth::id(), 
-            'people_id' => $request->people_id,
-            'parent_id' => $request->parent_id,
-            'parent' => $request->parent,
-        ]);
-        
+        return redirect()->back()->withErrors(['parent_id' => 'Person and Parent names cannot be the same.'])->withInput();
+    }
+
+    // Simpan data parent baru
+    Parents::create([
+        'user_id' => Auth::id(), 
+        'people_id' => $request->people_id,
+        'parent_id' => $request->parent_id,
+        'parent' => $request->parent,
+    ]);
+
         return redirect()->route('parentspeople.index')->with('success', 'Parent added successfully.');
     }
 
