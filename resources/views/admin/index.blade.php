@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-
     <style>
         /* Custom CSS */
         body {
@@ -35,7 +34,7 @@
             font-size: 16px; 
         }
         .btn-add {
-            background-color: #007bff; 
+            background-color: #0056b3; 
             border: none;
             padding: 10px 35px; 
             font-size: 15px; 
@@ -47,10 +46,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 30px; 
+            margin-bottom: 15px; 
         }
         .btn-edit {
-            background-color: #007bff; 
+            background-color: #f0ad4e; 
             color: white;
             font-size: 15px; 
         }
@@ -60,18 +59,18 @@
             font-size: 15px;
         }
         .table {
-            margin: 0 20px;
-            max-width: 95%; 
-            margin-left: auto;
-            margin-right: auto; 
+            margin: 0 auto; /* Rata tengah */
             border-collapse: collapse;
             font-size: 15px;
+            width: 95%; /* Lebar tabel */
         }
+
         th, td {
             text-align: left;
-            padding: 10px; 
+            padding: 12px; /* Tingkatkan padding untuk konsistensi */
             border-bottom: 1px solid #dee2e6;
         }
+
         th {
             background-color: #51A783;
             color: white;
@@ -118,12 +117,12 @@
                         <input type="text" name="query" class="form-control" placeholder="Search..." value="{{ request()->input('query') }}" style="border-radius: 10px 0 0 10px;">
                         <button class="btn btn-outline-success" type="submit" style="border-radius: 0 10px 10px 0; background-color: #51A783; color: white;">Search</button>
                     </div>
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    @endif
+                        @if ($message = Session::get('data_added'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ $message }} Table data successfully added.
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
                         <div class="table-responsive p-0 mt-3">
                             <table class="table align-items-center mb-0" id="datatable">
                                 <thead>
@@ -138,37 +137,41 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if($people->isEmpty())
+                                @if($people->isEmpty())
+                                    <tr>
+                                        <td colspan="7" class="text-center">No data available.</td>
+                                    </tr>
+                                @else
+                                    @foreach ($people as $i => $data)
                                         <tr>
-                                            <td colspan="7" class="text-center">No data available.</td>
-                                        </tr>
-                                    @else
-                                        @foreach ($people as $i => $data)
-                                            <tr>
-                                                <td>{{ ($people->currentPage() - 1) * $people->perPage() + $i + 1 }}.</td>
-                                                <td>{{ $data->name }}</td>
-                                                <td>{{ $data->gender }}</td>
-                                                <td>{{ $data->place_birth }}</td>
-                                                <td>{{ $data->birth_date }}</td>
-                                                <td>
-                                                    @if(empty($data->death_date))
-                                                        <span class="text-danger">Death Date Not Provided</span>
-                                                    @else
-                                                        {{ $data->death_date }}
-                                                    @endif
-                                                </td>
-                                                <td class="text-center action-buttons">
+                                            <td>{{ ($people->currentPage() - 1) * $people->perPage() + $i + 1 }}.</td>
+                                            <td>{{ $data->name }}</td>
+                                            <td>{{ $data->gender }}</td>
+                                            <td>{{ $data->place_birth }}</td>
+                                            <td>{{ $data->birth_date }}</td>
+                                            <td>
+                                                @if(empty($data->death_date))
+                                                    <span class="text-danger">Death Date Not Provided</span>
+                                                @else
+                                                    {{ $data->death_date }}
+                                                @endif
+                                            </td>
+                                            <td class="text-center action-buttons">
+                                                @if(Auth::user()->role === 'admin' && $data->user_id === Auth::user()->id)
                                                     <a href="{{ route('admin.edit', $data->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
                                                     <form action="{{ route('admin.destroy', $data->id) }}" method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
                                                     </form>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @endif
-                                </tbody>    
+                                                @else
+                                                    <span class="text-muted">No actions available</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @endif
+                            </tbody>
                             </table>
                         </div>
                     </div>

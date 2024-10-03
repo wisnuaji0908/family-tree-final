@@ -72,13 +72,29 @@ class AdminController extends Controller
     public function edit($id)
     {
         $person = People::findOrFail($id); 
+        $user = Auth::user();
+
+        // Pastikan hanya admin yang dapat mengedit yang mereka buat
+        if ($user->role !== 'admin' || $person->user_id !== $user->id) {
+            return redirect()->route('admin.index')->with('error', 'You do not have permission to edit this person.');
+        }
+
         $users = User::all(); 
         return view('admin.edit', compact('person', 'users'));
     }
 
 
+
     public function update(Request $request, $id)
     {
+        $person = People::findOrFail($id);
+        $user = Auth::user();
+
+        // Pastikan hanya admin yang dapat mengupdate yang mereka buat
+        if ($user->role !== 'admin' || $person->user_id !== $user->id) {
+            return redirect()->route('admin.index')->with('error', 'You do not have permission to update this person.');
+        }
+
         $validatedData = $request->validate([
             'user_id' => 'nullable|exists:users,id',
             'name' => 'required|string|max:255',
@@ -88,11 +104,11 @@ class AdminController extends Controller
             'death_date' => 'nullable|date|after_or_equal:birth_date',
         ]);
 
-        $person = People::findOrFail($id);
         $person->update($validatedData);
 
         return redirect()->route('admin.index')->with('success', 'Data updated successfully.');
     }
+
 
     public function destroy($id)
     {
