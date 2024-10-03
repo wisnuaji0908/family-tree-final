@@ -124,13 +124,25 @@ class ParentsController extends Controller
         return redirect()->route('parents.index')->with('success', 'Parent updated successfully.');
     }
 
-    public function destroy($id)
+    public function destroy(string $id)
     {
+        // Temukan data berdasarkan ID
         $parent = Parents::find($id);
+
+        // Jika data tidak ditemukan, berikan pesan error
         if (!$parent) {
             return redirect()->route('parents.index')->with('error', 'Parent not found.');
         }
+
+        // Validasi apakah user yang login adalah pemilik data
+        if (auth()->user()->id !== $parent->user_id) {
+            // Menambahkan pesan flash error ketika user tidak memiliki hak
+            return redirect()->route('parents.index')->with('error', 'Anda tidak memiliki izin untuk menghapus data ini.');
+        }
+
+        // Hapus data jika user valid
         $parent->delete();
+
         return redirect()->route('parents.index')->with('success', 'Data successfully removed.');
     }
 }

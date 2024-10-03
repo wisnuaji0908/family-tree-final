@@ -124,17 +124,21 @@
                                 <tbody>
                                     @foreach ($parents as $index => $parent)
                                         <tr>
-                                        <td>{{ ($parents->currentPage() - 1) * $parents->perPage() + $index + 1 }}.</td>
+                                            <td>{{ ($parents->currentPage() - 1) * $parents->perPage() + $index + 1 }}.</td>
                                             <td>{{ $parent->people->name ?? 'N/A' }}</td> 
                                             <td>{{ $parent->userParent->name }}</td> 
                                             <td>{{ ucfirst($parent->parent) }}</td> 
                                             <td class="text-center action-buttons">
-                                                <a href="{{ route('parents.edit', $parent->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
-                                                <form action="{{ route('parents.destroy', $parent->id) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
-                                                </form>
+                                                @if(auth()->user()->id === $parent->user_id)
+                                                    <a href="{{ route('parents.edit', $parent->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
+                                                    <form action="{{ route('parents.destroy', $parent->id) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
+                                                    </form>
+                                                @else
+                                                    <span class="text-muted">No actions available</span>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
