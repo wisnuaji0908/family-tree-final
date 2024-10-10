@@ -118,8 +118,8 @@ class PeopleController extends Controller
 
         // Mencari orang berdasarkan ID dan memastikan user_id belum diisi
         $person = People::where('id', $request->person_id)
-                        ->whereNotNull('people_id')
-                        ->firstOrFail();
+                ->whereNotNull('user_id')
+                ->firstOrFail();
 
         // Cek kecocokan tanggal lahir dan tempat lahir
         if ($person->birth_date == $request->birth_date && $person->place_birth === $request->place_birth) {
