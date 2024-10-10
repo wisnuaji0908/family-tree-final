@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Parents;
 use App\Models\User;
 use App\Models\People;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,8 +13,9 @@ class ParentsController extends Controller
 {
     public function index()
     {
+        $setting = Setting::first();
         $parents = Parents::with(['user', 'people', 'userParent'])->paginate(5); 
-        return view('parents.index', compact('parents'));
+        return view('parents.index', compact('parents', 'setting'));
     }
     
 
@@ -21,7 +23,8 @@ class ParentsController extends Controller
     {
         $users = User::all();
         $people = People::all();
-        return view('parents.create', compact('users', 'people'));
+        $setting = Setting::first();
+        return view('parents.create', compact('users', 'people', 'setting'));
     }
 
     public function store(Request $request)
@@ -73,7 +76,8 @@ class ParentsController extends Controller
         $parent = Parents::findOrFail($id);
         $users = User::all();
         $people = People::all();
-        return view('parents.edit', compact('parent', 'users', 'people'));
+        $setting = Setting::first();
+        return view('parents.edit', compact('parent', 'users', 'people', 'setting'));
     
     }
 

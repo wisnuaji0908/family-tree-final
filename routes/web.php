@@ -12,6 +12,7 @@ use App\Http\Controllers\CouplePeopleController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ParentsPeopleController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\AppSettingController;
 
     Route::get('/', function () {
         return redirect()->route('login');
@@ -93,3 +94,8 @@ use App\Http\Controllers\ForgotPasswordController;
 
     Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->middleware('guest')->name('password.store');
    
+
+    // APP SETTING
+    Route::resource('setting', App\Http\Controllers\AppSettingController::class);
+    Route::get('/setting/{id?}', [AppSettingController::class, 'index'])->name('setting.index');
+    Route::put('/setting/{setting}', [AppSettingController::class, 'update'])->name('setting.update');

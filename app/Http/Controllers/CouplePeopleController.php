@@ -4,17 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Couple;
 use App\Models\People;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CouplePeopleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
     $loggedInUser = Auth::id();
+    $setting = Setting::first();
     $claimedPersonId = Auth::user()->people_id; 
     
     $coupleperson = Couple::with(['people', 'partner'])
@@ -22,19 +21,16 @@ class CouplePeopleController extends Controller
         ->orWhere('couple_id', $claimedPersonId)
         ->paginate(5);
 
-        return view('couplepeople.index', compact('coupleperson'));
+        return view('couplepeople.index', compact('coupleperson', 'setting'));
     }
 
     public function create()
     {
         $people = People::all();
-
-        return view('couplepeople.create', compact('people'));
+        $setting = Setting::first();
+        return view('couplepeople.create', compact('people', 'setting'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -68,19 +64,17 @@ class CouplePeopleController extends Controller
         return redirect()->route('peoplecouple.index')->with('success', 'Couple created successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function edit(Couple $couplesperson)
     {
         if ($couplesperson->user_id !== Auth::id()) {
             return redirect()->route('peoplecouple.index')->withErrors('You do not have permission to edit this data.');
         }
 
+        $setting = Setting::first();
         $people = People::all();
         $couple = $couplesperson;
 
-        return view('couplepeople.edit', compact('couple', 'people'));
+        return view('couplepeople.edit', compact('couple', 'people', 'setting'));
     }
 
     /**
@@ -124,17 +118,13 @@ class CouplePeopleController extends Controller
         return redirect()->route('peoplecouple.index')->with('success', 'Couple updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Couple $couplesperson)
     {
         if ($couplesperson->user_id !== Auth::id()) {
             return redirect()->route('peoplecouple.index')->withErrors('You do not have permission to delete this data.');
         }
-
         $couplesperson->delete();
-
+        $setting = Setting::first();
         return redirect()->route('peoplecouple.index')->with('success', 'Couple deleted successfully.');
     }
 }

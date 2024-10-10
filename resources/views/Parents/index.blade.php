@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parents List Admin</title>
+    <title>{{ $setting->app_name }} - Parents Admin</title> 
+    <link rel="icon" href="{{ $setting->app_logo ? asset('storage/' . $setting->app_logo) : asset('default_favicon.ico') }}" type="image/png">
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <!-- Bootstrap CSS -->
