@@ -92,13 +92,23 @@
                             <form action="{{ route('register') }}" method="POST">
                                 @csrf
                                 <!-- Email input -->
-                                <div class="form-floating mb-4">
+                                {{-- <div class="form-floating mb-4">
                                     <input type="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" autocomplete="off" value="{{ old('email') }}">
                                     <label for="floatingInput">Email address</label>
                                     @error('email')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div>
+                                </div> --}}
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">+62</span>
+                                    <div class="form-floating">
+                                      <input type="number" name="phone_number" class="form-control {{ $errors->has('phone_number') ? 'is-invalid' : '' }}" id="floatingInputGroup1" placeholder="Phone Number" value="{{ old('phone_number') }}">
+                                      <label for="floatingInputGroup1">Phone Number</label>
+                                      @error('phone_number')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                      @enderror
+                                    </div>
+                                  </div>
                                 <!-- Password input -->
                                 <div class="form-floating mb-4 position-relative">
                                     <input type="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}" id="password" placeholder="Password" name="password" autocomplete="off">

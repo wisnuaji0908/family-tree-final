@@ -15,34 +15,36 @@ class LoginController extends Controller
 
     }
 
-    public function store(Request $request){
-        $credentials = $request->validate([
-            'email'=>['required', 'email'],
-            'password'=>['required'],
-        ]);
+    public function store(Request $request)
+{
+    $credentials = $request->validate([
+        'phone_number' => ['required', 'digits_between:10,15', 'exists:users,phone_number'],
+        'password' => ['required'],
+    ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+    // Attempt to log in using phone_number and password
+    if (Auth::attempt(['phone_number' => $credentials['phone_number'], 'password' => $request->password])) {
+        $request->session()->regenerate();
 
-            if (auth()->user()->role === 'admin') {
-                return redirect()->intended('/admin');
-            }
-
-                return redirect()->intended('/people');
+        if (auth()->user()->role === 'admin') {
+            return redirect()->intended('/admin');
         }
 
-
-        $emailExists = User::where('email', $request->email)->exists();
-
-        if ($emailExists) {
-            return back()->withErrors([
-                'password' => 'The password is incorrect.',
-            ])->onlyInput('password')->withInput($request->only('email'));
-        } else {
-            return back()->withErrors([
-                'email' => 'The Email do not match our records.',
-            ])->onlyInput('email')->withInput($request->only('email'));
-        }
-
+        return redirect()->intended('/people');
     }
+
+    // Check if the phone number exists in the database
+    $phoneExists = User::where('phone_number', $request->phone_number)->exists();
+
+    if ($phoneExists) {
+        return back()->withErrors([
+            'password' => 'The password is incorrect.',
+        ])->withInput($request->only('phone_number'));
+    } else {
+        return back()->withErrors([
+            'phone_number' => 'The phone number does not match our records.',
+        ])->withInput($request->only('phone_number'));
+    }
+}
+
 }
