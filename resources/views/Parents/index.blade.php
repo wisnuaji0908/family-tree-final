@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $setting?->app_name ?? config('app.name') }} - Parents</title>  
+    <title>{{ $setting?->app_name ?? config('app.name') }} - Parents Admin</title>  
     <link rel="icon" href="{{ $setting->app_logo ? asset('storage/' . $setting->app_logo) : asset('default_favicon.ico') }}" type="image/png">
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
@@ -151,11 +151,9 @@
             </div>
         </div>
     </div>
-
     <div class="d-flex justify-content-center mt-4">
         {{ $parents->links('pagination::bootstrap-4') }}
     </div>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
