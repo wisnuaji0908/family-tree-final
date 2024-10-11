@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $setting->app_name }} - People</title> 
+    <title>{{ $setting?->app_name ?? config('app.name') }} - Edit People</title>  
     <link rel="icon" href="{{ $setting->app_logo ? asset('storage/' . $setting->app_logo) : asset('default_favicon.ico') }}" type="image/png">
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
@@ -61,15 +61,15 @@
             font-size: 15px;
         }
         .table {
-            margin: 0 auto; /* Rata tengah */
+            margin: 0 auto;
             border-collapse: collapse;
             font-size: 15px;
-            width: 95%; /* Lebar tabel */
+            width: 95%; 
         }
 
         th, td {
             text-align: left;
-            padding: 12px; /* Tingkatkan padding untuk konsistensi */
+            padding: 12px; 
             border-bottom: 1px solid #dee2e6;
         }
 

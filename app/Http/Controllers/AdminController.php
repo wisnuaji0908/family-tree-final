@@ -19,6 +19,8 @@ class AdminController extends Controller
             $people = People::where('name', 'LIKE', "%{$query}%")
                             ->orWhere('gender', 'LIKE', "%{$query}%")
                             ->orWhere('place_birth', 'LIKE', "%{$query}%")
+                            ->orWhere('birth_date', 'LIKE', "%{$query}%")
+                            ->orWhere('death_date', 'LIKE', "%{$query}%")
                             ->paginate(5);
         } else {
             $people = People::paginate(5);
