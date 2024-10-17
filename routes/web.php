@@ -12,6 +12,7 @@ use App\Http\Controllers\CouplePeopleController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ParentsPeopleController;
 use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\OtpController;
 use App\Http\Controllers\AppSettingController;
 
     Route::get('/', function () {
@@ -25,6 +26,10 @@ use App\Http\Controllers\AppSettingController;
     // REGISTER
     Route::get('register', [RegisterController::class, 'register'])->name('register');
     Route::post('register', [RegisterController::class, 'store']);
+
+    // OTP
+    Route::post('/send-otp', [OtpController::class, 'sendOtp'])->name('send.otp');
+    Route::post('/verify-otp', [OtpController::class, 'verifyOtp'])->name('verify.otp');
 
     // ROLE: ADMIN
     Route::middleware(['auth', 'can:admin', ClaimPeopleMiddleware::class])->group(function(){

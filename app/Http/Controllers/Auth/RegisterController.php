@@ -18,6 +18,7 @@ class RegisterController extends Controller
     public function store(Request $request){
         $validated = $request->validate([
             'phone_number' => ['required', 'digits_between:10,15', 'unique:users,phone_number'],
+            // 'otp_code' => 'required|numeric',
             'password' => ['required', 'confirmed', 'min:3'],
             'password_confirmation' => ['required', 'same:password'],
         ]);
