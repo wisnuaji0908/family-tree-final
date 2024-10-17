@@ -124,6 +124,21 @@ class ParentsController extends Controller
         return redirect()->route('parents.index')->with('success', 'Parent updated successfully.');
     }
 
+    public function show($id)
+    {
+        // Ambil parent berdasarkan ID
+        $parent = Parents::findOrFail($id);
+        
+        // Ambil data parent berdasarkan user yang sedang login
+        $parents = Parents::where('people_id', $parent->people_id)
+            ->where('user_id', Auth::id())
+            ->with(['userParent', 'people'])
+            ->get();
+
+        return view('parents.show', compact('parents', 'parent'));
+    }
+
+
     public function destroy(string $id)
     {
         // Temukan data berdasarkan ID
@@ -144,5 +159,30 @@ class ParentsController extends Controller
         $parent->delete();
 
         return redirect()->route('parents.index')->with('success', 'Data successfully removed.');
+    }
+
+    public function getParent($id)
+    {
+        $person = People::find($id);
+
+        $parentFather = \App\Models\Parents::where('people_id', $id)
+            ->where('parent', 'father')
+            ->with(['userParent', 'people'])
+            ->get();
+
+        $parentMother = \App\Models\Parents::where('people_id', $id)
+            ->where('parent', 'mother')
+            ->with(['userParent', 'people'])
+            ->get();
+            
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'person' => $person,
+                'father' => $parentFather,
+                'mother' => $parentMother,
+            ],
+        ]);
     }
 }

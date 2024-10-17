@@ -175,4 +175,28 @@ class ParentsPeopleController extends Controller
 
         return redirect()->route('parentspeople.index')->with('success', 'Data successfully removed.');
     }
+    public function getParent($userId)
+    {
+
+        $person  = people::find (id);
+
+        $parentFather = \App\Models\ParentsPeople::where('user_id', $userId)
+            ->where('parent', 'father')
+            ->with(['userParent', 'people'])
+            ->get();
+
+        $parentMother = \App\Models\ParentsPeople::where('user_id', $userId)
+            ->where('parent', 'mother')
+            ->with(['userParent', 'people'])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'person' => $person,
+                'father' => $parentFather,
+                'mother' => $parentMother,
+            ],
+        ]);
+    }
 }

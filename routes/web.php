@@ -92,4 +92,4 @@ use App\Http\Controllers\ForgotPasswordController;
     })->middleware('guest')->name('password.reset');
 
     Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->middleware('guest')->name('password.store');
-   
+    Route::get('get-parent/{userId}', [ParentsController::class, 'getParent'])->name('get-parent');   
