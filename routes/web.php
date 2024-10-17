@@ -44,6 +44,8 @@ use App\Http\Controllers\ForgotPasswordController;
         // COUPLE
         Route::resource('couple', CoupleController::class);
         Route::get('/couple', [CoupleController::class, 'index'])->name('couple.index');
+        Route::get('/couple-tree/{id}', [CoupleController::class, 'getTreeData'])->name('couple.tree');
+
 
     });
 
@@ -68,6 +70,7 @@ use App\Http\Controllers\ForgotPasswordController;
         Route::get('/couplepeople/{couplesperson}/edit', [CouplePeopleController::class, 'edit'])->name('peoplecouple.edit');
         Route::put('/couplepeople/{couplesperson}', [CouplePeopleController::class, 'update'])->name('peoplecouple.update');
         Route::delete('/couplepeople/{couplesperson}', [CouplePeopleController::class, 'destroy'])->name('peoplecouple.destroy');
+        Route::get('/couple-people-tree/{id}', [CouplePeopleController::class, 'getTreeData'])->name('couple.people.tree');
 
     });
     

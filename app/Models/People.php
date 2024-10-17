@@ -23,4 +23,7 @@ class People extends Model
     public function user(){
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+    public function couples(){
+        return $this->hasMany(Couple::class, 'people_id');
+    }
 }
