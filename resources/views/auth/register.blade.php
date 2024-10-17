@@ -11,6 +11,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&family=Sofadi+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         /* Full height to center the card vertically */
         body, html {
@@ -91,24 +93,26 @@
                             </div>
                             <form action="{{ route('register') }}" method="POST">
                                 @csrf
-                                <!-- Email input -->
-                                {{-- <div class="form-floating mb-4">
-                                    <input type="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" autocomplete="off" value="{{ old('email') }}">
-                                    <label for="floatingInput">Email address</label>
-                                    @error('email')
+                                 <!-- Phone Number input -->
+                                 <div class="form-floating mb-4">
+                                    <input type="number" class="form-control {{ $errors->has('phone_number') ? 'is-invalid' : '' }}" id="phone_number" placeholder="Input" name="phone_number" autocomplete="off">
+                                    <label for="floatingInput">Phone Number</label>
+                                    @error('phone_number')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                {{-- button to send OTP
+                                <div class="mb-4">
+                                    <button type="button" class="btn btn-primary btn-sm" onclick="sendOtp()">Kirim Kode OTP</button>
+                                </div>
+                                <!-- Phone Number input -->
+                                <div class="form-floating mb-4">
+                                    <input type="number" class="form-control {{ $errors->has('otp_code') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="Input" name="otp_code" autocomplete="off">
+                                    <label for="floatingInput">OTP code</label>
+                                    @error('otp_code')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div> --}}
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">+62</span>
-                                    <div class="form-floating">
-                                      <input type="number" name="phone_number" class="form-control {{ $errors->has('phone_number') ? 'is-invalid' : '' }}" id="floatingInputGroup1" placeholder="Phone Number" value="{{ old('phone_number') }}">
-                                      <label for="floatingInputGroup1">Phone Number</label>
-                                      @error('phone_number')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                      @enderror
-                                    </div>
-                                  </div>
                                 <!-- Password input -->
                                 <div class="form-floating mb-4 position-relative">
                                     <input type="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}" id="password" placeholder="Password" name="password" autocomplete="off">
@@ -153,6 +157,74 @@
                 eyeIcon.textContent = "👁️";
             }
         }
+        
+        function sendOtp() {
+        const phoneNumber = document.getElementById('phone_number').value;
+
+        if (!phoneNumber) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Nomor Telepon harus diisi!',
+            });
+            return;
+        }
+
+        fetch("{{ route('send.otp') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ phone_number: phoneNumber })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: 'Kode OTP telah dikirim!',
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: data.message || 'Terjadi kesalahan saat mengirim OTP!, Coba lagi',
+                });
+            }
+        })
+        .catch(error => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Terjadi kesalahan saat mengirim OTP!',
+            });
+            console.error('Error:', error);
+        });
+    }
+
+    @if (session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: "{{ session('success') }}",
+        });
+    @endif
+
+    @if ($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            html: `
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            `,
+        });
+    @endif
     </script>    
 </body>
 </html>

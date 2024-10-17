@@ -95,24 +95,14 @@
                                         <div class="alert alert-success my-2 text-success" role="alert">{{ $message }}</div>
                                     @endif
                                 </div>
-                                <!-- Email input -->
-                                {{-- <div class="form-floating mb-4">
-                                    <input type="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" autocomplete="off">
-                                    <label for="floatingInput">Email address</label>
-                                    @error('email')
+                                <!-- Phone Number input -->
+                                <div class="form-floating mb-4">
+                                    <input type="number" class="form-control {{ $errors->has('phone_number') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="Input" name="phone_number" autocomplete="off">
+                                    <label for="floatingInput">Phone Number</label>
+                                    @error('phone_number')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div> --}}
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">+62</span>
-                                    <div class="form-floating">
-                                      <input type="number" name="phone_number" class="form-control {{ $errors->has('phone_number') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="Phone Number">
-                                      <label for="floatingInputGroup1">Phone Number</label>
-                                      @error('phone_number')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                      @enderror
-                                    </div>
-                                  </div>
+                                </div>
                                 <!-- Password input -->
                                 <div class="form-floating mb-4 position-relative">
                                     <input type="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}" id="floatingPassword" placeholder="Password" name="password" autocomplete="off">
@@ -127,7 +117,7 @@
                                     <!-- Checkbox -->
                                     <div class="col-6 d-flex">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked/>
+                                            <input class="form-check-input" type="checkbox" value="" id="form2Example31" name="remember" />
                                             <label class="form-check-label" for="form2Example31"> Remember me </label>
                                         </div>
                                     </div>

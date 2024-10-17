@@ -23,15 +23,16 @@ class LoginController extends Controller
     ]);
 
     // Attempt to log in using phone_number and password
-    if (Auth::attempt(['phone_number' => $credentials['phone_number'], 'password' => $request->password])) {
+    if (Auth::attempt(['phone_number' => $credentials['phone_number'], 'password' => $request->password], $request->filled('remember'))) {
         $request->session()->regenerate();
-
+    
         if (auth()->user()->role === 'admin') {
             return redirect()->intended('/admin');
         }
-
+    
         return redirect()->intended('/people');
     }
+    
 
     // Check if the phone number exists in the database
     $phoneExists = User::where('phone_number', $request->phone_number)->exists();

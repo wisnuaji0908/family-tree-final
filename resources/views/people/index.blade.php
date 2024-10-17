@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $setting?->app_name ?? config('app.name') }} - Edit People</title>  
-    <link rel="icon" href="{{ $setting->app_logo ? asset('storage/' . $setting->app_logo) : asset('default_favicon.ico') }}" type="image/png">
+    <link rel="icon" href="{{ $setting?->app_logo ? asset('storage/' . $setting?->app_logo) : asset('default_favicon.ico') }}" type="image/png">
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -125,96 +125,138 @@
 @include('nav')
 
 <script>
-    var svg = d3.select("body").append("svg")
-            .attr("width",  900).attr("height", 600)
-            .append("g").attr("transform", "translate(50, 50)");
+    // Set up the initial dimensions and margins
+    var margin = { top: 50, right: 50, bottom: 50, left: 50 };
+    var width = window.innerWidth - margin.left - margin.right;
+    var height = window.innerHeight - margin.top - margin.bottom;
 
-    var data = [{"child":"John", "parent":"", "spouse":"Issabella"}, 
-                {"child":"Arron", "parent":"Kevin"}, 
-                {"child":"Kevin", "parent":"John", "spouse":"Emma"}, 
-                {"child":"Hannah", "parent":"Ann"}, 
-                {"child":"Rose", "parent":"Sarah"}, 
-                {"child":"Ann", "parent":"John", "spouse":"Issac"}, 
-                {"child":"Sarah", "parent":"Kevin", "spouse":"George"}, 
-                {"child":"Mark", "parent":"Ann", "spouse":"Lucy"}, 
-                {"child":"Angel", "parent":"Sarah"}, 
-                {"child":"Iqbal", "parent":"Mark"}, 
-               ];
+    // Create the SVG container and set its dimensions
+    var svg = d3.select("body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var data = [
+        { "child": "John", "parent": "", "spouse": "Issabella" },
+        { "child": "Arron", "parent": "Kevin" },
+        { "child": "Kevin", "parent": "John", "spouse": "Emma" },
+        { "child": "Hannah", "parent": "Ann" },
+        { "child": "Rose", "parent": "Sarah" },
+        { "child": "Ann", "parent": "John", "spouse": "Issac" },
+        { "child": "Sarah", "parent": "Kevin", "spouse": "George" },
+        { "child": "Mark", "parent": "Ann", "spouse": "Lucy" },
+        { "child": "Angel", "parent": "Sarah" },
+        { "child": "Iqbal", "parent": "Mark" }
+    ];
 
     var dataStructure = d3.stratify()
-                      .id(function(d){return d.child;})
-                      .parentId(function(d){return d.parent;})
-                      (data);
+        .id(function (d) { return d.child; })
+        .parentId(function (d) { return d.parent; })
+        (data);
 
-    var treeStructure = d3.tree().size([650, 400]);
+    var treeStructure = d3.tree().size([width, height]);
     var information = treeStructure(dataStructure);
 
-    console.log(information.descendants());
+    // Draw the connections between nodes
+    var connections = svg.append("g").selectAll("path")
+        .data(information.links());
 
-    var connections1 = svg.append("g").selectAll("path")
-                    .data(information.links());
-    connections1.enter().append("path")
-        .attr("d", function(d){
-        return "M" + (d.source.x-20) + "," + d.source.y + "h 60 v 50 H"
-        + d.target.x + " V" + d.target.y;
-    })
-    .classed("hide", function(d){
-                if(d.target.data.child == undefined)
-                    return true;
-                else 
-                    return false;
-            });
+    connections.enter().append("path")
+        .attr("d", function (d) {
+            return "M" + d.source.x + "," + d.source.y +
+                "C" + d.source.x + "," + (d.source.y + d.target.y) / 2 +
+                " " + d.target.x + "," + (d.source.y + d.target.y) / 2 +
+                " " + d.target.x + "," + d.target.y;
+        })
+        .attr("stroke", "#ccc")
+        .attr("fill", "none");
 
-    var connections2 = svg.append("g").selectAll("path")
-                    .data(information.links());
-    connections2.enter().append("path")
-        .attr("d", function(d){
-        if(d.target.data.child == null)
-            return "M" + (d.source.x) + "," + d.source.y + "h 80";
-        else
-            return "M" + (d.source.x+40) + "," + d.source.y + "h 40";
-    });
-    
+    // Draw the rectangles for the nodes
     var rectangles = svg.append("g").selectAll("rect")
-                .data(information.descendants());
+        .data(information.descendants());
+
     rectangles.enter().append("rect")
-           .attr("x", function(d){return d.x-60;})
-           .attr("y", function(d){return d.y-20;})
-           .classed("hide", function(d){
-                if(d.data.child == undefined)
-                    return true;
-                else 
-                    return false;
-            });
+        .attr("x", function (d) { return d.x - 40; })
+        .attr("y", function (d) { return d.y - 15; })
+        .attr("width", 80)
+        .attr("height", 30)
+        .attr("fill", "#fff")
+        .attr("stroke", "#000")
+        .attr("stroke-width", 1);
 
+    // Draw the rectangles for the spouses
     var spouseRectangles = svg.append("g").selectAll("rect")
-                            .data(information.descendants());
+        .data(information.descendants());
+
     spouseRectangles.enter().append("rect")
-            .attr("x", function(d){return d.x+60;})
-            .attr("y", function(d){return d.y-20;})
-            .classed("hide", function(d){
-                if(d.data.spouse == undefined)
-                    return true;
-                else 
-                    return false;
-            });
+        .attr("x", function (d) { return d.x + 50; })
+        .attr("y", function (d) { return d.y - 15; })
+        .attr("width", 80)
+        .attr("height", 30)
+        .attr("fill", "#fff")
+        .attr("stroke", "#000")
+        .attr("stroke-width", 1)
+        .classed("hide", function (d) {
+            return d.data.spouse === undefined;
+        });
 
-    var names = svg.append("g").selectAll("text")              
-              .data(information.descendants());
-        names.enter().append("text")
-             .text(function(d){return d.data.child;})
-             .attr("x", function(d){return d.x-20;})
-             .attr("y", function(d){return d.y;})
-             .classed("bigger", "true");
+    // Add names to the nodes
+    var names = svg.append("g").selectAll("text")
+        .data(information.descendants());
 
+    names.enter().append("text")
+        .text(function (d) { return d.data.child; })
+        .attr("x", function (d) { return d.x; })
+        .attr("y", function (d) { return d.y; })
+        .attr("dy", ".35em")
+        .attr("text-anchor", "middle");
+
+    // Add names for the spouses
     var spouseNames = svg.append("g").selectAll("text")
-                        .data(information.descendants());
+        .data(information.descendants());
+
     spouseNames.enter().append("text")
-                .text(function(d){return d.data.spouse;})
-                .attr("x", function(d){return d.x+100;})
-                .attr("y", function(d){return d.y;})
-                .classed("bigger", "true");
+        .text(function (d) { return d.data.spouse; })
+        .attr("x", function (d) { return d.x + 90; })
+        .attr("y", function (d) { return d.y; })
+        .attr("dy", ".35em")
+        .attr("text-anchor", "middle")
+        .classed("hide", function (d) {
+            return d.data.spouse === undefined;
+        });
+
+    // Make the chart responsive by updating on window resize
+    window.addEventListener("resize", function () {
+        width = window.innerWidth - margin.left - margin.right;
+        height = window.innerHeight - margin.top - margin.bottom;
+        svg.attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
+        treeStructure.size([width, height]);
+        information = treeStructure(dataStructure);
+
+        // Update positions of nodes, connections, and text dynamically
+        connections.attr("d", function (d) {
+            return "M" + d.source.x + "," + d.source.y +
+                "C" + d.source.x + "," + (d.source.y + d.target.y) / 2 +
+                " " + d.target.x + "," + (d.source.y + d.target.y) / 2 +
+                " " + d.target.x + "," + d.target.y;
+        });
+
+        rectangles.attr("x", function (d) { return d.x - 40; })
+            .attr("y", function (d) { return d.y - 15; });
+
+        spouseRectangles.attr("x", function (d) { return d.x + 50; })
+            .attr("y", function (d) { return d.y - 15; });
+
+        names.attr("x", function (d) { return d.x; })
+            .attr("y", function (d) { return d.y; });
+
+        spouseNames.attr("x", function (d) { return d.x + 90; })
+            .attr("y", function (d) { return d.y; });
+    });
 </script>
+
 
 <div class="container-fluid py-0"> 
     <div class="row">
