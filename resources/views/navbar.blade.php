@@ -47,13 +47,13 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand ps-3" href="#">
-            @if(isset($setting) && $setting->app_logo)
-                <img src="{{ asset('storage/' . $setting->app_logo) }}" alt="Logo" class="logo-img">
+            @if(isset($setting) && $setting?->app_logo)
+                <img src="{{ asset('storage/' . $setting?->app_logo) }}" alt="Logo" class="logo-img">
             @else
                 <img src="{{ asset('logo_ft.png') }}" alt="Default Logo" class="logo-img">
             @endif
         </a>
-        <a class="navbar-brand" style="margin-left: 10px;">{{ $setting->app_name ?? 'Family Tree' }}</a>
+        <a class="navbar-brand" style="margin-left: 10px;">{{ $setting?->app_name ?? 'Family Tree' }}</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>

@@ -11,9 +11,15 @@ class AppSettingController extends Controller
     public function index()
     {
         $setting = Setting::first();
+
         if (!$setting) {
-            return redirect()->back()->with('error', 'Setting not found. Please create a setting first.');
+            Setting::create([
+                'app_name' => config('app.name'),
+            ]);
+
+            
         }
+
         return view('setting.index', compact('setting'));
     }
 
@@ -28,9 +34,9 @@ class AppSettingController extends Controller
         $setting->app_name = $request->input('app_name');
 
         if ($request->hasFile('app_logo')) {
-            if ($setting->app_logo) {
+            if ($setting?->app_logo) {
                 try {
-                    Storage::disk('public')->delete($setting->app_logo);
+                    Storage::disk('public')->delete($setting?->app_logo);
                 } catch (\Exception $e) {
                     return redirect()->back()->withErrors('Error deleting old logo: ' . $e->getMessage());
                 }
