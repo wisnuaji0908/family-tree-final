@@ -98,7 +98,8 @@ use App\Http\Controllers\AppSettingController;
     })->middleware('guest')->name('password.reset');
 
     Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->middleware('guest')->name('password.store');
-   
+
+    Route::get('get-parent/{userId}', [ParentsController::class, 'getParent'])->name('get-parent');   
 
     // APP SETTING
     Route::resource('setting', App\Http\Controllers\AppSettingController::class);
