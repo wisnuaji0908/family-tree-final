@@ -104,4 +104,29 @@ class CoupleController extends Controller
 
         return redirect()->route('couple.index')->with('success', 'Couple deleted successfully.');
     }
+    public function getTreeData($id)
+    {
+        // Temukan orang dengan relasi pasangan dan pasangan mereka
+        $people = People::with(['couples' => function($query) {
+            $query->orderBy('married_date', 'asc'); // Urutkan berdasarkan married_date
+        }, 'couples.partner'])->findOrFail($id); 
+    
+        // Struktur data pohon untuk D3.js
+        $treeData = [
+            'name' => $people->name,
+            'children' => []
+        ];
+    
+        // Loop melalui semua pasangan dan tambahkan data ke treeData
+        foreach ($people->couples as $couple) {
+            $treeData['children'][] = [
+                'name' => $couple->partner->name,
+                'married_date' => $couple->married_date, // Sertakan tanggal pernikahan
+                'children' => [] // Tambahkan jika ada relasi lebih lanjut
+            ];
+        }
+    
+        return response()->json($treeData);
+    }
+    
 }
