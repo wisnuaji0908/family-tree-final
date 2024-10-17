@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>People List Admin</title>
+    <title>{{ $setting?->app_name ?? config('app.name') }} - People Admin</title> 
+    <link rel="icon" href="{{ $setting && $setting->app_logo ? asset('storage/' . $setting->app_logo) : asset('default_favicon.ico') }}" type="image/png">
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
     <style>
-        /* Custom CSS */
         body {
             background-color: #f5f7fa;
             font-family: 'Poppins', sans-serif;
@@ -59,15 +59,15 @@
             font-size: 15px;
         }
         .table {
-            margin: 0 auto; /* Rata tengah */
+            margin: 0 auto;
             border-collapse: collapse;
             font-size: 15px;
-            width: 95%; /* Lebar tabel */
+            width: 95%;
         }
 
         th, td {
             text-align: left;
-            padding: 12px; /* Tingkatkan padding untuk konsistensi */
+            padding: 12px; 
             border-bottom: 1px solid #dee2e6;
         }
 

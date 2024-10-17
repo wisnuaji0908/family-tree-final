@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Couple;
 use App\Models\People;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; 
 
@@ -12,13 +13,15 @@ class CoupleController extends Controller
     public function index()
     {
         $couple = Couple::with('people')->paginate(5); 
-        return view('couple.index', compact('couple'));
+        $setting = Setting::first();
+        return view('couple.index', compact('couple', 'setting'));
     }
 
     public function create()
     {
         $people = People::all();
-        return view('couple.create', compact('people'));
+        $setting = Setting::first();
+        return view('couple.create', compact('people', 'setting'));
     }
 
     public function store(Request $request)
@@ -57,7 +60,8 @@ class CoupleController extends Controller
     public function edit(Couple $couple)
     {
         $people = People::all();
-        return view('couple.edit', compact('couple', 'people'));
+        $setting = Setting::first();
+        return view('couple.edit', compact('couple', 'people', 'setting'));
     }
 
     public function update(Request $request, Couple $couple)

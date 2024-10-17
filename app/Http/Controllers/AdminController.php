@@ -4,28 +4,38 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User; 
 use App\Models\People;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
+{
+    public function index(Request $request)
     {
-        public function index(Request $request)
-    {
+        // Mengambil query pencarian jika ada
         $query = $request->input('query');
+        
+        // Mencari orang berdasarkan query
         if ($query) {
             $people = People::where('name', 'LIKE', "%{$query}%")
                             ->orWhere('gender', 'LIKE', "%{$query}%")
                             ->orWhere('place_birth', 'LIKE', "%{$query}%")
+                            ->orWhere('birth_date', 'LIKE', "%{$query}%")
+                            ->orWhere('death_date', 'LIKE', "%{$query}%")
                             ->paginate(5);
         } else {
             $people = People::paginate(5);
         }
-        return view('admin.index', compact('people'));
-    }
 
+        // Mengambil pengaturan terbaru untuk navbar
+        $setting = Setting::first();
+
+        return view('admin.index', compact('people', 'setting'));
+    }
     public function create()
     {
         $users = User::all(); 
-        return view('admin.create', compact('users'));
+        $setting = Setting::first();
+        return view('admin.create', compact('users', 'setting'));
     }
 
    
@@ -43,7 +53,7 @@ class AdminController extends Controller
 
         // Mendapatkan user yang sedang login
         $user = Auth::user();
-
+        $setting = Setting::first();
         // Ambil semua data request
         $data = $request->all();
 
@@ -78,9 +88,9 @@ class AdminController extends Controller
         if ($user->role !== 'admin' || $person->user_id !== $user->id) {
             return redirect()->route('admin.index')->with('error', 'You do not have permission to edit this person.');
         }
-
+        $setting = Setting::first();
         $users = User::all(); 
-        return view('admin.edit', compact('person', 'users'));
+        return view('admin.edit', compact('person', 'users', 'setting'));
     }
 
 
@@ -89,7 +99,7 @@ class AdminController extends Controller
     {
         $person = People::findOrFail($id);
         $user = Auth::user();
-
+        $setting = Setting::first();
         // Pastikan hanya admin yang dapat mengupdate yang mereka buat
         if ($user->role !== 'admin' || $person->user_id !== $user->id) {
             return redirect()->route('admin.index')->with('error', 'You do not have permission to update this person.');
@@ -114,7 +124,7 @@ class AdminController extends Controller
     {
         $person = People::findOrFail($id);
         $person->delete();
-    
+        $setting = Setting::first();
         return redirect()->route('admin.index')->with('success', 'Data successfully removed.');
     }
     

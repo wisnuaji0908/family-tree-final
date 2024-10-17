@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>People</title>
+    <title>{{ $setting?->app_name ?? config('app.name') }} - Edit People</title>  
+    <link rel="icon" href="{{ $setting->app_logo ? asset('storage/' . $setting->app_logo) : asset('default_favicon.ico') }}" type="image/png">
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
+    {{-- d3js --}}
+    <script src="https://d3js.org/d3.v5.min.js"></script>
     <style>
         /* Custom CSS */
         body {
@@ -59,15 +61,15 @@
             font-size: 15px;
         }
         .table {
-            margin: 0 auto; /* Rata tengah */
+            margin: 0 auto;
             border-collapse: collapse;
             font-size: 15px;
-            width: 95%; /* Lebar tabel */
+            width: 95%; 
         }
 
         th, td {
             text-align: left;
-            padding: 12px; /* Tingkatkan padding untuk konsistensi */
+            padding: 12px; 
             border-bottom: 1px solid #dee2e6;
         }
 
@@ -93,13 +95,126 @@
         .search-container {
             margin-bottom: 20px; 
         }
+        rect {
+            fill: white;
+            stroke: silver;
+            width: 80px;
+            height: 40px;
+            stroke-width: 2;
+        }
+        path {
+            fill: none;
+            stroke: silver;
+            stroke-width: 2;
 
+        }
+        text {
+            dominant-baseline: middle;
+            text-anchor: middle;
+        }
+        .bigger {
+          font-size: 20px;
+        }
+        .hide {
+            visibility: hidden;
+        }
     </style>
 </head>
 <body>
-
 <!-- Include Navbar -->
 @include('nav')
+
+<script>
+    var svg = d3.select("body").append("svg")
+            .attr("width",  900).attr("height", 600)
+            .append("g").attr("transform", "translate(50, 50)");
+
+    var data = [{"child":"John", "parent":"", "spouse":"Issabella"}, 
+                {"child":"Arron", "parent":"Kevin"}, 
+                {"child":"Kevin", "parent":"John", "spouse":"Emma"}, 
+                {"child":"Hannah", "parent":"Ann"}, 
+                {"child":"Rose", "parent":"Sarah"}, 
+                {"child":"Ann", "parent":"John", "spouse":"Issac"}, 
+                {"child":"Sarah", "parent":"Kevin", "spouse":"George"}, 
+                {"child":"Mark", "parent":"Ann", "spouse":"Lucy"}, 
+                {"child":"Angel", "parent":"Sarah"}, 
+                {"child":"Iqbal", "parent":"Mark"}, 
+               ];
+
+    var dataStructure = d3.stratify()
+                      .id(function(d){return d.child;})
+                      .parentId(function(d){return d.parent;})
+                      (data);
+
+    var treeStructure = d3.tree().size([650, 400]);
+    var information = treeStructure(dataStructure);
+
+    console.log(information.descendants());
+
+    var connections1 = svg.append("g").selectAll("path")
+                    .data(information.links());
+    connections1.enter().append("path")
+        .attr("d", function(d){
+        return "M" + (d.source.x-20) + "," + d.source.y + "h 60 v 50 H"
+        + d.target.x + " V" + d.target.y;
+    })
+    .classed("hide", function(d){
+                if(d.target.data.child == undefined)
+                    return true;
+                else 
+                    return false;
+            });
+
+    var connections2 = svg.append("g").selectAll("path")
+                    .data(information.links());
+    connections2.enter().append("path")
+        .attr("d", function(d){
+        if(d.target.data.child == null)
+            return "M" + (d.source.x) + "," + d.source.y + "h 80";
+        else
+            return "M" + (d.source.x+40) + "," + d.source.y + "h 40";
+    });
+    
+    var rectangles = svg.append("g").selectAll("rect")
+                .data(information.descendants());
+    rectangles.enter().append("rect")
+           .attr("x", function(d){return d.x-60;})
+           .attr("y", function(d){return d.y-20;})
+           .classed("hide", function(d){
+                if(d.data.child == undefined)
+                    return true;
+                else 
+                    return false;
+            });
+
+    var spouseRectangles = svg.append("g").selectAll("rect")
+                            .data(information.descendants());
+    spouseRectangles.enter().append("rect")
+            .attr("x", function(d){return d.x+60;})
+            .attr("y", function(d){return d.y-20;})
+            .classed("hide", function(d){
+                if(d.data.spouse == undefined)
+                    return true;
+                else 
+                    return false;
+            });
+
+    var names = svg.append("g").selectAll("text")              
+              .data(information.descendants());
+        names.enter().append("text")
+             .text(function(d){return d.data.child;})
+             .attr("x", function(d){return d.x-20;})
+             .attr("y", function(d){return d.y;})
+             .classed("bigger", "true");
+
+    var spouseNames = svg.append("g").selectAll("text")
+                        .data(information.descendants());
+    spouseNames.enter().append("text")
+                .text(function(d){return d.data.spouse;})
+                .attr("x", function(d){return d.x+100;})
+                .attr("y", function(d){return d.y;})
+                .classed("bigger", "true");
+</script>
 
 <div class="container-fluid py-0"> 
     <div class="row">

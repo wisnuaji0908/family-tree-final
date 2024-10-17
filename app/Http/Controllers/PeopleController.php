@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth; 
 use App\Models\User; 
 use App\Models\People;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 
@@ -12,14 +13,16 @@ class PeopleController extends Controller
     public function index()
     {
         $user = request()->user();
+        $setting = Setting::first();
         $people = People::query()->where('user_id', $user->id)->paginate(5);
-        return view('people.index', compact('people'));
+        return view('people.index', compact('people', 'setting'));
     }
 
     public function create()
     {
         $users = User::all(); 
-        return view('people.create', compact('users'));
+        $setting = Setting::first();
+        return view('people.create', compact('users', 'setting'));
     
     }
 
@@ -35,6 +38,7 @@ class PeopleController extends Controller
 
         $userId = Auth::id();
         $data = $request->all();
+        $setting = Setting::first();
         $data['user_id'] = $userId;
 
         People::create($data);
@@ -47,7 +51,8 @@ class PeopleController extends Controller
     {
         $person = People::findOrFail($id); 
         $users = User::all(); 
-        return view('people.edit', compact('person', 'users'));
+        $setting = Setting::first();
+        return view('people.edit', compact('person', 'users', 'setting'));
     }
 
 
@@ -64,6 +69,7 @@ class PeopleController extends Controller
 
         $person = People::findOrFail($id);
         $person->update($validatedData);
+        $setting = Setting::first();
 
         return redirect()->route('people.index')->with('success', 'Data updated successfully.');
     }
@@ -73,6 +79,7 @@ class PeopleController extends Controller
     {
         $person = People::findOrFail($id);
         $person->delete();
+        $setting = Setting::first();
     
         return redirect()->route('people.index')->with('success', 'Data successfully removed.');
     }
@@ -84,8 +91,8 @@ class PeopleController extends Controller
         }
 
         $people = People::get(); 
-
-        return view('people.claim', compact('people'));
+        $setting = Setting::first();
+        return view('people.claim', compact('people', 'setting'));
     }
 
     public function claim(Request $request)
@@ -111,8 +118,8 @@ class PeopleController extends Controller
 
         // Mencari orang berdasarkan ID dan memastikan user_id belum diisi
         $person = People::where('id', $request->person_id)
-                        ->whereNotNull('people_id')
-                        ->firstOrFail();
+                ->whereNotNull('user_id')
+                ->firstOrFail();
 
         // Cek kecocokan tanggal lahir dan tempat lahir
         if ($person->birth_date == $request->birth_date && $person->place_birth === $request->place_birth) {
