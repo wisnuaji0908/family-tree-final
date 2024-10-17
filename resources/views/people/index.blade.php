@@ -125,96 +125,187 @@
 @include('nav')
 
 <script>
+    var treeData = [
+        {
+            "name": "John",
+            "Couple": "Issabella",
+            "parents": {
+                "father": {
+                    "name": "Robert"
+                },
+                "mother": {
+                    "name": "Linda"
+                }
+            },
+            "children": [
+                { 
+                    "name": "Kevin",
+                    "Couple": "Emma",
+                    "parents": { "father": "John", "mother": "Issabella" },
+                    "children": [
+                        { "name": "Sarah", "Couple": "George" },
+                        { "name": "Arron" }
+                    ]
+                },
+                { 
+                    "name": "Ann",
+                    "Couple": "Issac",
+                    "parents": { "father": "John", "mother": "Issabella" },
+                    "children": [
+                        { "name": "Mark", "Couple": "Lucy" },
+                        { "name": "Hannah" }
+                    ]
+                }
+            ]
+        }
+    ];
+
+    var margin = {top: 40, right: 90, bottom: 50, left: 90},
+        width = 960 - margin.left - margin.right,
+        height = 600 - margin.top - margin.bottom;
+
     var svg = d3.select("body").append("svg")
-            .attr("width",  900).attr("height", 600)
-            .append("g").attr("transform", "translate(50, 50)");
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var data = [{"child":"John", "parent":"", "spouse":"Issabella"}, 
-                {"child":"Arron", "parent":"Kevin"}, 
-                {"child":"Kevin", "parent":"John", "spouse":"Emma"}, 
-                {"child":"Hannah", "parent":"Ann"}, 
-                {"child":"Rose", "parent":"Sarah"}, 
-                {"child":"Ann", "parent":"John", "spouse":"Issac"}, 
-                {"child":"Sarah", "parent":"Kevin", "spouse":"George"}, 
-                {"child":"Mark", "parent":"Ann", "spouse":"Lucy"}, 
-                {"child":"Angel", "parent":"Sarah"}, 
-                {"child":"Iqbal", "parent":"Mark"}, 
-               ];
+    var i = 0,
+        duration = 750,
+        root;
 
-    var dataStructure = d3.stratify()
-                      .id(function(d){return d.child;})
-                      .parentId(function(d){return d.parent;})
-                      (data);
+    var treemap = d3.tree().size([height, width]);
 
-    var treeStructure = d3.tree().size([650, 400]);
-    var information = treeStructure(dataStructure);
-
-    console.log(information.descendants());
-
-    var connections1 = svg.append("g").selectAll("path")
-                    .data(information.links());
-    connections1.enter().append("path")
-        .attr("d", function(d){
-        return "M" + (d.source.x-20) + "," + d.source.y + "h 60 v 50 H"
-        + d.target.x + " V" + d.target.y;
-    })
-    .classed("hide", function(d){
-                if(d.target.data.child == undefined)
-                    return true;
-                else 
-                    return false;
-            });
-
-    var connections2 = svg.append("g").selectAll("path")
-                    .data(information.links());
-    connections2.enter().append("path")
-        .attr("d", function(d){
-        if(d.target.data.child == null)
-            return "M" + (d.source.x) + "," + d.source.y + "h 80";
-        else
-            return "M" + (d.source.x+40) + "," + d.source.y + "h 40";
+    // Function to get hierarchy including parents before children
+    root = d3.hierarchy(treeData[0], function(d) {
+        var allNodes = [];
+        if (d.parents) {
+            allNodes.push(d.parents.father, d.parents.mother);
+        }
+        if (d.children) {
+            allNodes = allNodes.concat(d.children);
+        }
+        return allNodes;
     });
-    
-    var rectangles = svg.append("g").selectAll("rect")
-                .data(information.descendants());
-    rectangles.enter().append("rect")
-           .attr("x", function(d){return d.x-60;})
-           .attr("y", function(d){return d.y-20;})
-           .classed("hide", function(d){
-                if(d.data.child == undefined)
-                    return true;
-                else 
-                    return false;
-            });
 
-    var spouseRectangles = svg.append("g").selectAll("rect")
-                            .data(information.descendants());
-    spouseRectangles.enter().append("rect")
-            .attr("x", function(d){return d.x+60;})
-            .attr("y", function(d){return d.y-20;})
-            .classed("hide", function(d){
-                if(d.data.spouse == undefined)
-                    return true;
-                else 
-                    return false;
-            });
+    root.x0 = height / 2;
+    root.y0 = 0;
 
-    var names = svg.append("g").selectAll("text")              
-              .data(information.descendants());
-        names.enter().append("text")
-             .text(function(d){return d.data.child;})
-             .attr("x", function(d){return d.x-20;})
-             .attr("y", function(d){return d.y;})
-             .classed("bigger", "true");
+    root.children.forEach(collapse);
+    update(root);
 
-    var spouseNames = svg.append("g").selectAll("text")
-                        .data(information.descendants());
-    spouseNames.enter().append("text")
-                .text(function(d){return d.data.spouse;})
-                .attr("x", function(d){return d.x+100;})
-                .attr("y", function(d){return d.y;})
-                .classed("bigger", "true");
+    function collapse(d) {
+      if(d.children) {
+        d._children = d.children;
+        d._children.forEach(collapse);
+        d.children = null;
+      }
+    }
+
+    function update(source) {
+      var treeData = treemap(root);
+      var nodes = treeData.descendants(),
+          links = treeData.descendants().slice(1);
+
+      nodes.forEach(function(d){ d.y = d.depth * 180 });
+
+      var node = svg.selectAll('g.node')
+          .data(nodes, function(d) {return d.id || (d.id = ++i); });
+
+      var nodeEnter = node.enter().append('g')
+          .attr('class', 'node')
+          .attr("transform", function(d) {
+            return "translate(" + source.y0 + "," + source.x0 + ")";
+        })
+        .on('click', click);
+
+      nodeEnter.append('rect')
+          .attr('width', 140)
+          .attr('height', 60)
+          .attr('x', -70)
+          .attr('y', -30)
+          .style("fill", "#fff");
+
+      nodeEnter.append('text')
+          .attr("dy", "-0.5em")
+          .attr("x", 0)
+          .attr("text-anchor", "middle")
+          .text(function(d) { return d.data.name; });
+
+      nodeEnter.append('text')
+          .attr("dy", "1em")
+          .attr("x", 0)
+          .attr("text-anchor", "middle")
+          .style("fill", "gray")
+          .text(function(d) { return d.data.Couple ? "Couple: " + d.data.Couple : ""; });
+
+      var nodeUpdate = nodeEnter.merge(node);
+      nodeUpdate.transition()
+        .duration(duration)
+        .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+
+      nodeUpdate.select('rect')
+        .attr('width', 140)
+        .attr('height', 60)
+        .attr('x', -70)
+        .attr('y', -30)
+        .style("fill", "#fff");
+
+      var nodeExit = node.exit().transition()
+          .duration(duration)
+          .attr("transform", function(d) {
+              return "translate(" + source.y + "," + source.x + ")";
+          })
+          .remove();
+
+      var link = svg.selectAll('path.link')
+          .data(links, function(d) { return d.id; });
+
+      var linkEnter = link.enter().insert('path', "g")
+          .attr("class", "link")
+          .attr('d', function(d){
+            var o = {x: source.x0, y: source.y0}
+            return diagonal(o, o);
+          });
+
+      var linkUpdate = linkEnter.merge(link);
+      linkUpdate.transition()
+          .duration(duration)
+          .attr('d', function(d){ return diagonal(d, d.parent); });
+
+      var linkExit = link.exit().transition()
+          .duration(duration)
+          .attr('d', function(d) {
+            var o = {x: source.x, y: source.y}
+            return diagonal(o, o);
+          })
+          .remove();
+
+      nodes.forEach(function(d){
+        d.x0 = d.x;
+        d.y0 = d.y;
+      });
+
+      function diagonal(s, d) {
+        return `M ${s.y} ${s.x}
+                C ${(s.y + d.y) / 2} ${s.x},
+                  ${(s.y + d.y) / 2} ${d.x},
+                  ${d.y} ${d.x}`;
+      }
+
+      function click(d) {
+        if (d.children) {
+            d._children = d.children;
+            d.children = null;
+        } else {
+            d.children = d._children;
+            d._children = null;
+        }
+        update(d);
+      }
+    }
 </script>
+
 
 <div class="container-fluid py-0"> 
     <div class="row">

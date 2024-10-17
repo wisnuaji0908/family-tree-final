@@ -15,7 +15,9 @@ class PeopleController extends Controller
         $user = request()->user();
         $setting = Setting::first();
         $people = People::query()->where('user_id', $user->id)->paginate(5);
-        return view('people.index', compact('people', 'setting'));
+        // Menambahkan variabel $peopleTreeData yang belum didefinisikan
+        $peopleTreeData = []; // Definisikan sesuai kebutuhan
+        return view('people.index', compact('people', 'setting', 'peopleTreeData'));
     }
 
     public function create()
