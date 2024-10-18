@@ -116,7 +116,7 @@
         }
 
         .parent {
-            border: 2px solid #007bff;
+            border: 2px solid #28a745;
             border-radius: 10px;
             padding: 10px;
             text-align: center;
@@ -135,7 +135,7 @@
         .connector .line {
             height: 2px;
             width: 50%;
-            background-color: #007bff;
+            background-color: #28a745;
             position: relative;
         }
 
@@ -146,39 +146,39 @@
         }
 
         .person {
-            border: 2px solid #28a745;
+            /* border: 2px solid #28a745; */
             border-radius: 10px;
             padding: 10px;
             text-align: center;
             width: 150px;
             position: relative;
-            
         }
 
-        /* Garis penghubung */
+        /* Garis penghubung untuk orang tua */
         .parents .parent:after {
             content: '';
             display: block;
             width: 2px;
             height: 23px;
-            background: #007bff;
+            background: #28a745; /* Ganti warna jika perlu */
             position: absolute;
             left: 50%;
             top: 100%;
             transform: translateX(-50%);
         }
 
+        /* Garis penghubung untuk anak */
         .children .person:before {
             content: '';
             display: block;
             width: 2px;
-            height: 21px;
-            background: #007bff;
+            height: 37px;
+            background: #28a745; /* Ganti warna jika perlu */
             position: absolute;
             left: 50%;
             top: -22px; /* Mengatur posisi agar di atas anak */
-            transform: translateX(-50%);
         }
+
 
 
         
@@ -289,50 +289,73 @@
 
     <script>
         function showParentModal(id) {
-    
             $('#mother').empty();
             $('#father').empty();
             $('#person').empty();
 
-        
-        $.ajax({
-            url: `/get-parent/${id}`,  // Endpoint backend yang akan memberikan data orang tua
-            type: 'GET',
-            success: function(res) {
-                
-                
-                if (res.data.mother.length > 0) {
-                    $.each(res.data.mother, function(index, value) {
-                        $('#mother').append(`<p>${value.user_parent.name} (${value.parent})</p>`);
-                    });
-                } else {
-                    $('#mother').append('<p>No data for mother</p>');
-                }
+            $.ajax({
+                url: `/get-parent/${id}`,  // Endpoint backend yang akan memberikan data orang tua
+                type: 'GET',
+                success: function(res) {
+                    // Menampilkan data untuk ibu
+                    if (res.data.mother.length > 0) {
+                        $.each(res.data.mother, function(index, value) {
+                            $('#mother').append(`<p>${value.user_parent.name} (${value.parent})</p>`);
+                        });
+                    } else {
+                        $('#mother').append('<p>No data for mother</p>');
+                    }
 
-                
-                if (res.data.father.length > 0) {
-                    $.each(res.data.father, function(index, value) {
-                        $('#father').append(`<p>${value.user_parent.name} (${value.parent})</p>`);
-                    });
-                } else {
-                    $('#father').append('<p>No data for father</p>');
-                }
+                    // Menampilkan data untuk ayah
+                    if (res.data.father.length > 0) {
+                        $.each(res.data.father, function(index, value) {
+                            $('#father').append(`<p>${value.user_parent.name} (${value.parent})</p>`);
+                        });
+                    } else {
+                        $('#father').append('<p>No data for father</p>');
+                    }
 
-                // Menampilkan data untuk person/child
-                if (res.data.person) {
-                    $('#person').append(`<p>${res.data.person.name}</p>`);
-                } else {
-                    $('#person').append('<p>{{ $parent->people->name ?? 'N/A' }}</p>');
+                    // Menampilkan data untuk person/child
+                    if (res.data.person) {
+                        const person = res.data.person;
+
+                        // Mengatur warna garis berdasarkan gender
+                        let lineColor = (person.gender === 'male') ? 'blue' : 'magenta';
+                        
+                        // Mengatur warna background dan text berdasarkan status kematian
+                        let bgColor = person.death_date ? 'black' : 'white';
+                        let textColor = person.death_date ? 'white' : 'black';
+
+                        // Format tanggal lahir dan tanggal kematian
+                        const birthDate = person.birth_date ? new Date(person.birth_date).toLocaleDateString() : 'N/A';
+                        const deathDate = person.death_date ? new Date(person.death_date).toLocaleDateString() : 'N/A';
+
+                        // Menampilkan data person dengan kedua tanggal
+                        $('#person').append(`
+                            <div style="background-color: ${bgColor}; color: ${textColor}; border: 2px solid ${lineColor}; padding: 5px; margin: 5px; width: 180px; margin-left: -30px;">
+                                <p style="font-weight: bold;">${person.name}</p>
+                                <p>Birth Date: ${birthDate}</p>
+                                <p>Death Date: ${person.death_date ? deathDate : '-'}</p>
+                            </div>
+                        `);
+
+                    } else {
+                        $('#person').append('<p>N/A</p>');
+                    }
+                },
+                error: function(err) {
+                    console.error("Error fetching parent data:", err);
+                    $('#mother').append('<p>Error fetching data</p>');
+                    $('#father').append('<p>Error fetching data</p>');
+                    $('#person').append('<p>Error fetching data</p>');
                 }
-            },
-            error: function(err) {
-                console.error("Error fetching parent data:", err);
-                $('#mother').append('<p>Error fetching data</p>');
-                $('#father').append('<p>Error fetching data</p>');
-                $('#person').append('<p>Error fetching data</p>');
-            }
-        });
-    }
+            });
+}
+
+
+
+
+
 
     </script>
 
