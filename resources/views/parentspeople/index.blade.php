@@ -146,7 +146,7 @@
         }
 
         .person {
-            border: 2px solid #28a745;
+            /* border: 2px solid #28a745; */
             border-radius: 10px;
             padding: 10px;
             text-align: center;
@@ -171,7 +171,7 @@
             content: '';
             display: block;
             width: 2px;
-            height: 22px;
+            height: 37px;
             background: #007bff;
             position: absolute;
             left: 50%;
@@ -331,12 +331,11 @@
             $('#person').empty();
 
         
-        $.ajax({
+            $.ajax({
             url: `/get-parent/${id}`,  // Endpoint backend yang akan memberikan data orang tua
             type: 'GET',
             success: function(res) {
-                
-                
+                // Menampilkan data untuk ibu
                 if (res.data.mother.length > 0) {
                     $.each(res.data.mother, function(index, value) {
                         $('#mother').append(`<p>${value.user_parent.name} (${value.parent})</p>`);
@@ -345,7 +344,7 @@
                     $('#mother').append('<p>No data for mother</p>');
                 }
 
-                
+                // Menampilkan data untuk ayah
                 if (res.data.father.length > 0) {
                     $.each(res.data.father, function(index, value) {
                         $('#father').append(`<p>${value.user_parent.name} (${value.parent})</p>`);
@@ -356,9 +355,30 @@
 
                 // Menampilkan data untuk person/child
                 if (res.data.person) {
-                    $('#person').append(`<p>${res.data.person.name}</p>`);
+                    const person = res.data.person;
+
+                    // Mengatur warna garis berdasarkan gender
+                    let lineColor = (person.gender === 'male') ? 'blue' : 'magenta';
+                    
+                    // Mengatur warna background dan text berdasarkan status kematian
+                    let bgColor = person.death_date ? 'black' : 'white';
+                    let textColor = person.death_date ? 'white' : 'black';
+
+                    // Format tanggal lahir dan tanggal kematian
+                    const birthDate = person.birth_date ? new Date(person.birth_date).toLocaleDateString() : 'N/A';
+                    const deathDate = person.death_date ? new Date(person.death_date).toLocaleDateString() : 'N/A';
+
+                    // Menampilkan data person dengan kedua tanggal
+                    $('#person').append(`
+                        <div style="background-color: ${bgColor}; color: ${textColor}; border: 2px solid ${lineColor}; padding: 5px; margin: 5px; width: 180px; margin-left: -30px;">
+                            <p style="font-weight: bold;">${person.name}</p>
+                            <p>Birth Date: ${birthDate}</p>
+                            <p>Death Date: ${person.death_date ? deathDate : '-'}</p>
+                        </div>
+                    `);
+
                 } else {
-                    $('#person').append('<p>{{ $parent->people->name ?? 'N/A' }}</p>');
+                    $('#person').append('<p>N/A</p>');
                 }
             },
             error: function(err) {
@@ -368,7 +388,7 @@
                 $('#person').append('<p>Error fetching data</p>');
             }
         });
-}
+    }
 
     </script>
 
