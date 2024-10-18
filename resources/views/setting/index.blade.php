@@ -133,8 +133,7 @@
             @endif
             <img id="preview-logo" src="#" alt="New Logo"> 
         </div>
-        <form action="{{ route('setting.update', $setting->id) }}" method="POST" enctype="multipart/form-data" onsubmit="return showPreview();">
-            @csrf
+        <form action="{{ route('setting.update', $setting->id) }}" method="POST" enctype="multipart/form-data" onsubmit="return showPreview();">            @csrf
             @method('PUT')
             <div class="mb-3">
                 <label for="app_name" class="form-label">App Name</label>

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Otp;
-use App\Models\Customer;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 
@@ -22,14 +21,16 @@ class OtpController extends Controller
             ['otp_code'=>$otpCode, 'expires_at'=>Carbon::now()->addMinutes(5)]
         );
 
-        $apiResponse = Http::baseUrl('https://app.japati.id/')
-            ->withToken('API-TOKEN-ZMhshS3ip6q8sfp7Ah3i7vlHEU0Rlq6VHeWEixnWnrvGdaOwCp32Y1')
+        $apiResponse = Http::baseUrl('https://app.japati.id')
+            ->withToken('API-TOKEN-fnG7nPGvCXVhuluKPxoyqj0YNKT8jAb2QnmWYyQBMQeJrbdnPps7l7')
             ->post('/api/send-message', [
-                'gateway' => '6289616745193',
+                'gateway' => '6282128208361',
                 'number' => $request->phone_number,
                 'type' => 'text',
                 'message' => '*' . $otpCode . '* adalah kode OTP Anda. Demi keamanan, jangan bagikan kode ini.',
             ]);
+
+            logger($apiResponse->json());
 
             if ($apiResponse->successful()) {
                 return response()->json([
