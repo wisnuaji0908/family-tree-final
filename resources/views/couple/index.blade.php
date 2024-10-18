@@ -212,18 +212,17 @@
     fetch(`/couple-tree/${peopleId}`)
         .then(response => response.json())
         .then(data => {
-            document.getElementById('treeContainer').innerHTML = ''; // Clear existing tree
+            console.log(data);
+            document.getElementById('treeContainer').innerHTML = ''; 
 
-            const width = 800; // Sesuaikan dengan ukuran modal yang lebih besar
-            const height = 600; // Sesuaikan dengan ukuran modal yang lebih besar
-
+            const width = 800; 
+            const height = 600; 
 
             const svg = d3.select("#treeContainer").append("svg")
                .attr("width", width)
                .attr("height", height)
                .append("g")
-               .attr("transform", "translate(100,50)"); // Atur transformasi agar tidak terlalu sempit
-
+               .attr("transform", "translate(100,50)"); 
 
             const root = d3.hierarchy(data);
             const treeLayout = d3.tree().size([height - 200, width - 300]); 
@@ -239,7 +238,7 @@
                 .attr('y1', d => d.source.x)
                 .attr('x2', d => d.target.y)
                 .attr('y2', d => d.target.x)
-                .attr('stroke', 'blue')
+                .attr('stroke', 'black')
                 .attr('stroke-width', 2);
 
             // Create nodes
@@ -252,14 +251,19 @@
 
             // Kotak di sekitar nama
             node.append('rect')
-                .attr('x', -80) // Tambahkan padding horizontal
+                .attr('x', -80) 
                 .attr('y', -30)
-                .attr('width', 160) // Perbesar lebar kotak
+                .attr('width', 160) 
                 .attr('height', 60)
-                .attr('fill', 'white')
-                .attr('stroke', 'green')
+                .attr('fill', d => {
+                    if (d.data.divorce_date) {
+                        return 'red'; 
+                    } else {
+                        return 'green';
+                    }
+                } )
+                .attr('stroke', 'black')
                 .attr('stroke-width', 2);
-
 
             // Tambahkan nama
             node.append('text')
@@ -267,7 +271,8 @@
                 .attr('x', 0)
                 .attr('text-anchor', 'middle')
                 .text(d => d.data.name)
-                .style('font-size', '14px');
+                .style('font-size', '14px')
+                .style('fill', 'white'); 
 
             // Tambahkan tanggal pernikahan
             node.append('text')
@@ -276,13 +281,24 @@
                 .attr('text-anchor', 'middle')
                 .text(d => d.data.married_date ? `Married: ${d.data.married_date}` : '')
                 .style('font-size', '12px')
-                .style('fill', 'gray');
+                .style('fill', 'white'); 
+
+            // Tambahkan tanggal cerai (jika ada)
+            node.append('text')
+                .attr('dy', 45) 
+                .attr('x', 0)
+                .attr('text-anchor', 'middle')
+                .text(d => d.data.divorce_date ? `Divorced: ${d.data.divorce_date}` : '')
+                .style('font-size', '12px')
+                .style('fill', 'red'); 
         });
 
     var treeModal = new bootstrap.Modal(document.getElementById('treeModal'));
     treeModal.show();
-}
+  }
 </script>
+
+
 
 
 
