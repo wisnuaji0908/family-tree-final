@@ -60,13 +60,14 @@
                                         <div class="alert alert-success my-2 text-success" role="alert">{{ $message }}</div>
                                     @endif
                                 </div>
-                                {{-- Email Input --}}
+                                <!-- Phone Number input -->
                                 <div class="form-floating mb-4">
-                                    <input type="email" readonly class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" value="{{ old('email', request('email')) }}">
-                                    <label for="floatingInput">Email address</label>
-                                    @error('email')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <input type="text" name="identifier" class="form-control {{ $errors->has('identifier') ? 'is-invalid' : '' }}" id="identifier" 
+                                        value="{{ old('identifier', session('identifier', request('identifier'))) }}" placeholder="phone" readonly>
+                                    <label for="identifier">Phone Number</label>
+                                        @error('identifier')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                 </div>
                                 <!-- Password input -->
                                 <div class="form-floating mb-4 position-relative">
