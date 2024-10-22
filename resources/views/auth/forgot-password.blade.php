@@ -50,17 +50,16 @@
                                         <div class="alert alert-success my-2 text-success" role="alert">{{ $message }}</div>
                                     @endif
                                 </div>
-                                <!-- Email input -->
                                 <div class="form-floating mb-4">
-                                    <input type="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="name@example.com" name="email" autocomplete="off">
-                                    <label for="floatingInput">Email address</label>
-                                    @error('email')
+                                    <input type="text" name="identifier" class="form-control {{ $errors->has('identifier') ? 'is-invalid' : '' }}" id="identifier" value="{{ old('identifier') }}" placeholder="Masukkan Nomor WhatsApp" autocomplete="off">
+                                    <label for="identifier">Phone Number</label>
+                                    @error('identifier')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
-                                </div>
+                                  </div>
                                 <!-- Submit button -->
                                 <div class="d-grid gap-2">
-                                    <input type="submit" value="Send Email Link" class="btn btn-primary mb-4">
+                                    <input type="submit" value="Send OTP Code" class="btn btn-primary mb-4">
                                 </div>
                             </form>
                         </div>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $setting?->app_name ?? config('app.name') }} - Edit People</title>  
+    <title>{{ $setting?->app_name ?? config('app.name') }} - People</title>  
     <link rel="icon" href="{{ $setting?->app_logo ? asset('storage/' . $setting?->app_logo) : asset('default_favicon.ico') }}" type="image/png">
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
@@ -130,12 +130,8 @@
             "name": "John",
             "Couple": "Issabella",
             "parents": {
-                "father": {
-                    "name": "Robert"
-                },
-                "mother": {
-                    "name": "Linda"
-                }
+                "father": { "name": "Robert" },
+                "mother": { "name": "Ann" }
             },
             "children": [
                 { 
@@ -176,7 +172,6 @@
 
     var treemap = d3.tree().size([height, width]);
 
-    // Function to get hierarchy including parents before children
     root = d3.hierarchy(treeData[0], function(d) {
         var allNodes = [];
         if (d.parents) {
@@ -210,7 +205,7 @@
       nodes.forEach(function(d){ d.y = d.depth * 180 });
 
       var node = svg.selectAll('g.node')
-          .data(nodes, function(d) {return d.id || (d.id = ++i); });
+          .data(nodes, function(d) { return d.id || (d.id = ++i); });
 
       var nodeEnter = node.enter().append('g')
           .attr('class', 'node')
@@ -219,6 +214,7 @@
         })
         .on('click', click);
 
+      // Create the main person's box
       nodeEnter.append('rect')
           .attr('width', 140)
           .attr('height', 60)
@@ -226,30 +222,36 @@
           .attr('y', -30)
           .style("fill", "#fff");
 
+      // Display the name of the main person
       nodeEnter.append('text')
           .attr("dy", "-0.5em")
           .attr("x", 0)
           .attr("text-anchor", "middle")
           .text(function(d) { return d.data.name; });
 
+      // Create the couple's box if they exist
+      nodeEnter.append('rect')
+          .filter(d => d.data.Couple)
+          .attr('width', 140)
+          .attr('height', 30)
+          .attr('x', -70)
+          .attr('y', 30) // Position below the main node
+          .style("fill", "#f0f0f0");
+
+      // Display the name of the couple if they exist
       nodeEnter.append('text')
-          .attr("dy", "1em")
+          .filter(d => d.data.Couple)
+          .attr("dy", "2.5em")
           .attr("x", 0)
           .attr("text-anchor", "middle")
           .style("fill", "gray")
-          .text(function(d) { return d.data.Couple ? "Couple: " + d.data.Couple : ""; });
+          .text(function(d) { return d.data.Couple ? d.data.Couple : ""; });
 
       var nodeUpdate = nodeEnter.merge(node);
+
       nodeUpdate.transition()
         .duration(duration)
         .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
-
-      nodeUpdate.select('rect')
-        .attr('width', 140)
-        .attr('height', 60)
-        .attr('x', -70)
-        .attr('y', -30)
-        .style("fill", "#fff");
 
       var nodeExit = node.exit().transition()
           .duration(duration)
@@ -269,6 +271,7 @@
           });
 
       var linkUpdate = linkEnter.merge(link);
+
       linkUpdate.transition()
           .duration(duration)
           .attr('d', function(d){ return diagonal(d, d.parent); });
@@ -305,6 +308,8 @@
       }
     }
 </script>
+
+
 
 
 <div class="container-fluid py-0"> 

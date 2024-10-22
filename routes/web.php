@@ -96,6 +96,12 @@ use App\Http\Controllers\AppSettingController;
     Route::post('forgot-password', [ForgotPasswordController::class, 'forgotPassword'])->name('forgot-password');
     
     // RESET PASSWORD
+    Route::get('/verify-otp', function () {
+        return view('auth.verify-otp'); 
+    })->middleware('guest')->name('otp.verify');
+    
+    Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp'])->middleware('guest')->name('otp.verify.post');
+
     Route::get('/reset-password/{token}', function (string $token) {
         return view('auth.reset-password', ['token' => $token]);
     })->middleware('guest')->name('password.reset');

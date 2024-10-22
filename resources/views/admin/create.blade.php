@@ -101,7 +101,7 @@
                         id="name" name="name" 
                         class="form-control @error('name') is-invalid @enderror" 
                         placeholder="Enter Name" aria-label="name" 
-                        value="{{ old('name') }}">
+                        value="{{ old('name') }}" autocomplete="off">
                     @error('name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -124,7 +124,7 @@
                            class="form-control @error('place_birth') is-invalid @enderror" 
                            placeholder="Place of Birth" 
                            id="place_birth" name="place_birth" 
-                           value="{{ old('place_birth') }}">
+                           value="{{ old('place_birth') }}" autocomplete="off">
                     @error('place_birth')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

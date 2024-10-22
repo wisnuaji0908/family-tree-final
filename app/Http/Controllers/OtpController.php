@@ -14,7 +14,7 @@ class OtpController extends Controller
             'phone_number'=>'required|string|min:10|max:15',
         ]);
 
-        $otpCode = rand(100000, 99999);
+        $otpCode = rand(100000, 999999);
         
         Otp::updateOrCreate(
             ['phone_number'=>$request->phone_number],
