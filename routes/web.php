@@ -62,6 +62,7 @@ use App\Http\Controllers\AppSettingController;
         Route::get('/people/create', [PeopleController::class, 'create'])->name('people.create');
         Route::post('/people/store', [PeopleController::class, 'store'])->name('people.store');
         Route::get('/people/{id}/edit', [PeopleController::class, 'edit'])->name('people.edit');
+        Route::get('/people/{id}/viewtree', [PeopleController::class, 'viewtree'])->name('people.viewtree');
         Route::put('/people/{id}', [PeopleController::class, 'update'])->name('people.update');
         Route::delete('/people/{id}', [PeopleController::class, 'destroy'])->name('people.destroy');
         

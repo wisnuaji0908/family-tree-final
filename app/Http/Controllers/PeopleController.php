@@ -86,6 +86,15 @@ class PeopleController extends Controller
         return redirect()->route('people.index')->with('success', 'Data successfully removed.');
     }
 
+    public function viewTree($id) {
+        $person = People::findOrFail($id);
+        $parents = $person->parents; 
+        $couple = $person->couples;
+        $setting = Setting::first();
+        return view('people.viewtree', compact('person', 'parents', 'couple', 'setting'));
+    }
+
+    
     public function showClaimForm()
     {   
         if (User::where('id', request()->user()->id)->whereNotNull('people_id')->first()) {
