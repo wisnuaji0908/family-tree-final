@@ -329,13 +329,13 @@
                 // Menampilkan data untuk ibu
                 if (res.data.mother.length > 0) {
                     $.each(res.data.mother, function(index, value) {
-                        let lineColor = value.user_parent.gender === 'male' ? 'blue' : 'pink';
+                        let lineColor = value.user_parent.gender === 'male' ? 'blue' : 'magenta';
                         let bgColor = value.user_parent.death_date ? 'black' : 'white';
                         let textColor = value.user_parent.death_date ? 'white' : 'black';
                         const birthDate = value.user_parent.birth_date ? new Date(value.user_parent.birth_date).toLocaleDateString() : 'N/A';
                         const deathDate = value.user_parent.death_date ? new Date(value.user_parent.death_date).toLocaleDateString() : '-';
                         $('#mother').append(`
-                            <div style="background-color: ${bgColor}; color: ${textColor}; border: 2px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: 1px; font-size: 12px;">
+                            <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: 1px; font-size: 12px; border-radius: 8%;">
                                 <p style="font-weight: bold; text-align: center;">${value.user_parent.name} (${value.parent})</p>
                                 <div style="display: flex; justify-content: space-between;">
                                 <p>Birth Date:</p>
@@ -350,7 +350,7 @@
                     });
                 } else {
                     $('#mother').append(`
-                        <div style=" color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px; box-sizing: border-box; text-align: center; z-index: 999px">
+                        <div style=" color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px; box-sizing: border-box; text-align: center; border-radius: 8%;">
                             <p style="margin: 0;">No data for mother</p>
                         </div>
                     `);
@@ -359,28 +359,28 @@
                 // Menampilkan data untuk ayah
                 if (res.data.father.length > 0) {
                     $.each(res.data.father, function(index, value) {
-                        let lineColor = value.user_parent.gender === 'male' ? 'blue' : 'pink';
+                        let lineColor = value.user_parent.gender === 'male' ? 'blue' : 'magenta';
                         let bgColor = value.user_parent.death_date ? 'black' : 'white';
                         let textColor = value.user_parent.death_date ? 'white' : 'black';
                         const birthDate = value.user_parent.birth_date ? new Date(value.user_parent.birth_date).toLocaleDateString() : 'N/A';
                         const deathDate = value.user_parent.death_date ? new Date(value.user_parent.death_date).toLocaleDateString() : '-';
                             $('#father').append(`
-                                <div style="background-color: ${bgColor}; color: ${textColor}; border: 2px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: -30px; font-size: 12px;">
+                                <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: -30px; font-size: 12px; border-radius: 8%;">
                                     <p style="font-weight: bold; text-align: center;">${value.user_parent.name} (${value.parent})</p>
                                     <div style="display: flex; justify-content: space-between;">
                                         <p>Birth Date:</p>
                                         <p>${birthDate}</p>
                                     </div>
                                     <div style="display: flex; justify-content: space-between;">
-                                        <p>Birth Date:</p>
-                                        <p>${birthDate}</p>
+                                        <p>Death Date:</p>
+                                        <p>${deathDate}</p>
                                     </div>
                                 </div>
                             `);
                     });
                 } else {
                     $('#father').append(`
-                        <div style=" color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px;  box-sizing: border-box; text-align: center; z-index: 999px">
+                        <div style=" color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px;  box-sizing: border-box; text-align: center; border-radius: 8%; ">
                             <p style="margin: 0;">No data for father</p>
                         </div>
                     `);
@@ -395,7 +395,7 @@
                     const birthDate = person.birth_date ? new Date(person.birth_date).toLocaleDateString() : 'N/A';
                     const deathDate = person.death_date ? new Date(person.death_date).toLocaleDateString() : 'N/A';
                     $('#person').append(`
-                        <div style="background-color: ${bgColor}; color: ${textColor}; border: 2px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; height: 116px; margin-left: -2px; font-size: 12px;">
+                        <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; height: 116px; margin-left: -2px; font-size: 12px; border-radius: 8%;">
                             <p style="font-weight: bold; text-align: center;">${person.name}</p>
                             <div style="display: flex; justify-content: space-between;">
                                 <p>Birth Date:</p>
