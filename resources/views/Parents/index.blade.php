@@ -207,7 +207,7 @@
             background-color: green;
             position: absolute;
             left: 154px; /* Sesuaikan posisi garis horizontal untuk menengahkannya */
-            top: -60px;  /* Posisi garis agar berada di tengah antara mother dan father */
+            top: -83px;  /* Posisi garis agar berada di tengah antara mother dan father */
         }
 
         .connector-vertical {
@@ -223,9 +223,9 @@
             height: 140px; /* Sesuaikan tinggi vertikal */
             background-color: green;
             position: relative;
-            top: -60px; /* Posisikan agar garis vertikal menyambung dengan horizontal */
-            left: -12px; /* Sesuaikan posisi kiri */
-            margin-left: -1px; 
+            top: -81px; /* Posisikan agar garis vertikal menyambung dengan horizontal */
+            left: -8px;  
+            /* margin-left: -1px;  */
         }
 
         .parent {
@@ -235,14 +235,14 @@
         }
 
         .children {
-            margin-top: 0px; /* Hilangkan jarak antara garis vertikal dan kotak person */
+            margin-top: 0px;  Hilangkan jarak antara garis vertikal dan kotak person */
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         #person {
-            margin-top: -67px; /* Geser kotak person agar lebih dekat ke garis vertikal */
+            margin-top: -81px;  Geser kotak person agar lebih dekat ke garis vertikal */
         }
 
 
@@ -379,7 +379,7 @@
         const deathDate = value.user_parent.death_date ? new Date(value.user_parent.death_date).toLocaleDateString() : '-';
 
         $('#mother').append(`
-            <div style="background-color: ${bgColor}; color: ${textColor}; border: 2px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: 5px; font-size: 12px;">
+            <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: 5px; font-size: 12px; border-radius: 8%;">
                 <p style="font-weight: bold; text-align: center;">${value.user_parent.name} (${value.parent})</p>
                 <div style="display: flex; justify-content: space-between;">
                     <p>Birth Date:</p>
@@ -394,7 +394,7 @@
     });
 } else {
     $('#mother').append(`
-        <div style=" color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px; box-sizing: border-box; text-align: center; z-index: 999px">
+        <div style=" color: black; border: 3px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px; box-sizing: border-box; text-align: center;  border-radius: 8%;">
             <p style="margin: 0;">No data for mother</p>
         </div>
     `);
@@ -411,7 +411,7 @@ if (res.data.father.length > 0) {
         const deathDate = value.user_parent.death_date ? new Date(value.user_parent.death_date).toLocaleDateString() : '-';
 
         $('#father').append(`
-            <div style="background-color: ${bgColor}; color: ${textColor}; border: 2px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: -30px; font-size: 12px;">
+            <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: -30px; font-size: 12px; border-radius: 8%;">
                 <p style="font-weight: bold; text-align: center;">${value.user_parent.name} (${value.parent})</p>
                 <div style="display: flex; justify-content: space-between;">
                     <p>Birth Date:</p>
@@ -426,7 +426,7 @@ if (res.data.father.length > 0) {
     });
 } else {
     $('#father').append(`
-        <div style=" color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px;  box-sizing: border-box; text-align: center; z-index: 999px">
+        <div style=" color: black; border: 3px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px;  box-sizing: border-box; text-align: center; border-radius: 8%;">
             <p style="margin: 0;">No data for mother</p>
         </div>
     `);
@@ -442,7 +442,7 @@ if (res.data.person) {
     const deathDate = person.death_date ? new Date(person.death_date).toLocaleDateString() : '-';
 
     $('#person').append(`
-        <div style="background-color: ${bgColor}; color: ${textColor}; border: 2px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: -30px; font-size: 12px;">
+        <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin-bottom: 40px; width: 160px; margin-left: -6px; font-size: 12px; border-radius: 8%;">
             <p style="font-weight: bold; text-align: center;">${person.name}</p>
             <div style="display: flex; justify-content: space-between;">
                 <p>Birth Date:</p>
