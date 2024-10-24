@@ -12,14 +12,14 @@ class CouplePeopleController extends Controller
 {
     public function index()
     {
-    $loggedInUser = Auth::id();
-    $setting = Setting::first();
-    $claimedPersonId = Auth::user()->people_id; 
-    
-    $coupleperson = Couple::with(['people', 'partner'])
-        ->where('people_id', $claimedPersonId)
-        ->orWhere('couple_id', $claimedPersonId)
-        ->paginate(5);
+        $loggedInUser = Auth::id();
+        $setting = Setting::first();
+        $claimedPersonId = Auth::user()->people_id;
+
+        $coupleperson = Couple::with(['people', 'partner'])
+            ->where('people_id', $claimedPersonId)
+            ->orWhere('couple_id', $claimedPersonId)
+            ->paginate(5);
 
         return view('couplepeople.index', compact('coupleperson', 'setting'));
     }
@@ -38,29 +38,42 @@ class CouplePeopleController extends Controller
             'married_date' => 'required|date',
             'divorce_date' => 'nullable|date|after_or_equal:married_date',
         ]);
-
+    
         $claimedPersonId = Auth::user()->people_id;
-
-        $existingCouple = Couple::where(function($query) use ($claimedPersonId, $request) {
+        $person = People::findOrFail($claimedPersonId);
+    
+        // Cek apakah person adalah perempuan dan sudah memiliki pasangan aktif
+        if ($person->gender === 'female' && $person->couples()->whereNull('divorce_date')->exists()) {
+            return redirect()->back()->withErrors('This female person already has a partner.');
+        }
+    
+        // Dapatkan pasangan untuk validasi gender
+        $partner = People::findOrFail($request->couple_id);
+        if ($person->gender === $partner->gender) {
+            return redirect()->back()->withErrors('The couple must be of different genders.');
+        }
+    
+        // Cek apakah pasangan ini sudah terdaftar
+        $existingCouple = Couple::where(function ($query) use ($claimedPersonId, $request) {
             $query->where('people_id', $claimedPersonId)
                   ->where('couple_id', $request->couple_id);
-        })->orWhere(function($query) use ($claimedPersonId, $request) {
+        })->orWhere(function ($query) use ($claimedPersonId, $request) {
             $query->where('people_id', $request->couple_id)
                   ->where('couple_id', $claimedPersonId);
         })->first();
-
+    
         if ($existingCouple) {
             return redirect()->back()->withErrors('This couple is already registered.');
         }
-
+    
         Couple::create([
-            'user_id' => Auth::id(), 
-            'people_id' => $claimedPersonId, 
+            'user_id' => Auth::id(),
+            'people_id' => $claimedPersonId,
             'couple_id' => $request->couple_id,
             'married_date' => $request->married_date,
             'divorce_date' => $request->divorce_date,
         ]);
-
+    
         return redirect()->route('peoplecouple.index')->with('success', 'Couple created successfully.');
     }
 
@@ -77,47 +90,61 @@ class CouplePeopleController extends Controller
         return view('couplepeople.edit', compact('couple', 'people', 'setting'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Couple $couplesperson)
     {
         if ($couplesperson->user_id !== Auth::id()) {
             return redirect()->route('peoplecouple.index')->withErrors('You do not have permission to update this data.');
         }
-
+    
         $request->validate([
             'couple_id' => 'required|exists:people,id|different:people_id',
             'married_date' => 'required|date',
             'divorce_date' => 'nullable|date|after_or_equal:married_date',
         ]);
-
+    
         $claimedPersonId = Auth::user()->people_id;
-
-        $existingCouple = Couple::where(function($query) use ($claimedPersonId, $request, $couplesperson) {
+        $person = People::findOrFail($claimedPersonId);
+    
+        // Cek jika person adalah perempuan dan sudah memiliki pasangan aktif
+        if ($person->gender === 'female') {
+            // Pastikan untuk memeriksa pasangan aktif, kecuali pasangan yang sedang diedit
+            $activeCouples = $person->couples()->whereNull('divorce_date')->where('id', '!=', $couplesperson->id);
+            if ($activeCouples->exists()) {
+                return redirect()->back()->withErrors('This female person already has a partner.');
+            }
+        }
+    
+        // Dapatkan pasangan untuk validasi gender
+        $partner = People::findOrFail($request->couple_id);
+        if ($person->gender === $partner->gender) {
+            return redirect()->back()->withErrors('The couple must be of different genders.');
+        }
+    
+        // Cek apakah pasangan ini sudah terdaftar
+        $existingCouple = Couple::where(function ($query) use ($claimedPersonId, $request, $couplesperson) {
             $query->where('people_id', $claimedPersonId)
                   ->where('couple_id', $request->couple_id)
                   ->where('id', '!=', $couplesperson->id);
-        })->orWhere(function($query) use ($claimedPersonId, $request, $couplesperson) {
+        })->orWhere(function ($query) use ($claimedPersonId, $request, $couplesperson) {
             $query->where('people_id', $request->couple_id)
                   ->where('couple_id', $claimedPersonId)
                   ->where('id', '!=', $couplesperson->id);
         })->first();
-
+    
         if ($existingCouple) {
             return redirect()->back()->withErrors('This couple is already registered.');
         }
-
+    
+        // Update pasangan
         $couplesperson->update([
-            'people_id' => $claimedPersonId, 
+            'people_id' => $claimedPersonId,
             'couple_id' => $request->couple_id,
             'married_date' => $request->married_date,
             'divorce_date' => $request->divorce_date,
         ]);
-
+    
         return redirect()->route('peoplecouple.index')->with('success', 'Couple updated successfully.');
     }
-
     public function destroy(Couple $couplesperson)
     {
         if ($couplesperson->user_id !== Auth::id()) {
@@ -127,30 +154,46 @@ class CouplePeopleController extends Controller
         $setting = Setting::first();
         return redirect()->route('peoplecouple.index')->with('success', 'Couple deleted successfully.');
     }
-    
 
     public function getTreeData($id)
     {
-        $people = People::with(['couples' => function($query) {
-            $query->orderBy('married_date', 'asc'); 
-        }, 'couples.partner'])->findOrFail($id); 
-    
+        // Mengambil data orang dengan pasangan mereka
+        $people = People::with(['couples' => function ($query) {
+            $query->orderBy('married_date', 'asc');
+        }, 'couples.partner'])->findOrFail($id);
+
+        // Tambahkan informasi gender ke data root (orang utama)
         $treeData = [
             'name' => $people->name,
+            'gender' => $people->gender,
+            'divorce_date' => null,
             'children' => []
         ];
-    
+
+        // Menambahkan pasangan dan status pernikahan mereka
         foreach ($people->couples as $couple) {
+            // Tambahkan pasangan sebagai children
             $treeData['children'][] = [
                 'name' => $couple->partner->name,
-                'married_date' => $couple->married_date, 
-                'divorce_date' => $couple->divorce_date, 
-                'children' => [] 
+                'gender' => $couple->partner->gender,
+                'married_date' => $couple->married_date,
+                'divorce_date' => $couple->divorce_date,
+                'children' => []
             ];
         }
-    
+
+        // Mengambil pasangan lain yang mungkin ada di partner
+        $otherPartners = Couple::where('couple_id', $people->id)->with('people')->get();
+        foreach ($otherPartners as $otherPartner) {
+            $treeData['children'][] = [
+                'name' => $otherPartner->people->name,
+                'gender' => $otherPartner->people->gender,
+                'married_date' => $otherPartner->married_date,
+                'divorce_date' => $otherPartner->divorce_date,
+                'children' => []
+            ];
+        }
+
         return response()->json($treeData);
     }
-
-
 }

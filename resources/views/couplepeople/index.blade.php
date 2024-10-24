@@ -227,20 +227,19 @@
     <script>
   function viewTree(peopleId) {
     fetch(`/couple-people-tree/${peopleId}`)
-        .then(response => response.json())
+    .then(response => response.json())
         .then(data => {
-            document.getElementById('treeContainer').innerHTML = ''; // Clear existing tree
+            console.log(data);
+            document.getElementById('treeContainer').innerHTML = ''; 
 
             const width = 800; 
-            const height = 600;
-
+            const height = 600; 
 
             const svg = d3.select("#treeContainer").append("svg")
                .attr("width", width)
                .attr("height", height)
                .append("g")
                .attr("transform", "translate(100,50)"); 
-
 
             const root = d3.hierarchy(data);
             const treeLayout = d3.tree().size([height - 200, width - 300]); 
@@ -267,47 +266,55 @@
                 .attr('class', 'node')
                 .attr('transform', d => `translate(${d.y},${d.x})`);
 
-            // Kotak di sekitar nama
-            node.append('rect')
-                .attr('x', -80) 
-                .attr('y', -30)
-                .attr('width', 160) 
-                .attr('height', 60)
-                .attr('fill', d => {
-                    if (d.data.divorce_date) {
-                        return 'red'; 
-                    } else {
-                        return 'green'; 
-                    }
-                } )
-                .attr('stroke', 'black')
-                .attr('stroke-width', 2);
+             // Kotak di sekitar nama
+node.append('rect')
+    .attr('x', -80) 
+    .attr('y', -40) // Ubah y untuk memberikan ruang ekstra
+    .attr('width', 160) 
+    .attr('height', 80) // Tinggi kotak ditambah untuk menampung lebih banyak teks
+    .attr('fill', d => {
+        const hasDivorced = d.data.divorce_date !== null; // Apakah ada perceraian
+        const hasNewPartner = d.parent && d.parent.children.some(child => child.data.divorce_date === null); // Apakah ada pasangan baru
 
-            // Tambahkan nama
-            node.append('text')
-                .attr('dy', -5)
-                .attr('x', 0)
-                .attr('text-anchor', 'middle')
-                .text(d => d.data.name)
-                .style('font-size', '14px')
-                .style('fill', 'white');
+        if (d.parent) {
+            if (hasDivorced) {
+                return 'red'; // Partner yang bercerai
+            }
+            return 'green'; // Person dan partner baru
+        }
+        return 'green'; // Kotak hijau jika tidak ada perceraian
+    })
+    .attr('stroke', d => {
+        return d.data.gender === 'female' ? '#FF00FF' : 'blue'; // Outline gender
+    })
+    .attr('stroke-width', 4); // Ketebalan outline
 
-            // Tambahkan tanggal pernikahan
-            node.append('text')
-                .attr('dy', 15) 
-                .attr('x', 0)
-                .attr('text-anchor', 'middle')
-                .text(d => d.data.married_date ? `Married: ${d.data.married_date}` : '')
-                .style('font-size', '12px')
-                .style('fill', 'white'); 
-            // Tambahkan tanggal cerai (jika ada)
-            node.append('text')
-                .attr('dy', 45) 
-                .attr('x', 0)
-                .attr('text-anchor', 'middle')
-                .text(d => d.data.divorce_date ? `Divorced: ${d.data.divorce_date}` : '')
-                .style('font-size', '12px')
-                .style('fill', 'red'); 
+// Tambahkan nama
+node.append('text')
+    .attr('dy', -25) // Ubah posisi y untuk memberi ruang atas
+    .attr('x', 0)
+    .attr('text-anchor', 'middle')
+    .text(d => d.data.name)
+    .style('font-size', '14px')
+    .style('fill', 'white'); 
+
+// Tambahkan tanggal pernikahan
+node.append('text')
+    .attr('dy', 5) // Ubah dy untuk menempatkan tanggal pernikahan
+    .attr('x', 0)
+    .attr('text-anchor', 'middle')
+    .text(d => d.data.married_date ? `Married: ${d.data.married_date}` : '')
+    .style('font-size', '12px')
+    .style('fill', 'white'); 
+
+// Tambahkan tanggal cerai (hanya untuk partner)
+node.append('text')
+    .attr('dy', 25) // Ubah dy untuk menempatkan tanggal cerai lebih rendah
+    .attr('x', 0)
+    .attr('text-anchor', 'middle')
+    .text(d => d.data.divorce_date ? `Divorced: ${d.data.divorce_date}` : '')
+    .style('font-size', '12px')
+    .style('fill', 'white'); 
         });
 
     var treeModal = new bootstrap.Modal(document.getElementById('treeModal'));

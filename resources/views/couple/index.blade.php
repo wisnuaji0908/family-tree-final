@@ -208,7 +208,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script>
-  function viewTree(peopleId) {
+function viewTree(peopleId) {
     fetch(`/couple-tree/${peopleId}`)
         .then(response => response.json())
         .then(data => {
@@ -225,82 +225,83 @@
                .attr("transform", "translate(100,50)"); 
 
             const root = d3.hierarchy(data);
-            const treeLayout = d3.tree().size([height - 200, width - 300]); 
+            const treeLayout = d3.tree().size([height - 200, width - 300]);
 
             treeLayout(root);
+// Create links with correct branching direction (right to left)
+svg.selectAll('line')
+    .data(root.links())
+    .enter()
+    .append('line')
+    .attr('x1', d => d.source.data.gender === 'male' ? 500 : 30) // Ubah posisi berdasarkan gender
+    .attr('y1', d => d.source.x)
+    .attr('x2', d => d.target.data.gender === 'male' ? 500 : 30) // Sama seperti di atas, posisi diubah
+    .attr('y2', d => d.target.x)
+    .attr('stroke', 'black')
+    .attr('stroke-width', 2);
 
-            // Create links
-            svg.selectAll('line')
-                .data(root.links())
-                .enter()
-                .append('line')
-                .attr('x1', d => d.source.y)
-                .attr('y1', d => d.source.x)
-                .attr('x2', d => d.target.y)
-                .attr('y2', d => d.target.x)
-                .attr('stroke', 'black')
-                .attr('stroke-width', 2);
 
-            // Create nodes
-            const node = svg.selectAll('g.node')
-                .data(root.descendants())
-                .enter()
-                .append('g')
-                .attr('class', 'node')
-                .attr('transform', d => `translate(${d.y},${d.x})`);
+// Create nodes
+const node = svg.selectAll('g.node')
+    .data(root.descendants())
+    .enter()
+    .append('g')
+    .attr('class', 'node')
+    .attr('transform', d => {
+        const xPos = d.data.gender === 'female' ? 30 : 500; // Perempuan di kiri, laki-laki di kanan
+        return `translate(${xPos},${d.x})`;
+    });
 
-            // Kotak di sekitar nama
-            node.append('rect')
-                .attr('x', -80) 
-                .attr('y', -30)
-                .attr('width', 160) 
-                .attr('height', 60)
-                .attr('fill', d => {
-                    if (d.data.divorce_date) {
-                        return 'red'; 
-                    } else {
-                        return 'green';
-                    }
-                } )
-                .attr('stroke', 'black')
-                .attr('stroke-width', 2);
 
-            // Tambahkan nama
-            node.append('text')
-                .attr('dy', -5)
-                .attr('x', 0)
-                .attr('text-anchor', 'middle')
-                .text(d => d.data.name)
-                .style('font-size', '14px')
-                .style('fill', 'white'); 
 
-            // Tambahkan tanggal pernikahan
-            node.append('text')
-                .attr('dy', 15) 
-                .attr('x', 0)
-                .attr('text-anchor', 'middle')
-                .text(d => d.data.married_date ? `Married: ${d.data.married_date}` : '')
-                .style('font-size', '12px')
-                .style('fill', 'white'); 
 
-            // Tambahkan tanggal cerai (jika ada)
-            node.append('text')
-                .attr('dy', 45) 
-                .attr('x', 0)
-                .attr('text-anchor', 'middle')
-                .text(d => d.data.divorce_date ? `Divorced: ${d.data.divorce_date}` : '')
-                .style('font-size', '12px')
-                .style('fill', 'red'); 
+          // Kotak di sekitar nama
+node.append('rect')
+    .attr('x', -80)
+    .attr('y', -30)
+    .attr('width', 160)
+    .attr('height', 60)
+    .attr('fill', d => {
+        // Menggunakan color dari data
+        return d.data.color === 'red' ? 'red' : 'green'; 
+    })
+    .attr('stroke', d => d.data.gender === 'female' ? '#FF00FF' : 'blue') // Warna outline sesuai gender
+    .attr('stroke-width', 4);
+
+
+// Tambahkan nama
+node.append('text')
+    .attr('dy', -10) // Ubah posisi y untuk memberi ruang atas
+    .attr('x', 0)
+    .attr('text-anchor', 'middle')
+    .text(d => d.data.name)
+    .style('font-size', '14px')
+    .style('fill', 'white'); 
+
+// Tambahkan tanggal pernikahan
+node.append('text')
+    .attr('dy', 5) // Ubah dy untuk menempatkan tanggal pernikahan
+    .attr('x', 0)
+    .attr('text-anchor', 'middle')
+    .text(d => d.data.married_date ? `Married: ${d.data.married_date}` : '')
+    .style('font-size', '12px')
+    .style('fill', 'white'); 
+
+// Tambahkan tanggal cerai (hanya untuk partner)
+node.append('text')
+    .attr('dy', 25) // Ubah dy untuk menempatkan tanggal cerai lebih rendah
+    .attr('x', 0)
+    .attr('text-anchor', 'middle')
+    .text(d => d.data.divorce_date ? `Divorced: ${d.data.divorce_date}` : '')
+    .style('font-size', '12px')
+    .style('fill', 'white'); 
+
         });
 
     var treeModal = new bootstrap.Modal(document.getElementById('treeModal'));
     treeModal.show();
-  }
+}
 </script>
-
-
-
-
 
 </body>
 </html>
