@@ -8,6 +8,7 @@
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
 
     <style>
         /* Custom CSS */
@@ -102,7 +103,7 @@
         }
 
         /* css utuk diagram modal  */
-            .diagram-container {
+        .diagram-container {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -110,73 +111,60 @@
 
         .parents {
             display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-            width: 100%;
+            justify-content: space-between;
+            width: 400px; /* Sesuaikan ukuran */
+            position: relative;
+        }
+
+        .connector-horizontal {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            width: 400px; /* Ukuran yang sama dengan parents untuk menjaga keselarasan */
+        }
+
+        .line-horizontal {
+            width: 75px; /* Panjang garis horizontal */
+            height: 2px;
+            background-color: green;
+            position: absolute;
+            left: 160px;
+            top: -60px;  /* Mengatur posisi garis agar berada di tengah antara mother dan father */
+        }
+
+        .connector-vertical {
+            display: flex;
+            justify-content: center;
+            margin: 0;
+            position: relative;
+            width: 400px; 
+        }
+
+        .line-vertical {
+            width: 2px;
+            height: 140px; /* Sesuaikan dengan tinggi yang Anda inginkan */
+            background-color: green;
+            position: relative;
+            top: -60px; /* Posisikan agar garis vertikal menyambung dengan horizontal */
+            left: -3px; /* Geser garis ke kiri */
+            margin-left: -1px; 
         }
 
         .parent {
-            border: 2px solid #007bff;
-            border-radius: 10px;
-            padding: 10px;
-            text-align: center;
-            width: 150px;
-            position: relative;
-        }
-
-        .connector {
             display: flex;
-            justify-content: center;
-            width: 100%;
-            margin-bottom: 20px;
-            position: relative;
-        }
-
-        .connector .line {
-            height: 2px;
-            width: 50%;
-            background-color: #007bff;
-            position: relative;
+            flex-direction: column;
+            align-items: center;
         }
 
         .children {
-            display: flex;
-            justify-content: center;
-            width: 100%;
+        margin-top: 0px; /* Hilangkan jarak antara garis vertikal dan kotak person */
+        display: flex;
+        justify-content: center;
+        align-items: center;
         }
 
-        .person {
-            /* border: 2px solid #28a745; */
-            border-radius: 10px;
-            padding: 10px;
-            text-align: center;
-            width: 150px;
-            position: relative;
-        }
-
-        /* Garis penghubung */
-        .parents .parent:after {
-            content: '';
-            display: block;
-            width: 2px;
-            height: 23px;
-            background: #007bff;
-            position: absolute;
-            left: 50%;
-            top: 100%;
-            transform: translateX(-50%);
-        }
-
-        .children .person:before {
-            content: '';
-            display: block;
-            width: 2px;
-            height: 37px;
-            background: #007bff;
-            position: absolute;
-            left: 50%;
-            top: -22px; /* Mengatur posisi agar di atas anak */
-            transform: translateX(-50%);
+        #person {
+            margin-top: -67px; /* Geser kotak person agar lebih dekat ke garis vertikal */
         }
 
 
@@ -303,8 +291,12 @@
                             <!-- Konten dari JS -->
                         </div>
                     </div>
-                    <div class="connector">
-                        <span class="line"></span>
+                    <div class="connector-horizontal">
+                        <span class="line-horizontal"></span>
+                    </div>
+                    <!-- Garis vertikal yang menghubungkan garis horizontal dengan person -->
+                    <div class="connector-vertical">
+                        <span class="line-vertical"></span>
                     </div>
                     <div class="children">
                         <div class="person" id="person">
@@ -325,61 +317,129 @@
 
     <script>
         function showParentModal(id) {
-    
-            $('#mother').empty();
-            $('#father').empty();
-            $('#person').empty();
 
-        
-            $.ajax({
+        $('#mother').empty();
+        $('#father').empty();
+        $('#person').empty();
+
+        $.ajax({
             url: `/get-parent/${id}`,  // Endpoint backend yang akan memberikan data orang tua
             type: 'GET',
             success: function(res) {
                 // Menampilkan data untuk ibu
                 if (res.data.mother.length > 0) {
                     $.each(res.data.mother, function(index, value) {
-                        $('#mother').append(`<p>${value.user_parent.name} (${value.parent})</p>`);
+                        let lineColor = value.user_parent.gender === 'male' ? 'blue' : 'pink';
+                        let bgColor = value.user_parent.death_date ? 'black' : 'white';
+                        let textColor = value.user_parent.death_date ? 'white' : 'black';
+                        const birthDate = value.user_parent.birth_date ? new Date(value.user_parent.birth_date).toLocaleDateString() : 'N/A';
+                        const deathDate = value.user_parent.death_date ? new Date(value.user_parent.death_date).toLocaleDateString() : '-';
+                        $('#mother').append(`
+                            <div style="background-color: ${bgColor}; color: ${textColor}; border: 2px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: 1px; font-size: 12px;">
+                                <p style="font-weight: bold; text-align: center;">${value.user_parent.name} (${value.parent})</p>
+                                <div style="display: flex; justify-content: space-between;">
+                                <p>Birth Date:</p>
+                                <p>${birthDate}</p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <p>Death Date:</p>
+                                <p>${deathDate}</p>
+                            </div>
+                        </div>
+                        `);
                     });
                 } else {
-                    $('#mother').append('<p>No data for mother</p>');
+                    $('#mother').append(`
+                        <div style=" color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px; box-sizing: border-box; text-align: center; z-index: 999px">
+                            <p style="margin: 0;">No data for mother</p>
+                        </div>
+                    `);
                 }
 
                 // Menampilkan data untuk ayah
                 if (res.data.father.length > 0) {
                     $.each(res.data.father, function(index, value) {
-                        $('#father').append(`<p>${value.user_parent.name} (${value.parent})</p>`);
+                        let lineColor = value.user_parent.gender === 'male' ? 'blue' : 'pink';
+                        let bgColor = value.user_parent.death_date ? 'black' : 'white';
+                        let textColor = value.user_parent.death_date ? 'white' : 'black';
+                        const birthDate = value.user_parent.birth_date ? new Date(value.user_parent.birth_date).toLocaleDateString() : 'N/A';
+                        const deathDate = value.user_parent.death_date ? new Date(value.user_parent.death_date).toLocaleDateString() : '-';
+                            $('#father').append(`
+                                <div style="background-color: ${bgColor}; color: ${textColor}; border: 2px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: -30px; font-size: 12px;">
+                                    <p style="font-weight: bold; text-align: center;">${value.user_parent.name} (${value.parent})</p>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <p>Birth Date:</p>
+                                        <p>${birthDate}</p>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <p>Birth Date:</p>
+                                        <p>${birthDate}</p>
+                                    </div>
+                                </div>
+                            `);
                     });
                 } else {
-                    $('#father').append('<p>No data for father</p>');
+                    $('#father').append(`
+                        <div style=" color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px;  box-sizing: border-box; text-align: center; z-index: 999px">
+                            <p style="margin: 0;">No data for father</p>
+                        </div>
+                    `);
                 }
 
                 // Menampilkan data untuk person/child
                 if (res.data.person) {
                     const person = res.data.person;
-
-                    // Mengatur warna garis berdasarkan gender
                     let lineColor = (person.gender === 'male') ? 'blue' : 'magenta';
-                    
-                    // Mengatur warna background dan text berdasarkan status kematian
                     let bgColor = person.death_date ? 'black' : 'white';
                     let textColor = person.death_date ? 'white' : 'black';
-
-                    // Format tanggal lahir dan tanggal kematian
                     const birthDate = person.birth_date ? new Date(person.birth_date).toLocaleDateString() : 'N/A';
                     const deathDate = person.death_date ? new Date(person.death_date).toLocaleDateString() : 'N/A';
-
-                    // Menampilkan data person dengan kedua tanggal
                     $('#person').append(`
-                        <div style="background-color: ${bgColor}; color: ${textColor}; border: 2px solid ${lineColor}; padding: 5px; margin: 5px; width: 180px; margin-left: -30px;">
-                            <p style="font-weight: bold;">${person.name}</p>
-                            <p>Birth Date: ${birthDate}</p>
-                            <p>Death Date: ${person.death_date ? deathDate : '-'}</p>
+                        <div style="background-color: ${bgColor}; color: ${textColor}; border: 2px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; height: 116px; margin-left: -2px; font-size: 12px;">
+                            <p style="font-weight: bold; text-align: center;">${person.name}</p>
+                            <div style="display: flex; justify-content: space-between;">
+                                <p>Birth Date:</p>
+                                <p>${birthDate}</p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <p>Death Date:</p>
+                                <p>${person.death_date ? deathDate : '-'}</p>
+                            </div>
                         </div>
                     `);
 
                 } else {
                     $('#person').append('<p>N/A</p>');
                 }
+
+                // D3.js untuk menggambar garis "T"
+                d3.select("#line-container").selectAll("*").remove();
+
+                const svg = d3.select("#line-container");
+                const width = +svg.attr("width");
+                const height = +svg.attr("height");
+                const startX = width / 2;
+                const startY = 10;
+                const endX = startX;
+                const endY = height - 10;
+                const leftX = startX - 50;
+                const rightX = startX + 50;
+
+                svg.append("line")
+                    .attr("x1", startX)
+                    .attr("y1", startY)
+                    .attr("x2", endX)
+                    .attr("y2", endY)
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 2);
+
+                svg.append("line")
+                    .attr("x1", leftX)
+                    .attr("y1", startY)
+                    .attr("x2", rightX)
+                    .attr("y2", startY)
+                    .attr("stroke", "black")
+                    .attr("stroke-width", 2);
             },
             error: function(err) {
                 console.error("Error fetching parent data:", err);
@@ -390,10 +450,11 @@
         });
     }
 
+
     </script>
 
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/boots .fr4ntrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
