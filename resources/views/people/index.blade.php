@@ -310,8 +310,6 @@
 </script>
 
 
-
-
 <div class="container-fluid py-0"> 
     <div class="row">
         <div class="col-12">
