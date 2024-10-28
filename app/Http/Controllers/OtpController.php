@@ -11,7 +11,7 @@ class OtpController extends Controller
 {
     public function sendOtp(Request $request) {
         $request->validate([
-            'phone_number'=>'required|string|min:10|max:15',
+            'phone_number'=>'required|string|min:10|max:15'
         ]);
 
         $otpCode = rand(100000, 999999);

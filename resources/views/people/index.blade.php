@@ -130,7 +130,6 @@
 <!-- Include Navbar -->
 @include('nav')
 
-
 <div class="container-fluid py-0"> 
     <div class="row">
         <div class="col-12">
@@ -139,7 +138,7 @@
                     <h5 class="mb-0" style="font-size: 20px;">People List</h5>
                     <div class="text-end">
                         <a href="{{ route('people.create') }}" class="btn btn-add">
-                            <span class="btn-add-icon"></span> [+] Add People
+                            <span class="btn-add-icon"> [+] Add People </span>
                         </a>
                     </div>
                 </div>
@@ -181,7 +180,170 @@
                                         <td colspan="7" class="text-center">No data available.</td>
                                     </tr>
                                 @else
-                                    @foreach ($people as $i => $data)
+                                                                        @php
+                                            $children = $people->filter(function($person) use ($people) {
+                                                return $person->parent_id == $people[0]->id;
+                                            })->map(function($child) {
+                                                return [
+                                                    "name" => $child->name,
+                                                    "gender" => $child->gender,
+                                                    "place_birth" => $child->place_birth,
+                                                    "birth_date" => $child->birth_date,
+                                                    "death_date" => empty($child->death_date) ? 'Not Provided' : $child->death_date,
+                                                ];
+                                            })->values();
+                                        @endphp
+
+                                        <script>
+                                            var rootPerson = {
+                                                "name": "{{ $people[0]->name }}",
+                                                "gender": "{{ $people[0]->gender }}",
+                                                "place_birth": "{{ $people[0]->place_birth }}",
+                                                "birth_date": "{{ $people[0]->birth_date }}",
+                                                "death_date": "{{ empty($people[0]->death_date) ? 'Not Provided' : $people[0]->death_date }}",
+                                                "children": @json($children)
+                                            };
+
+                                            var treeData = [rootPerson]; // Use the root person and their children
+
+                                            // D3.js logic to visualize the tree (same as before)
+                                            var margin = {top: 40, right: 90, bottom: 50, left: 90},
+                                                width = 960 - margin.left - margin.right,
+                                                height = 600 - margin.top - margin.bottom;
+
+                                            var svg = d3.select("body").append("svg")
+                                                .attr("width", width + margin.left + margin.right)
+                                                .attr("height", height + margin.top + margin.bottom)
+                                                .append("g")
+                                                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                                            var i = 0,
+                                                duration = 750,
+                                                root;
+
+                                            var treemap = d3.tree().size([height, width]);
+
+                                            // Assign the data to a hierarchy using parent-child relationships
+                                            root = d3.hierarchy(treeData[0], function(d) {
+                                                return d.children;
+                                            });
+
+                                            root.x0 = height / 2;
+                                            root.y0 = 0;
+
+                                            root.children.forEach(collapse);
+                                            update(root);
+
+                                            function collapse(d) {
+                                                if (d.children) {
+                                                    d._children = d.children;
+                                                    d._children.forEach(collapse);
+                                                    d.children = null;
+                                                }
+                                            }
+
+                                            function update(source) {
+                                                var treeData = treemap(root);
+                                                var nodes = treeData.descendants(),
+                                                    links = treeData.descendants().slice(1);
+
+                                                nodes.forEach(function(d){ d.y = d.depth * 180 });
+
+                                                var node = svg.selectAll('g.node')
+                                                    .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+                                                var nodeEnter = node.enter().append('g')
+                                                    .attr('class', 'node')
+                                                    .attr("transform", function(d) {
+                                                        return "translate(" + source.y0 + "," + source.x0 + ")";
+                                                    })
+                                                    .on('click', click);
+
+                                                nodeEnter.append('rect')
+                                                    .attr('width', 160)
+                                                    .attr('height', 80)
+                                                    .attr('x', -80)
+                                                    .attr('y', -40)
+                                                    .style("fill", "#fff");
+
+                                                nodeEnter.append('text')
+                                                    .attr("dy", "-1em")
+                                                    .attr("x", 0)
+                                                    .attr("text-anchor", "middle")
+                                                    .text(function(d) { return d.data.name; });
+
+                                                nodeEnter.append('text')
+                                                    .attr("dy", "1em")
+                                                    .attr("x", 0)
+                                                    .attr("text-anchor", "middle")
+                                                    .style("fill", "gray")
+                                                    .text(function(d) { 
+                                                        return "Gender: " + d.data.gender + " | Birth: " + d.data.birth_date + " | Death: " + d.data.death_date;
+                                                    });
+
+                                                var nodeUpdate = nodeEnter.merge(node);
+
+                                                nodeUpdate.transition()
+                                                    .duration(duration)
+                                                    .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+
+                                                var nodeExit = node.exit().transition()
+                                                    .duration(duration)
+                                                    .attr("transform", function(d) {
+                                                        return "translate(" + source.y + "," + source.x + ")";
+                                                    })
+                                                    .remove();
+
+                                                var link = svg.selectAll('path.link')
+                                                    .data(links, function(d) { return d.id; });
+
+                                                var linkEnter = link.enter().insert('path', "g")
+                                                    .attr("class", "link")
+                                                    .attr('d', function(d){
+                                                        var o = {x: source.x0, y: source.y0}
+                                                        return diagonal(o, o);
+                                                    });
+
+                                                var linkUpdate = linkEnter.merge(link);
+
+                                                linkUpdate.transition()
+                                                    .duration(duration)
+                                                    .attr('d', function(d){ return diagonal(d, d.parent); });
+
+                                                var linkExit = link.exit().transition()
+                                                    .duration(duration)
+                                                    .attr('d', function(d) {
+                                                        var o = {x: source.x, y: source.y}
+                                                        return diagonal(o, o);
+                                                    })
+                                                    .remove();
+
+                                                nodes.forEach(function(d){
+                                                    d.x0 = d.x;
+                                                    d.y0 = d.y;
+                                                });
+
+                                                function diagonal(s, d) {
+                                                    return `M ${s.y} ${s.x}
+                                                            C ${(s.y + d.y) / 2} ${s.x},
+                                                            ${(s.y + d.y) / 2} ${d.x},
+                                                            ${d.y} ${d.x}`;
+                                                }
+
+                                                function click(d) {
+                                                    if (d.children) {
+                                                        d._children = d.children;
+                                                        d.children = null;
+                                                    } else {
+                                                        d.children = d._children;
+                                                        d._children = null;
+                                                    }
+                                                    update(d);
+                                                }
+                                            }
+                                        </script>
+                                
+                                
                                         <tr>
                                             <td>{{ ($people->currentPage() - 1) * $people->perPage() + $i + 1 }}.</td>
                                             <td>{{ $data->name }}</td>

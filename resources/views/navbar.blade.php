@@ -41,9 +41,18 @@
           width: 80px;
           height: auto !important;
         }
+        .profile-image {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+    }
     </style>
 </head>
 <body>
+    @php
+        $user = auth()->user();
+        $people = \App\Models\People::where('user_id', $user->id)->first();
+    @endphp
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand ps-3" href="#">
@@ -68,18 +77,26 @@
                 <li class="nav-item">
                     <a href="{{ route('couple.index') }}" class="nav-link">Couple</a>
                 </li>
-                <li class="nav-item">
-                    <a href="{{ route('setting.index') }}" class="nav-link" aria-label="Settings">
-                        Settings 
-                        <img src="{{ asset('settings.png') }}" alt="Settings" style="width: 20px; height: 20px;">
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="User Menu">
+                        Settings
                     </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li>
+                            <a href="{{ route('setting.index') }}" class="dropdown-item" aria-label="Settings">
+                                App Setting
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('logout') }}" class="dropdown-item" id="logoutLink" aria-label="Logout">Logout</a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item">
-                    <form id="logoutForm" action="{{ route('logout') }}" method="POST" style="display: inline;">
-                        @csrf
-                        <button type="button" id="logoutButton" class="btn btn-danger" aria-label="Logout">Logout</button>
-                    </form>
-                </li>
+                    <a href="{{ route('landing.profile') }}" class="nav-link" aria-label="Profile">
+                        <img src="{{ isset($people) && $people->photo_profile ? asset('storage/' . $people->photo_profile) : asset('pdi.png') }}" class="rounded-circle profile-image" alt="Profile" />
+                    </a>
+                </li> 
             </ul>
         </div>
     </div>
@@ -99,5 +116,6 @@
       }
   });
 </script>
+
 </body>
 </html>

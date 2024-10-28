@@ -14,6 +14,7 @@ use App\Http\Controllers\ParentsPeopleController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\AppSettingController;
+use App\Http\Controllers\ProfileController;
 
     Route::get('/', function () {
         return redirect()->route('login');
@@ -52,7 +53,27 @@ use App\Http\Controllers\AppSettingController;
         Route::get('/couple', [CoupleController::class, 'index'])->name('couple.index');
         Route::get('/couple-tree/{id}', [CoupleController::class, 'getTreeData'])->name('couple.tree');
 
+        // PROFILE
+        Route::prefix('/profile')->group(function () {
+            Route::get('/', [ProfileController::class, 'profile'])->name('landing.profile');
+            Route::post('/', [ProfileController::class, 'profileUpdate'])->name('update.profile');
+            Route::post('/password', [ProfileController::class, 'updatePassword'])->name('update.password');
+            Route::post('/change-phone', [ProfileController::class, 'changePhone'])->name('change-phone-customer');
+            Route::get('/change-phone', [ProfileController::class, 'changePhone'])->name('change-phone-customer');
+            Route::get('/validate-otp', [ProfileController::class, 'showOtpForm'])->name('validate-otp-phone');
+            Route::post('/validate-otp', [ProfileController::class, 'showOtpForm'])->name('validate-otp-phone');
+            Route::post('/validate-otp', [ProfileController::class, 'showValidateOtpCustomer'])->name('validate-otp-customer');
+        });
+        
+        route::prefix('/edit')->group(function () {
 
+            Route::get('/phone', [ProfileController::class, 'editPhone'])->name('change-phone');
+            Route::get('/profile', [ProfileController::class, 'editProfile'])->name('landing.edit');
+            Route::get('/password', [ProfileController::class, 'changePass'])->name('landing.change');
+        });
+
+        // BUTTON BACK
+        Route::get('/back-redirect', [ProfileController::class, 'backRedirect'])->name('backRedirect');
     });
 
     // ROLE: PEOPLE
@@ -83,6 +104,7 @@ use App\Http\Controllers\AppSettingController;
     
     // AUTH 
     Route::middleware(['auth'])->group(function(){
+        Route::get('logout', [LogoutController::class, 'logout'])->name('logout');
         Route::post('logout', [LogoutController::class, 'logout'])->name('logout');
 
         Route::get('/people/claim', [PeopleController::class, 'showClaimForm'])->name('people.claim');

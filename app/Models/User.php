@@ -51,6 +51,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function profile(): BelongsTo
+    {
+        return $this->belongsTo(People::class, 'people_id', 'id');
+    }
+
     public function people(): HasMany {
         return $this->hasMany(People::class);
     }

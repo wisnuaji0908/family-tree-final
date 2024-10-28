@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('place_birth');
             $table->date('birth_date');
             $table->date('death_date')->nullable();
+            $table->string('photo_profile')->nullable();
             $table->timestamps();
         });
     }

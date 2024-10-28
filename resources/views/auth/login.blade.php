@@ -97,7 +97,7 @@
                                 </div>
                                 <!-- Phone Number input -->
                                 <div class="form-floating mb-4">
-                                    <input type="number" class="form-control {{ $errors->has('phone_number') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="Input" name="phone_number" autocomplete="off">
+                                    <input type="number" class="form-control {{ $errors->has('phone_number') ? 'is-invalid' : '' }}" id="floatingInput" placeholder="Input" name="phone_number" autocomplete="off" value="{{ old('phone_number') }}">
                                     <label for="floatingInput">Phone Number</label>
                                     @error('phone_number')
                                         <div class="invalid-feedback">{{ $message }}</div>
