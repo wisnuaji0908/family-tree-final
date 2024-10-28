@@ -150,7 +150,7 @@
             position: absolute; /* Memungkinkan penempatan tepat */
             top: 390px; /* Atur ini untuk menggeser garis ke atas, misalnya 25px */
             left: 34%; /* Mengatur ke tengah secara horizontal */
-            transform: translateX(103%); /* Menggeser garis ke kiri agar sejajar */
+            transform: translateX(102%); /* Menggeser garis ke kiri agar sejajar */
         }
 
 
@@ -162,6 +162,67 @@
             position: relative; /* Agar properti top bekerja */
             top: -70px; /* Atur untuk menaikkan elemen */
             left: 200px; /* Geser sedikit ke kanan, sesuaikan nilainya */
+        }
+        
+
+        /* CSS untuk bagan orang tua pasangan */
+        .couple-parents {
+            display: flex; /* Mengatur tampilan dalam baris */
+            justify-content: center; /* Pusatkan konten secara horizontal */
+            margin-top: 20px; /* Jarak atas untuk pemisahan */
+        }
+
+        .couple-parent {
+            display: flex;
+            flex-direction: column; /* Susun orang tua secara vertikal
+             */
+            align-items: center; /* Pusatkan konten */
+            margin: 0 30px; /* Jarak antar orang tua */
+        }
+
+        .couple-parent-box {
+            padding: 15px; /* Padding yang lebih besar untuk ruang */
+            border-radius: 10px; /* Radius sudut yang lebih besar */
+            width: 180px; /* Lebar yang sedikit lebih besar */
+            border: 2px solid #ccc; /* Warna batas default */
+            outline: 2px solid transparent; /* Outline default yang transparan */
+            outline-offset: 2px; /* Jarak antara outline dan border */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Efek bayangan yang lebih kuat */
+            transition: transform 0.3s, outline 0.3s, box-shadow 0.3s; /* Efek transisi lebih halus */
+            background-color: #ffffff; /* Warna latar belakang */
+        }
+
+        .couple-parent-box:hover {
+            transform: scale(1.05); /* Meningkatkan ukuran saat hover */
+            border-color: #007bff; /* Mengubah warna batas saat hover */
+            outline-color: #007bff; /* Mengubah warna outline saat hover */
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3); /* Efek bayangan saat hover */
+        }
+
+        .couple-parent-title {
+            font-weight: bold;
+            text-align: center; /* Pusatkan teks */
+            color: #333; /* Warna teks judul */
+            margin-bottom: 8px; /* Jarak bawah untuk pemisahan */
+            font-size: 14px; /* Ukuran font yang lebih besar */
+        }
+
+        .couple-parent-details {
+            display: flex;
+            justify-content: space-between; /* Ruang antara label dan data */
+            font-size: 13px; /* Ukuran font untuk detail */
+            color: #555; /* Warna teks detail */
+        }
+
+        /* Gaya untuk garis penghubung antara orang tua dan pasangan */
+        .couple-parent-connector {
+            width: 60px; /* Panjang garis penghubung yang lebih panjang */
+            height: 3px; /* Ketebalan garis yang lebih tebal */
+            background-color: green; /* Warna garis penghubung */
+            margin: 5px auto; /* Jarak atas-bawah untuk pusatkan garis secara horizontal */
+            position: relative; /* Memungkinkan penempatan tepat */
+            top: -8px; /* Mengatur posisi garis */
+            border-radius: 2px; /* Menambahkan sudut melingkar pada garis penghubung */
         }
 
 
@@ -310,36 +371,109 @@
 
                 // Menampilkan data untuk couple
                 if (res.data.couple && res.data.couple.length > 0) { 
-                    
-                    const couple = res.data.couple[0];
-                    const coupleId = couple.partner;
-                    console.log(coupleId);
-                    let lineColor = (coupleId.gender === 'male') ? 'blue' : 'magenta';
-                    let bgColor = couple.divorce_date ? 'red' : 'green';
-                    let textColor = couple.divorce_date ? 'green' : 'red';
-                    const birthDate = coupleId.birth_date ? new Date(coupleId.birth_date).toLocaleDateString() : 'N/A';
-                    const divorceDate = couple.divorce_date ? new Date(couple.divorce_date).toLocaleDateString() : '-';
-                    $('#couple').append(`
-                        <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: 0; font-size: 12px; border-radius: 8%;">
-                            <p style="font-weight: bold; text-align: center;">${coupleId.name} (Couple)</p>
-                            <div style="display: flex; justify-content: space-between;">
-                                <p>Birth Date:</p>
-                                <p>${birthDate}</p>
-                            </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <p>Divorce Date:</p>
-                                <p>${divorceDate}</p>
-                            </div>
+                const couple = res.data.couple[0];
+                const coupleId = couple.partner;
+                console.log(coupleId);
+                let lineColor = (coupleId.gender === 'male') ? 'blue' : 'magenta';
+                let bgColor = couple.divorce_date ? 'red' : 'green';
+                let textColor = couple.divorce_date ? 'white' : 'white';
+                const birthDate = coupleId.birth_date ? new Date(coupleId.birth_date).toLocaleDateString() : 'N/A';
+                const divorceDate = couple.divorce_date ? new Date(couple.divorce_date).toLocaleDateString() : '-';
+
+                // Panggil fungsi untuk mendapatkan orang tua pasangan
+                getCoupleParents(coupleId.id);
+
+                // Setelah mendapatkan orang tua, tampilkan data pasangan
+                $('#couple').append(`
+                    <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: 0; font-size: 12px; border-radius: 8%;">
+                        <p style="font-weight: bold; text-align: center;">${coupleId.name} (couple)</p>
+                        <div style="display: flex; justify-content: space-between;">
+                            <p>Birth Date:</p>
+                            <p>${birthDate}</p>
                         </div>
-                    `);
-                } else {
-                    $('#couple').append(`
-                        <div style="color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px; box-sizing: border-box; text-align: center; border-radius: 8%;">
-                            <p style="margin: 0;">No data for couple</p>
+                        <div style="display: flex; justify-content: space-between;">
+                            <p>Divorce Date:</p>
+                            <p>${divorceDate}</p>
                         </div>
-                    `);
+                    </div>
+                `);
+            } else {
+                $('#couple').append(`
+                    <div style="color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px; box-sizing: border-box; text-align: center; border-radius: 8%;">
+                        <p style="margin: 0;">No data for couple</p>
+                    </div>
+                `);
+            }
+
+            // Fungsi untuk mendapatkan orang tua pasangan
+            function getCoupleParents(coupleId) {
+                $.ajax({
+                    url: `/get-parent-people/${coupleId}`, // Ganti dengan endpoint yang sesuai untuk mendapatkan orang tua pasangan
+                    type: 'GET',
+                    success: function(res) {
+                        // Menampilkan data orang tua untuk pasangan
+                        if (res.data.mother.length > 0) {
+                            $.each(res.data.mother, function(index, value) {
+                                let lineColor = value.user_parent.gender === 'male' ? 'blue' : 'magenta';
+                                let bgColor = value.user_parent.death_date ? 'black' : 'white';
+                                let textColor = value.user_parent.death_date ? 'white' : 'black';
+                                const birthDate = value.user_parent.birth_date ? new Date(value.user_parent.birth_date).toLocaleDateString() : 'N/A';
+                                const deathDate = value.user_parent.death_date ? new Date(value.user_parent.death_date).toLocaleDateString() : '-';
+                                $('#couple').append(`
+                                    <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: 1px; font-size: 12px; border-radius: 8%;">
+                                        <p style="font-weight: bold; text-align: center;">${value.user_parent.name} (mother)</p>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <p>Birth Date:</p>
+                                            <p>${birthDate}</p>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <p>Death Date:</p>
+                                            <p>${deathDate}</p>
+                                        </div>
+                                    </div>
+                                `);
+                            });
+                        } else {
+                            $('#couple').append(`
+                                <div style="color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px; box-sizing: border-box; text-align: center; border-radius: 8%;">
+                                    <p style="margin: 0;">No data for mother</p>
+                                </div>
+                            `);
+                        }
+
+                        if (res.data.father.length > 0) {
+                            $.each(res.data.father, function(index, value) {
+                                let lineColor = value.user_parent.gender === 'male' ? 'blue' : 'magenta';
+                                let bgColor = value.user_parent.death_date ? 'black' : 'white';
+                                let textColor = value.user_parent.death_date ? 'white' : 'black';
+                                const birthDate = value.user_parent.birth_date ? new Date(value.user_parent.birth_date).toLocaleDateString() : 'N/A';
+                                const deathDate = value.user_parent.death_date ? new Date(value.user_parent.death_date).toLocaleDateString() : '-';
+                                $('#couple').append(`
+                                    <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: -30px; font-size: 12px; border-radius: 8%;">
+                                        <p style="font-weight: bold; text-align: center;">${value.user_parent.name} (father)</p>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <p>Birth Date:</p>
+                                            <p>${birthDate}</p>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <p>Death Date:</p>
+                                            <p>${deathDate}</p>
+                                        </div>
+                                    </div>
+                                `);
+                            });
+                        } else {
+                            $('#couple').append(`
+                                <div style="color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px; box-sizing: border-box; text-align: center; border-radius: 8%;">
+                                    <p style="margin: 0;">No data for father</p>
+                                </div>
+                            `);
+                        }
+                    }
                     
-                }
+                });
+            }
+
             }
         });
     }
