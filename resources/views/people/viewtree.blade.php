@@ -12,7 +12,7 @@
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <style>
         /* CSS untuk diagram */
-        body {
+         body {
             background-color: #f5f7fa;
             font-family: 'Poppins', sans-serif;
             font-size: 15px; 
@@ -81,6 +81,91 @@
         #person {
             margin-top: -67px; /* Geser kotak person agar lebih dekat ke garis vertikal */
         }
+
+        .modal-dialog {
+            max-width: 800px; /* Perbesar ukuran modal */ 
+        }
+
+
+        .modal-content {
+            padding: 20px; /* Tambahkan padding agar tidak terlalu mepet */
+        }
+
+        #treeContainer {
+            width: 100%; /* Atur agar memenuhi lebar modal */
+            height: 600px; /* Atur agar cukup tinggi */
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+            overflow-x: auto; /* Jika konten lebih besar dari container, memungkinkan scrolling horizontal */
+        }
+        .couple {
+            margin-top: -67px; /* Sama seperti person */
+            margin-left: 20px; /* Jarak antara person dan couple */
+        }
+
+        #couple {
+            margin-top: -67px; /* Sama seperti person */
+        }
+        .person-couple-container {
+            display: flex;
+            align-items: flex-start; /* Ubah ini untuk menjadikan posisi ke atas */
+        }
+
+        .person-box, .couple-box {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px;
+            width: 160px;
+        }
+
+        .family-tree {
+        display: flex; /* Gunakan flexbox untuk menyusun elemen secara horizontal */
+        justify-content: center; /* Pusatkan konten */
+        align-items: flex-start; /* Sesuaikan posisi vertikal */
+        }
+
+        .people {
+            display: flex; /* Mengatur people agar tampil bersebelahan */
+            flex-direction: column; /* Bagan orang dalam satu kolom */
+            margin-right: 20px; /* Ruang antara people dan couple */
+        }
+
+        .couple {
+            display: flex; /* Mengatur couple agar tampil bersebelahan */
+            flex-direction: column; /* Bagan pasangan dalam satu kolom */
+        }
+
+        .connector-couple {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px; /* Sesuaikan ukuran */
+        }
+
+        .line-couple {
+            width: 274px; /* Panjang garis yang bisa disesuaikan */
+            height: 2px;
+            background-color: green;
+            position: absolute; /* Memungkinkan penempatan tepat */
+            top: 390px; /* Atur ini untuk menggeser garis ke atas, misalnya 25px */
+            left: 34%; /* Mengatur ke tengah secara horizontal */
+            transform: translateX(103%); /* Menggeser garis ke kiri agar sejajar */
+        }
+
+
+        .couple-box {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 0px;
+            width: 1px; /* Pastikan ini sesuai dengan yang diinginkan */
+            position: relative; /* Agar properti top bekerja */
+            top: -70px; /* Atur untuk menaikkan elemen */
+            left: 200px; /* Geser sedikit ke kanan, sesuaikan nilainya */
+        }
+
+
+
     </style>
 </head>
 <body>
@@ -111,6 +196,17 @@
                 <!-- Konten dari JS -->
             </div>
         </div>
+        <div class="person-couple-container">
+        <div id="people" class="person-box">
+            <!-- Data people akan di-append di sini -->
+        </div>
+        <div class="connector-couple">
+            <div class="line-couple"></div>
+        </div>
+        <div id="couple" class="couple-box">
+            <!-- Data couple akan di-append di sini -->
+        </div>
+       </div>
     </div>
 </div>
 
@@ -123,14 +219,15 @@
         $('#mother').empty();
         $('#father').empty();
         $('#person').empty();
+        $('#couple').empty();
 
         $.ajax({
-            url: `/get-parent/${id}`,  // Endpoint backend yang akan memberikan data orang tua
+            url: `/get-parent-people/${id}`,  // Endpoint backend yang akan memberikan data orang tua
             type: 'GET',
             success: function(res) {
                 // Menampilkan data untuk ibu
                 if (res.data.mother.length > 0) {
-                    $.each(res.data.mother, function(index, value) {
+                    $.each(res.data.mother, function(index, value) {    
                         let lineColor = value.user_parent.gender === 'male' ? 'blue' : 'magenta';
                         let bgColor = value.user_parent.death_date ? 'black' : 'white';
                         let textColor = value.user_parent.death_date ? 'white' : 'black';
@@ -195,34 +292,61 @@
                     let bgColor = person.death_date ? 'black' : 'white';
                     let textColor = person.death_date ? 'white' : 'black';
                     const birthDate = person.birth_date ? new Date(person.birth_date).toLocaleDateString() : 'N/A';
-                    const deathDate = person.death_date ? new Date(person.death_date).toLocaleDateString() : 'N/A';
+                    const deathDate = person.death_date ? new Date(person.death_date).toLocaleDateString() : '-';
                     $('#person').append(`
-                        <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; height: 116px; margin-left: -2px; font-size: 12px; border-radius: 8%;">
-                            <p style="font-weight: bold; text-align: center;">${person.name}</p>
+                        <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: 0; font-size: 12px; border-radius: 8%;">
+                            <p style="font-weight: bold; text-align: center;">${person.name} (people)</p>
                             <div style="display: flex; justify-content: space-between;">
                                 <p>Birth Date:</p>
                                 <p>${birthDate}</p>
                             </div>
                             <div style="display: flex; justify-content: space-between;">
                                 <p>Death Date:</p>
-                                <p>${person.death_date ? deathDate : '-'}</p>
+                                <p>${deathDate}</p>
+                            </div>
+                        </div>
+                    `);
+                }
+
+                // Menampilkan data untuk couple
+                if (res.data.couple && res.data.couple.length > 0) { 
+                    
+                    const couple = res.data.couple[0];
+                    const coupleId = couple.partner;
+                    console.log(coupleId);
+                    let lineColor = (coupleId.gender === 'male') ? 'blue' : 'magenta';
+                    let bgColor = couple.divorce_date ? 'red' : 'green';
+                    let textColor = couple.divorce_date ? 'green' : 'red';
+                    const birthDate = coupleId.birth_date ? new Date(coupleId.birth_date).toLocaleDateString() : 'N/A';
+                    const divorceDate = couple.divorce_date ? new Date(couple.divorce_date).toLocaleDateString() : '-';
+                    $('#couple').append(`
+                        <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: 0; font-size: 12px; border-radius: 8%;">
+                            <p style="font-weight: bold; text-align: center;">${coupleId.name} (Couple)</p>
+                            <div style="display: flex; justify-content: space-between;">
+                                <p>Birth Date:</p>
+                                <p>${birthDate}</p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <p>Divorce Date:</p>
+                                <p>${divorceDate}</p>
                             </div>
                         </div>
                     `);
                 } else {
-                    $('#person').append('<p>N/A</p>');
+                    $('#couple').append(`
+                        <div style="color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px; box-sizing: border-box; text-align: center; border-radius: 8%;">
+                            <p style="margin: 0;">No data for couple</p>
+                        </div>
+                    `);
+                    
                 }
-            },
-            error: function(err) {
-                console.error(err);
-                alert('Error fetching data');
             }
         });
     }
 
-    // Panggil fungsi dengan id yang sesuai
+    // Panggil fungsi saat halaman dimuat
     $(document).ready(function() {
-        showParentDiagram(1); // Ganti 1 dengan id yang sesuai
+        showParentDiagram({{ $person->id }}); 
     });
 </script>
 </body>

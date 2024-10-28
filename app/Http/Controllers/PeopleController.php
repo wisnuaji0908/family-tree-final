@@ -35,7 +35,7 @@ class PeopleController extends Controller
             'gender' => 'required|string',
             'place_birth' => 'required|string|max:255',
             'birth_date' => 'required|date',
-            'death_date' => 'nullable|date',
+            'death_date' => 'nullable|date|after_or_equal:birth_date',
         ]);
 
         $userId = Auth::id();
@@ -93,7 +93,7 @@ class PeopleController extends Controller
         $setting = Setting::first();
         return view('people.viewtree', compact('person', 'parents', 'couple', 'setting'));
     }
-
+  
     
     public function showClaimForm()
     {   

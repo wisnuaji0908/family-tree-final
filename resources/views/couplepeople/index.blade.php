@@ -175,19 +175,20 @@
                                                 <td class="{{ $couplesperson->divorce_date ? '' : 'text-danger' }}">
                                                     {{ $couplesperson->divorce_date ?? 'Divorce Date Not Provided' }}
                                                 </td>
-                                                <td class="text-center action-buttons">
+                                                <td class="text-center">
                                                 @if(auth()->user()->id === $couplesperson->user_id)
                                                     <a href="{{ route('peoplecouple.edit', $couplesperson->id) }}" class="btn btn-sm btn-edit me-2">Edit</a>
                                                     <form action="{{ route('peoplecouple.destroy', $couplesperson->id) }}" method="POST" class="d-inline">
+                                                        <a href="#" class="btn btn-sm ms-2" style="background-color: #51A783; color: white;" onclick="viewTree({{ $couplesperson->people->id }})">View Couple</a>
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
+                                                        <button type="submit" class="btn btn-sm btn-delete ms-2" onclick="return confirm('Are you sure?')">Delete</button>
                                                     </form>
-                                                    <a href="#" class="btn btn-sm btn-info ms-2" onclick="viewTree({{ $couplesperson->people->id }})">View Tree</a>
                                                 @else
                                                     <span class="text-muted">No actions available</span>
                                                 @endif
-                                                </td>
+                                            </td>
+
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -207,122 +208,120 @@
     </div>
 
     <!-- Modal -->
-<div class="modal fade" id="treeModal" tabindex="-1" aria-labelledby="treeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="treeModalLabel">Couple Tree</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="treeContainer"></div> <!-- Tempat untuk diagram -->
+    <div class="modal fade" id="treeModal" tabindex="-1" aria-labelledby="treeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="treeModalLabel">Couple Tree</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="treeContainer"></div> <!-- Tempat untuk diagram -->
+                </div>
             </div>
         </div>
     </div>
-</div>
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script>
-  function viewTree(peopleId) {
-    fetch(`/couple-people-tree/${peopleId}`)
-    .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            document.getElementById('treeContainer').innerHTML = ''; 
+    function viewTree(peopleId) {
+        fetch(`/couple-people-tree/${peopleId}`)
+        .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                document.getElementById('treeContainer').innerHTML = ''; 
 
-            const width = 800; 
-            const height = 600; 
+                const width = 800; 
+                const height = 600; 
 
-            const svg = d3.select("#treeContainer").append("svg")
-               .attr("width", width)
-               .attr("height", height)
-               .append("g")
-               .attr("transform", "translate(100,50)"); 
+                const svg = d3.select("#treeContainer").append("svg")
+                .attr("width", width)
+                .attr("height", height)
+                .append("g")
+                .attr("transform", "translate(100,50)"); 
 
-            const root = d3.hierarchy(data);
-            const treeLayout = d3.tree().size([height - 200, width - 300]); 
+                const root = d3.hierarchy(data);
+                const treeLayout = d3.tree().size([height - 200, width - 300]); 
 
-            treeLayout(root);
+                treeLayout(root);
 
-            // Create links
-            svg.selectAll('line')
-                .data(root.links())
-                .enter()
-                .append('line')
-                .attr('x1', d => d.source.y)
-                .attr('y1', d => d.source.x)
-                .attr('x2', d => d.target.y)
-                .attr('y2', d => d.target.x)
-                .attr('stroke', 'black')
-                .attr('stroke-width', 2);
+                // Create links
+                svg.selectAll('line')
+                    .data(root.links())
+                    .enter()
+                    .append('line')
+                    .attr('x1', d => d.source.y)
+                    .attr('y1', d => d.source.x)
+                    .attr('x2', d => d.target.y)
+                    .attr('y2', d => d.target.x)
+                    .attr('stroke', 'black')
+                    .attr('stroke-width', 2);
 
-            // Create nodes
-            const node = svg.selectAll('g.node')
-                .data(root.descendants())
-                .enter()
-                .append('g')
-                .attr('class', 'node')
-                .attr('transform', d => `translate(${d.y},${d.x})`);
+                // Create nodes 
+                const node = svg.selectAll('g.node')
+                    .data(root.descendants())
+                    .enter()
+                    .append('g')
+                    .attr('class', 'node')
+                    .attr('transform', d => `translate(${d.y},${d.x})`);
 
-             // Kotak di sekitar nama
-node.append('rect')
-    .attr('x', -80) 
-    .attr('y', -40) // Ubah y untuk memberikan ruang ekstra
-    .attr('width', 160) 
-    .attr('height', 80) // Tinggi kotak ditambah untuk menampung lebih banyak teks
-    .attr('fill', d => {
-        const hasDivorced = d.data.divorce_date !== null; // Apakah ada perceraian
-        const hasNewPartner = d.parent && d.parent.children.some(child => child.data.divorce_date === null); // Apakah ada pasangan baru
+                // Kotak di sekitar nama
+                node.append('rect')
+                    .attr('x', -80) 
+                    .attr('y', -40) // Ubah y untuk memberikan ruang ekstra
+                    .attr('width', 160) 
+                    .attr('height', 80) // Tinggi kotak ditambah untuk menampung lebih banyak teks
+                    .attr('fill', d => {
+                        const hasDivorced = d.data.divorce_date !== null; // Apakah ada perceraian
+                        const hasNewPartner = d.parent && d.parent.children.some(child => child.data.divorce_date === null); // Apakah ada pasangan baru
 
-        if (d.parent) {
-            if (hasDivorced) {
-                return 'red'; // Partner yang bercerai
-            }
-            return 'green'; // Person dan partner baru
-        }
-        return 'green'; // Kotak hijau jika tidak ada perceraian
-    })
-    .attr('stroke', d => {
-        return d.data.gender === 'female' ? '#FF00FF' : 'blue'; // Outline gender
-    })
-    .attr('stroke-width', 4); // Ketebalan outline
+                        if (d.parent) {
+                            if (hasDivorced) {
+                                return 'red'; // Partner yang bercerai
+                            }
+                            return 'green'; // Person dan partner baru
+                        }
+                        return 'green'; // Kotak hijau jika tidak ada perceraian
+                    })
+                    .attr('stroke', d => {
+                        return d.data.gender === 'female' ? '#FF00FF' : 'blue'; // Outline gender
+                    })
+                    .attr('stroke-width', 4); // Ketebalan outline
 
-// Tambahkan nama
-node.append('text')
-    .attr('dy', -25) // Ubah posisi y untuk memberi ruang atas
-    .attr('x', 0)
-    .attr('text-anchor', 'middle')
-    .text(d => d.data.name)
-    .style('font-size', '14px')
-    .style('fill', 'white'); 
+                // Tambahkan nama
+                node.append('text')
+                    .attr('dy', -25) // Ubah posisi y untuk memberi ruang atas
+                    .attr('x', 0)
+                    .attr('text-anchor', 'middle')
+                    .text(d => d.data.name)
+                    .style('font-size', '14px')
+                    .style('fill', 'white'); 
 
-// Tambahkan tanggal pernikahan
-node.append('text')
-    .attr('dy', 5) // Ubah dy untuk menempatkan tanggal pernikahan
-    .attr('x', 0)
-    .attr('text-anchor', 'middle')
-    .text(d => d.data.married_date ? `Married: ${d.data.married_date}` : '')
-    .style('font-size', '12px')
-    .style('fill', 'white'); 
+                // Tambahkan tanggal pernikahan
+                node.append('text')
+                    .attr('dy', 5) // Ubah dy untuk menempatkan tanggal pernikahan
+                    .attr('x', 0)
+                    .attr('text-anchor', 'middle')
+                    .text(d => d.data.married_date ? `Married: ${d.data.married_date}` : '')
+                    .style('font-size', '12px')
+                    .style('fill', 'white'); 
 
-// Tambahkan tanggal cerai (hanya untuk partner)
-node.append('text')
-    .attr('dy', 25) // Ubah dy untuk menempatkan tanggal cerai lebih rendah
-    .attr('x', 0)
-    .attr('text-anchor', 'middle')
-    .text(d => d.data.divorce_date ? `Divorced: ${d.data.divorce_date}` : '')
-    .style('font-size', '12px')
-    .style('fill', 'white'); 
-        });
+                // Tambahkan tanggal cerai (hanya untuk partner)
+                node.append('text')
+                    .attr('dy', 25) // Ubah dy untuk menempatkan tanggal cerai lebih rendah
+                    .attr('x', 0)
+                    .attr('text-anchor', 'middle')
+                    .text(d => d.data.divorce_date ? `Divorced: ${d.data.divorce_date}` : '')
+                    .style('font-size', '12px')
+                    .style('fill', 'white'); 
+                        });
 
-    var treeModal = new bootstrap.Modal(document.getElementById('treeModal'));
-    treeModal.show();
-}
+                    var treeModal = new bootstrap.Modal(document.getElementById('treeModal'));
+                    treeModal.show();
+                }
 
-</script>
-
-</body>
+                </script>
+        </body>
 </html>
 
