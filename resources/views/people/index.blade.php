@@ -118,6 +118,12 @@
         .hide {
             visibility: hidden;
         }
+        .btn-light-green {
+            background-color: #51A783; 
+            color: white; 
+            border: none; 
+        }
+
     </style>
 </head>
 <body>
@@ -353,6 +359,7 @@
                                             </td>
                                             <td class="text-center">
                                                 <a href="{{ route('people.edit', $data->id) }}" class="btn btn-sm btn-edit">Edit</a>
+                                                <a href="{{ route('people.viewtree', $data->id) }}" class="btn btn-sm btn-light-green">View Tree</a>
                                                 <form action="{{ route('people.destroy', $data->id) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
