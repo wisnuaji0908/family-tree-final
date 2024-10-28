@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User; // Model untuk menangani user dengan email
-use App\Models\Customer; // Model untuk menangani customer dengan nomor telepon
+use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -36,7 +35,8 @@ class ForgotPasswordController extends Controller
             $customer = User::where('phone_number', $identifier)->first();
             if (!$customer) {
                 \Log::error('Nomor telepon tidak ditemukan.');
-                return back()->withErrors(['identifier' => 'Nomor telepon tidak ditemukan.']);
+                return back()->withErrors(['identifier' => 'Nomor telepon tidak ditemukan.'])
+                ->withInput($request->only('identifier'));
             }
 
             \Log::info('User ditemukan: ' . $customer->phone_number);
@@ -69,7 +69,7 @@ class ForgotPasswordController extends Controller
             if ($apiResponse->failed()) {
                 \Log::error($apiResponse->json());
                 \Log::error('Gagal mengirim OTP ke nomor telepon: ' . $customer->phone_number);
-                return back()->withErrors(['identifier' => 'Gagal mengirim OTP.']);
+                return back()->withErrors(['identifier' => 'Failed to send the OTP.'])->withInput($request->only('identifier'));
             }
 
             \Log::info("OTP telah dikirim ke nomor telepon: " . $customer->phone_number);
@@ -78,7 +78,7 @@ class ForgotPasswordController extends Controller
             $request->session()->put('identifier', $identifier);
 
             // Redirect ke halaman verifikasi OTP dengan membawa identifier (nomor telepon)
-            return redirect()->route('otp.verify')->with('identifier', $identifier);
+            return redirect()->route('otp.verify')->with('identifier', $identifier)->withInput($request->only('identifier'));
         }
 
         \Log::error('Identifier bukan nomor telepon.');
@@ -103,7 +103,8 @@ class ForgotPasswordController extends Controller
 
         if (!$customer) {
             \Log::info("Customer tidak ditemukan dengan nomor telepon: " . $request->input('identifier'));
-            return back()->withErrors(['identifier' => 'Nomor telepon tidak ditemukan.']);
+            return back()->withErrors(['identifier' => 'Nomor telepon tidak ditemukan.'])
+             ->withInput($request->only('identifier'));
         }
 
         // Update password customer
@@ -152,7 +153,7 @@ class ForgotPasswordController extends Controller
         // Periksa apakah OTP valid
         if ($inputOtp != $tokenData->token) {
             \Log::info("OTP tidak valid.");
-            return back()->withErrors(['otp' => 'OTP tidak valid.']);
+            return back()->withErrors(['otp' => 'OTP tidak valid.'])->withInput($request->only('identifier'));
         }
 
         \Log::info("OTP valid, melanjutkan proses reset password.");

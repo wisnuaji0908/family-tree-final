@@ -26,8 +26,8 @@
             box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
             padding: 30px; 
-            width: 90%; 
-            max-width: 350px; 
+            width: 95%; /* Increased width */
+            max-width: 500px; /* Increased max-width for a larger card */
             text-align: center;
         }
         .logo-container {
@@ -36,13 +36,13 @@
             align-items: center;
             margin-bottom: 15px; 
         }
-
+    
         .logo-container img {
             width: 70px;
             height: auto;
             margin-bottom: 10px; 
         }
-
+    
         #preview-logo {
             display: none; 
             width: 70px; 
@@ -50,7 +50,7 @@
             margin-top: 10px; 
             position: relative; 
         }
-
+    
         .app-name {
             font-size: 1.3em;
             font-weight: bold;
@@ -113,9 +113,13 @@
             margin-bottom: 15px; 
         }
         label {
-            margin-top: 10px; 
+            display: block;
+            margin-bottom: 5px; 
+            font-weight: 500;   
+            color: #333;  
         }
     </style>
+    
 </head>
 <body>
     <div class="container">
@@ -133,7 +137,8 @@
             @endif
             <img id="preview-logo" src="#" alt="New Logo"> 
         </div>
-        <form action="{{ route('setting.update', $setting->id) }}" method="POST" enctype="multipart/form-data" onsubmit="return showPreview();">            @csrf
+        <form action="{{ route('setting.update', $setting->id) }}" method="POST" enctype="multipart/form-data" onsubmit="return showPreview();">            
+            @csrf
             @method('PUT')
             <div class="mb-3">
                 <label for="app_name" class="form-label">App Name</label>

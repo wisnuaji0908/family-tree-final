@@ -18,6 +18,7 @@ class People extends Model
         'place_birth',
         'birth_date',
         'death_date',
+        'photo_profile',
     ];
 
     public function user(){
