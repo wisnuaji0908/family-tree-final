@@ -12,44 +12,25 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
-
-
-class ProfileController extends Controller
+class ProfilePeopleController extends Controller
 {
-    public function profile()
-    {
+    public function profile(){
+
         $setting = Setting::first();
         $user = auth()->user();
         $people = People::where('user_id', $user->id)->first();
         
-
-        return view('profile.index', compact('user', 'people', 'setting'));
+        return view('profilepeople.index', compact('setting', 'user', 'people'));
     }
 
-    public function editPhone(){
+    public function profileUpdate(Request $request){
 
-        $setting = Setting::first();
-
-        return view('profile.changephone', compact('setting'));
-    }
-
-    public function editProfile(){
-
-        $setting = Setting::first();
-        $user = auth()->user(); 
-        $people = People::where('user_id', $user->id)->first();
-
-        return view('profile.editprofile', compact('setting', 'user', 'people'));
-    }
-
-    public function profileUpdate(Request $request)
-    {
     $request->validate([
         'name' => 'required|string|max:255',
         'phone' => 'required|numeric',
         'born' => 'required|date',
         'gender' => 'required|in:male,female',
-        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048' // Validate the photo
+        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
     ]);
 
     $user = Auth::user();
@@ -74,33 +55,24 @@ class ProfileController extends Controller
         $profileData['photo_profile'] = $request->file('photo')->store('profiles', 'public');
     }
 
-    $profile->update($profileData);
+        $profile->update($profileData);
 
-    return redirect()->route('landing.profile')->with('success', 'Profile updated successfully');
-}
-    
-
-    public function changePass(){
-
-        $setting = Setting::first();
-        $user = auth()->user();
-        $people = People::where('user_id', $user->id)->first();$setting = Setting::first();
-
-        return view('profile.changepass', compact('setting', 'user', 'people'));
+        return redirect()->route('landing.profile.people')->with('success', 'Profile updated successfully');
 
     }
-
+    
     public function updatePassword(Request $request){
         
         $request->validate([
             'current_password' => 'required',
-            'password' => 'required | string | min:3 | confirmed'
+            'password' => 'required | string | min:3 | confirmed',
+            'password_confirmation' => 'required'
         ]);
 
         $user = Auth::user();
 
         if (!Hash::check($request->current_password, $user->password)) {
-            return redirect()->route('landing.change')->with('warning', 'Current password does not match.');
+            return redirect()->route('landing.change.people')->with('warning', 'Current password does not match.');
         }
 
         $user->update([
@@ -118,7 +90,17 @@ class ProfileController extends Controller
             'message' => $message,
         ]);
 
-        return redirect()->route('landing.profile')->with('success', 'Password updated successfully.');
+        return redirect()->route('landing.profile.people')->with('success', 'Password updated successfully.');
+    }
+
+    public function changePass(){
+
+        $setting = Setting::first();
+        $user = auth()->user();
+        $people = People::where('user_id', $user->id)->first();$setting = Setting::first();
+
+        return view('profilepeople.changepass', compact('setting', 'user', 'people'));
+
     }
 
     public function changePhone(Request $request){
@@ -152,68 +134,73 @@ class ProfileController extends Controller
 
         session(['phone' => $request->phone]);
 
-        // return redirect()->back()->with('send', 'OTP sent successfully');
         return redirect()->route('validate-otp-customer')->with('send', 'OTP send successfully');
+    }
+
+    public function editProfile(){
+
+        $setting = Setting::first();
+        $user = auth()->user(); 
+        $people = People::where('user_id', $user->id)->first();
+
+        return view('profilepeople.editprofile', compact('setting', 'user', 'people'));
+    }
+
+    public function editPhone(){
+
+        $setting = Setting::first();
+        
+        return view('profilepeople.changephone', compact('setting'));
     }
 
     public function showOtpForm(){
 
         $setting = Setting::first();
         
-        return view('profile.showotp', compact('setting'));
+        return view('profilepeople.showotp', compact('setting'));
     }
 
     public function showValidateOtpCustomer(Request $request){
         
-    $request->validate([
-        'otp' => 'required|numeric|digits:6',
-    ]);
-
-    $user = Auth::user();
-    $otp = $request->otp;
-    $phone = session('phone');
-    $codeOtp = Otp::where('phone_number', $phone)->first();
-    $setting = Setting::first();
-
-    if ($codeOtp && $codeOtp->otp_code == $otp) {
-        $codeOtp->delete();
-
-        $message = "Hello, " . $user->name . ".\nYour " . $setting->app_name . " account is now connected with " . $phone . " number. If you didn't make this change, please contact us immediately.";
-        $api = Http::baseUrl('https://app.japati.id')
-            ->withToken('API-TOKEN-fnG7nPGvCXVhuluKPxoyqj0YNKT8jAb2QnmWYyQBMQeJrbdnPps7l7')
-            ->post('/api/send-message', [
-                'gateway' => '6282128208361',
-                'number' => $phone,
-                'type' => 'text',
-                'message' => $message,
-            ]);
-
-        $user->update([
-            'phone_number' => $phone,
-            'phone_verified_at' => now(),
+        $request->validate([
+            'otp' => 'required|numeric|digits:6',
         ]);
-
-        return redirect()->route('landing.profile')->with('success', 'Phone number updated successfully!');
-    } else {
-        return redirect()->back()->with('invalid-otp', 'Invalid OTP');
-    }
-
-}
-    public function backRedirect(){
-
-        $role = auth()->user()->role;
-
-        if ($role == 'admin') {
-            return redirect()->route('admin.index');
-        }else {
-            return redirect()->route('people.index');
+    
+        $user = Auth::user();
+        $otp = $request->otp;
+        $phone = session('phone');
+        $codeOtp = Otp::where('phone_number', $phone)->first();
+        $setting = Setting::first();
+    
+        if ($codeOtp && $codeOtp->otp_code == $otp) {
+            $codeOtp->delete();
+    
+            $message = "Hello, " . $user->name . ".\nYour " . $setting->app_name . " account is now connected with " . $phone . " number. If you didn't make this change, please contact us immediately.";
+            $api = Http::baseUrl('https://app.japati.id')
+                ->withToken('API-TOKEN-fnG7nPGvCXVhuluKPxoyqj0YNKT8jAb2QnmWYyQBMQeJrbdnPps7l7')
+                ->post('/api/send-message', [
+                    'gateway' => '6282128208361',
+                    'number' => $phone,
+                    'type' => 'text',
+                    'message' => $message,
+                ]);
+    
+            $user->update([
+                'phone_number' => $phone,
+                'phone_verified_at' => now(),
+            ]);
+    
+            return redirect()->route('landing.profile.people')->with('success', 'Phone number updated successfully!');
+        } else {
+            return redirect()->back()->with('invalid-otp', 'Invalid OTP');
         }
+    
     }
 
     public function photo(){
 
         $people = Auth::user()->people()->first();
 
-        return view('navbar', compact('people'));
+        return view('nav', compact('people'));
     }
 }

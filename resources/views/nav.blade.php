@@ -43,7 +43,16 @@
           width: 80px;
           height: auto !important;
         }
+        .profile-image {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        }
     </style>
+    @php
+        $user = auth()->user();
+        $people = \App\Models\People::where('user_id', $user->id)->first();
+    @endphp
        
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
@@ -78,6 +87,11 @@
           </form>
   
           </li>
+          <li class="nav-item">
+            <a href="{{ route('landing.profile.people') }}" class="nav-link" aria-label="Profile">
+                <img src="{{ isset($people) && $people->photo_profile ? asset('storage/' . $people->photo_profile) : asset('pdi.png') }}" class="rounded-circle profile-image" alt="Profile" />
+            </a>
+        </li> 
           <script>
       document.addEventListener('DOMContentLoaded', function() {
           const logoutButton = document.querySelector('#logoutButton');
