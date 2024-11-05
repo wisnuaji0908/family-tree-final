@@ -82,6 +82,7 @@ use App\Http\Controllers\ProfilePeopleController;
         Route::get('/people/create', [PeopleController::class, 'create'])->name('people.create');
         Route::post('/people/store', [PeopleController::class, 'store'])->name('people.store');
         Route::get('/people/{id}/edit', [PeopleController::class, 'edit'])->name('people.edit');
+        Route::get('/people/{id}/viewtree', [PeopleController::class, 'viewtree'])->name('people.viewtree');
         Route::put('/people/{id}', [PeopleController::class, 'update'])->name('people.update');
         Route::delete('/people/{id}', [PeopleController::class, 'destroy'])->name('people.destroy');
         
@@ -149,7 +150,8 @@ use App\Http\Controllers\ProfilePeopleController;
 
     Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->middleware('guest')->name('password.store');
 
-    Route::get('get-parent/{userId}', [ParentsController::class, 'getParent'])->name('get-parent');   
+    Route::get('get-parent/{userId}', [ParentsController::class, 'getParent'])->name('get-parent');
+    Route::get('get-parent-people/{userId}', [ParentsPeopleController::class, 'getParent'])->name('get-parent-people');
 
     // APP SETTING
     Route::resource('setting', App\Http\Controllers\AppSettingController::class);

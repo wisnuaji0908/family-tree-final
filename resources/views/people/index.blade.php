@@ -118,11 +118,18 @@
         .hide {
             visibility: hidden;
         }
+        .btn-light-green {
+            background-color: #51A783; 
+            color: white; 
+            border: none; 
+        }
+
     </style>
 </head>
 <body>
 <!-- Include Navbar -->
 @include('nav')
+
 
 <div class="container-fluid py-0"> 
     <div class="row">
@@ -132,7 +139,7 @@
                     <h5 class="mb-0" style="font-size: 20px;">People List</h5>
                     <div class="text-end">
                         <a href="{{ route('people.create') }}" class="btn btn-add">
-                            <span class="btn-add-icon"> [+] Add People </span>
+                            <span class="btn-add-icon"></span> [+] Add People
                         </a>
                     </div>
                 </div>
@@ -338,30 +345,54 @@
                                         </script> --}}
                                 
                                         @foreach ($people as $data)
-    <tr>
-        <td>{{ ($people->currentPage() - 1) * $people->perPage() + $loop->iteration }}.</td>
-        <td>{{ $data->name }}</td>
-        <td>{{ $data->gender }}</td>
-        <td>{{ $data->place_birth }}</td>
-        <td>{{ $data->birth_date }}</td>
-        <td>
-            @if(empty($data->death_date))
-                <span class="text-danger">Death Date Not Provided</span>
-            @else
-                {{ $data->death_date }}
-            @endif
-        </td>
-        <td class="text-center">
-            <a href="{{ route('people.edit', $data->id) }}" class="btn btn-sm btn-edit">Edit</a>
-            <form action="{{ route('people.destroy', $data->id) }}" method="POST" class="d-inline">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
-            </form>
-        </td>
-    </tr>
-@endforeach
-
+                                        <tr>
+                                            <td>{{ ($people->currentPage() - 1) * $people->perPage() + $loop->iteration }}.</td>
+                                            <td>{{ $data->name }}</td>
+                                            <td>{{ $data->gender }}</td>
+                                            <td>{{ $data->place_birth }}</td>
+                                            <td>{{ $data->birth_date }}</td>
+                                            <td>
+                                                @if(empty($data->death_date))
+                                                    <span class="text-danger">Death Date Not Provided</span>
+                                                @else
+                                                    {{ $data->death_date }}
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="{{ route('people.edit', $data->id) }}" class="btn btn-sm btn-edit">Edit</a>
+                                                <form action="{{ route('people.destroy', $data->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    @foreach ($people as $i => $data)
+                                        <tr>
+                                            <td>{{ ($people->currentPage() - 1) * $people->perPage() + $i + 1 }}.</td>
+                                            <td>{{ $data->name }}</td>
+                                            <td>{{ $data->gender }}</td>
+                                            <td>{{ $data->place_birth }}</td>
+                                            <td>{{ $data->birth_date }}</td>
+                                            <td>
+                                                @if(empty($data->death_date))
+                                                    <span class="text-danger">Death Date Not Provided</span>
+                                                @else
+                                                    {{ $data->death_date }}
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="{{ route('people.edit', $data->id) }}" class="btn btn-sm btn-edit">Edit</a>
+                                                <a href="{{ route('people.viewtree', $data->id) }}" class="btn btn-sm btn-light-green">View Tree</a>
+                                                <form action="{{ route('people.destroy', $data->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                 @endif
                             </tbody>    
                         </table>
