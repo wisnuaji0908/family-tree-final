@@ -15,6 +15,7 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\AppSettingController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfilePeopleController;
 
     Route::get('/', function () {
         return redirect()->route('login');
@@ -72,8 +73,6 @@ use App\Http\Controllers\ProfileController;
             Route::get('/password', [ProfileController::class, 'changePass'])->name('landing.change');
         });
 
-        // BUTTON BACK
-        Route::get('/back-redirect', [ProfileController::class, 'backRedirect'])->name('backRedirect');
     });
 
     // ROLE: PEOPLE
@@ -98,6 +97,26 @@ use App\Http\Controllers\ProfileController;
         Route::put('/couplepeople/{couplesperson}', [CouplePeopleController::class, 'update'])->name('peoplecouple.update');
         Route::delete('/couplepeople/{couplesperson}', [CouplePeopleController::class, 'destroy'])->name('peoplecouple.destroy');
         Route::get('/couple-people-tree/{id}', [CouplePeopleController::class, 'getTreeData'])->name('couple.people.tree');
+
+        // PROFILE
+        Route::prefix('/profile-people')->group(function () {
+            Route::get('/', [ProfilePeopleController::class, 'profile'])->name('landing.profile.people');
+            Route::post('/', [ProfilePeopleController::class, 'profileUpdate'])->name('update.profile.people');
+            Route::post('/password-people', [ProfilePeopleController::class, 'updatePassword'])->name('update.password.people');
+            Route::post('/change-phone-people', [ProfilePeopleController::class, 'changePhone'])->name('change-phone-people');
+            Route::get('/change-phone-people', [ProfilePeopleController::class, 'changePhone'])->name('change-phone-people');
+            
+            Route::get('/validate-otp-people', [ProfilePeopleController::class, 'showOtpForm'])->name('validate-otp-phone-people');
+            Route::post('/validate-otp-people', [ProfilePeopleController::class, 'showOtpForm'])->name('validate-otp-phone-people');
+            Route::post('/validate-otp-people', [ProfilePeopleController::class, 'showValidateOtpCustomer'])->name('validate-otp-people');
+        });
+        
+        route::prefix('/edit-people')->group(function () {
+
+            Route::get('/phone-people', [ProfilePeopleController::class, 'editPhone'])->name('people-change-phone');
+            Route::get('/profile-people', [ProfilePeopleController::class, 'editProfile'])->name('landing.edit.people');
+            Route::get('/password-people', [ProfilePeopleController::class, 'changePass'])->name('landing.change.people');
+        });
 
     });
     
@@ -136,3 +155,6 @@ use App\Http\Controllers\ProfileController;
     Route::resource('setting', App\Http\Controllers\AppSettingController::class);
     Route::get('/setting/{id?}', [AppSettingController::class, 'index'])->name('setting.index');
     Route::put('/setting/{setting}', [AppSettingController::class, 'update'])->name('setting.update');
+
+    // BUTTON BACK
+    Route::get('/back-redirect', [ProfileController::class, 'backRedirect'])->name('backRedirect');

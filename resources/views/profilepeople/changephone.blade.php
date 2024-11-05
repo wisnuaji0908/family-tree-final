@@ -83,7 +83,7 @@
                 <h5 class="mb-0 text-black">Enter Your New Phone Number</h5>
             </div>
             <div class="card-body p-4">
-                <form action="{{ route('change-phone-customer') }}" method="POST">
+                <form action="{{ route('change-phone-people') }}" method="POST">
                     @csrf
                     <div class="form-group mb-4">
                         <input type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="13"

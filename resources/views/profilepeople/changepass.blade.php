@@ -99,7 +99,7 @@
             </div>
         @endif
 
-        <form action="{{ route('update.password') }}" method="POST" onsubmit="return validateForm()">
+        <form action="{{ route('update.password.people') }}" method="POST" onsubmit="return validateForm()">
             @csrf
             <div class="form-group mb-4">
                 <label for="current_password">Current Password</label>
@@ -181,4 +181,3 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YWBdKqSMPvld8e8kEHTaVypvxl3lXtDSelwE4k20DdBOx2h74R6TvM7Sdz12tbY" crossorigin="anonymous"></script>
 </body>
 </html>
-
