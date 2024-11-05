@@ -369,10 +369,6 @@
                         `);
                     }
 
-
-
-
-
         // Menampilkan data untuk pasangan (couple)
         if (res.data.couple && res.data.couple.length > 0) {
             const couple = res.data.couple[0];
@@ -388,32 +384,42 @@
             // Panggil fungsi untuk mendapatkan orang tua pasangan
             getCoupleParents(coupleId.id);
 
+                                    //                     .line-horizontal {
+                                //     width: 75px; /* Panjang garis horizontal */
+                                //     height: 2px;
+                                //     background-color: green;
+                                //     position: absolute;
+                                //     left: 160px;
+                                //     top: -60px;  /* Mengatur posisi garis agar berada di tengah antara mother dan father */
+                                // }
+
             // tampilan parents couple
             $('#couple').append(`
-        <div id="couple-container" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: -220px;">
-            <div id="couple-parents" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -30px; transform: translateX(80px);">
-                <div id="parent-line" style="display: flex; justify-content: center; align-items: center; position: relative; margin-top: -15px;">
-                    <!-- Garis horizontal di antara kedua parent -->
-                    <div style="width: 100px; height: 2px; background-color: green; position: absolute; top: 100%;"></div>
-                    <!-- Tempat untuk menampilkan orang tua -->
+                <div id="couple-container" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: -220px;">
+                    <div id="couple-parents" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -30px; transform: translateX(50px);">
+                        <div id="parent-line" style="display: flex; justify-content: center; align-items: center; position: relative; margin-top: -15px;">
+                            <!-- Garis horizontal di antara kedua parent -->
+                               
+                            <div style="width: 100px; height: 2px; background-color: green; position: absolute; top: 100%;"></div>
+                            <!-- Tempat untuk menampilkan orang tua -->
+                        </div>
+                        <!-- Garis vertikal yang menghubungkan pasangan dengan garis horizontal -->
+                        <div style="width: 2px; height: 20px; top: -60px; background-color: green;"></div>
+                    </div>
+                    <!-- Tambahkan margin-top khusus untuk couple -->
+                    <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 3px; margin: 90px 5px 5px; width: 160px; font-size: 12px; border-radius: 8%;">
+                        <p style="font-weight: bold;">${coupleId.name} (couple)</p>
+                        <div style="display: flex; justify-content: space-between;">
+                            <p>Birth Date:</p>
+                            <p>${birthDate}</p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <p>Divorce Date:</p>
+                            <p>${divorceDate}</p>
+                        </div>
+                    </div>
                 </div>
-                <!-- Garis vertikal yang menghubungkan pasangan dengan garis horizontal -->
-                <div style="width: 2px; height: 20px; background-color: green;"></div>
-            </div>
-            <!-- Tambahkan margin-top khusus untuk couple -->
-            <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 3px; margin: 90px 5px 5px; width: 160px; font-size: 12px; border-radius: 8%;">
-                <p style="font-weight: bold;">${coupleId.name} (couple)</p>
-                <div style="display: flex; justify-content: space-between;">
-                    <p>Birth Date:</p>
-                    <p>${birthDate}</p>
-                </div>
-                <div style="display: flex; justify-content: space-between;">
-                    <p>Divorce Date:</p>
-                    <p>${divorceDate}</p>
-                </div>
-            </div>
-        </div>
-    `);
+            `);
 
 
 
@@ -479,8 +485,6 @@
 
             return parentHTML;
         }
-
-
                 }
             });
         }

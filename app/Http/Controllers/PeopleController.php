@@ -10,6 +10,34 @@ use Illuminate\Http\Request;
 
 class PeopleController extends Controller
 {
+
+    public function getFamilyTree()
+    {
+        // Ambil semua anggota keluarga beserta anak-anaknya
+        $members = FamilyMember::with('children')->get();
+
+        // Konversi data menjadi struktur pohon
+        $tree = $this->buildTree($members);
+        return response()->json($tree);
+    }
+
+    // Fungsi untuk membuat struktur pohon
+    private function buildTree($members, $parentId = null)
+    {
+        $branch = [];
+        foreach ($members as $member) {
+            if ($member->parent_id == $parentId) {
+                $children = $this->buildTree($members, $member->id);
+                $branch[] = [
+                    'name' => $member->name,
+                    'children' => $children
+                ];
+            }
+        }
+        return $branch;
+    }
+
+
     public function index()
     {
         $user = request()->user();
