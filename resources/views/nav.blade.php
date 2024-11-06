@@ -60,7 +60,7 @@
             @if(isset($setting) && $setting?->app_logo)
                 <img src="{{ asset('storage/' . $setting?->app_logo) }}" alt="Logo" class="logo-img">
             @else
-                <img src="{{ asset('logo_ft.png') }}" alt="Default Logo" class="logo-img">
+                <img src="{{ asset('pp.jpeg') }}" alt="Default Logo" class="logo-img">
             @endif
         </a>
     <a class="navbar-brand" style="margin-left: 10px;">{{ $setting?->app_name ?? 'Family Tree' }}</a>

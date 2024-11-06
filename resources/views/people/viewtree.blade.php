@@ -345,6 +345,9 @@
             success: function(result) {
               if (result.success) {
                 const person = result.data.person;
+                console.log(person);
+                
+                
                 const father = result.data.father.length ? result.data.father[0] : null;
                 const mother = result.data.mother.length ? result.data.mother[0] : null;
                 const spouses = result.data.couple.map(couple => couple.partner);
@@ -360,7 +363,7 @@
                     },
                     data: {
                       "name": person.name,
-                      birthday: mother.user_parent.birth_date + ` (${person.gender})`,
+                      birthday: person.birth_date + ` (${person.gender})`,
                       "gender": person.gender.charAt(0).toUpperCase()
                     }
                   },
@@ -372,7 +375,7 @@
                     },
                     data: {
                       "name": spouse.name,
-                      birthday: mother.user_parent.birth_date + ` (${spouse.gender})`,
+                      birthday: mother.birth_date + ` (${spouse.gender})`,
                       "gender": spouse.gender.charAt(0).toUpperCase()
                     }
                   }))
@@ -388,7 +391,7 @@
                     data: {
                       "name": father.user_parent.name + `(${father.parent})`,
                       "parent": father.parent,
-                      birthday: mother.user_parent.birth_date + ` (${father.user_parent.gender})`,
+                      birthday: father.birth_date + ` (${father.user_parent.gender})`,
                       "gender": father.user_parent.gender.charAt(0).toUpperCase()
                     }
                   });
@@ -404,7 +407,7 @@
                     data: {
                       "name": mother.user_parent.name + `(${mother.parent})`,
                       "parent": mother.parent,
-                      birthday: mother.user_parent.birth_date + ` (${mother.user_parent.gender})`,
+                      birthday: mother.birth_date + ` (${mother.user_parent.gender})`,
                       "gender": mother.user_parent.gender,
                     }
                   });
@@ -423,14 +426,14 @@
           });
         }
 
-        fetchFamilyData(1, function(data) {
+        fetchFamilyData(17, function(data) {
           console.log("data:", data);
         });
 
       
         let dataUser = [];
 
-        fetchFamilyData(1, function(data) {
+        fetchFamilyData(17, function(data) {
           dataUser = data;
 
           const store = f3.createStore({
