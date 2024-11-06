@@ -58,13 +58,16 @@ class ProfileController extends Controller
         'phone_number' => $request->phone,
     ]);
 
-    $profile = People::where('user_id', $user->id)->first();
-
+    
     $profileData = [
+        'user_id' => $user->id,
         'name' => $request->name,
         'birth_date' => $request->born,
+        'place_birth' => $request->place_birth,
         'gender' => $request->gender,
     ];
+
+    $profile = People::where('user_id', $user->id)->firstOrCreate($profileData);
 
     if ($request->hasFile('photo')) {
         if ($profile && $profile->photo_profile && Storage::exists('public/' . $profile->photo_profile)) {
@@ -110,9 +113,9 @@ class ProfileController extends Controller
         $setting = Setting::first();
         $message = "Hello, " . $user->name . ".\nYour password has been changed successfully. If you didn't make this change, please contact us immediately.";
         $api = Http::baseUrl('https://app.japati.id')
-        ->withToken('API-TOKEN-fnG7nPGvCXVhuluKPxoyqj0YNKT8jAb2QnmWYyQBMQeJrbdnPps7l7')
+        ->withToken('API-TOKEN-0RxRG4eYZzWHSbH4Z7u570dgtxoxANyLUVfm4JC3Tu7SNrf083yBrx')
         ->post('/api/send-message', [
-            'gateway' => '6282128208361',
+            'gateway' => '6282130657304',
             'number' => $user->phone_number,
             'type' => 'text',
             'message' => $message,
@@ -138,12 +141,12 @@ class ProfileController extends Controller
         ]);
 
         $api = Http::baseUrl('https://app.japati.id')
-            ->withToken('API-TOKEN-fnG7nPGvCXVhuluKPxoyqj0YNKT8jAb2QnmWYyQBMQeJrbdnPps7l7')
+            ->withToken('API-TOKEN-0RxRG4eYZzWHSbH4Z7u570dgtxoxANyLUVfm4JC3Tu7SNrf083yBrx')
             ->post('/api/send-message', [
-                'gateway' => '6282128208361',
+                'gateway' => '6282130657304',
                 'number' => $request->phone,
                 'type' => 'text',
-                'message' => '' . $otp. ' is your ' .$setting->app_name. ' Verivication code.',
+                'message' => '' . $otp. ' is your ' .$setting->app_name. ' Verification code.',
             ]);
 
         if (!$api->ok()) {
@@ -174,15 +177,16 @@ class ProfileController extends Controller
     $phone = session('phone');
     $codeOtp = Otp::where('phone_number', $phone)->first();
     $setting = Setting::first();
+    $people = People::all();
 
     if ($codeOtp && $codeOtp->otp_code == $otp) {
         $codeOtp->delete();
 
-        $message = "Hello, " . $user->name . ".\nYour " . $setting->app_name . " account is now connected with " . $phone . " number. If you didn't make this change, please contact us immediately.";
+        $message = "Hello, " . $people->name . ".\nYour " . $setting->app_name . " account is now connected with " . $phone . " number. If you didn't make this change, please contact us immediately.";
         $api = Http::baseUrl('https://app.japati.id')
-            ->withToken('API-TOKEN-fnG7nPGvCXVhuluKPxoyqj0YNKT8jAb2QnmWYyQBMQeJrbdnPps7l7')
+            ->withToken('API-TOKEN-0RxRG4eYZzWHSbH4Z7u570dgtxoxANyLUVfm4JC3Tu7SNrf083yBrx')
             ->post('/api/send-message', [
-                'gateway' => '6282128208361',
+                'gateway' => '6282130657304',
                 'number' => $phone,
                 'type' => 'text',
                 'message' => $message,

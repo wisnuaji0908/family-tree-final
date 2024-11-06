@@ -85,10 +85,10 @@
                 @csrf
                 <div class="form-group text-center">
                     <!-- Profile Photo Preview -->
-                    @if($people->photo_profile)
+                    @if($people?->photo_profile)
                         <img src="{{ asset('storage/' . $people->photo_profile) }}" alt="Profile Photo" class="profile-photo-preview">
                     @else
-                        <img src="{{ asset('default_profile.png') }}" alt="PP" class="profile-photo-preview">
+                        <img src="{{ asset('pp.jpeg') }}" alt="PP" class="profile-photo-preview">
                     @endif
                 </div>
 
@@ -102,7 +102,7 @@
 
                 <div class="form-group">
                     <label for="name">Name</label>
-                    <input type="text" id="name" name="name" class="form-control" value="{{ $people->name }}" autocomplete="off" required>
+                    <input type="text" id="name" name="name" class="form-control" value="{{ $people?->name }}" autocomplete="off" required>
                     @error('name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -118,6 +118,14 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+
+                <div class="form-group">
+                    <label for="place_birth">Place Birth</label>
+                    <input type="text" id="place_birth" name="place_birth" class="form-control" value="{{ $people->place_birth ?? '' }}" autocomplete="off" required>
+                    @error('place_birth')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
                 
                 <div class="form-group">
                     <label for="born">Date of Birth</label>
@@ -130,8 +138,9 @@
                 <div class="form-group">
                     <label for="gender">Gender</label>
                     <select id="gender" name="gender" class="form-select" required>
-                        <option value="male" {{ ($customer->gender ?? 'male') == 'male' ? 'selected' : '' }}>Male</option>
-                        <option value="female" {{ ($customer->gender ?? 'female') == 'female' ? 'selected' : '' }}>Female</option>
+                        <option value="" {{ old('gender', $customer->gender ?? '') == '' ? 'selected' : '' }}>Select your Gender</option>
+                        <option value="male" {{ old('gender', $customer->gender ?? '') == 'male' ? 'selected' : '' }}>Male</option>
+                        <option value="female" {{ old('gender', $customer->gender ?? '') == 'female' ? 'selected' : '' }}>Female</option>
                     </select>
                     @error('gender')
                         <div class="invalid-feedback">{{ $message }}</div>

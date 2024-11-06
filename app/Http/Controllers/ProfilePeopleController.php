@@ -23,14 +23,14 @@ class ProfilePeopleController extends Controller
         return view('profilepeople.index', compact('setting', 'user', 'people'));
     }
 
-    public function profileUpdate(Request $request){
-
+    public function profileUpdate(Request $request)
+    {
     $request->validate([
         'name' => 'required|string|max:255',
         'phone' => 'required|numeric',
         'born' => 'required|date',
         'gender' => 'required|in:male,female',
-        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+        'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048' // Validate the photo
     ]);
 
     $user = Auth::user();
@@ -39,13 +39,21 @@ class ProfilePeopleController extends Controller
         'phone_number' => $request->phone,
     ]);
 
-    $profile = People::where('user_id', $user->id)->first();
-
+    
     $profileData = [
+        'user_id' => $user->id,
         'name' => $request->name,
         'birth_date' => $request->born,
+        'place_birth' => $request->place_birth,
         'gender' => $request->gender,
     ];
+
+    // $profile = People::where('user_id', $user->id)->first();
+
+    $profile = People::updateOrCreate([
+        'user_id' => $user->id,
+    ], $profileData);
+
 
     if ($request->hasFile('photo')) {
         if ($profile && $profile->photo_profile && Storage::exists('public/' . $profile->photo_profile)) {
@@ -55,10 +63,9 @@ class ProfilePeopleController extends Controller
         $profileData['photo_profile'] = $request->file('photo')->store('profiles', 'public');
     }
 
-        $profile->update($profileData);
+    $profile->update($profileData);
 
-        return redirect()->route('landing.profile.people')->with('success', 'Profile updated successfully');
-
+    return redirect()->route('landing.profile.people')->with('success', 'Profile updated successfully');
     }
     
     public function updatePassword(Request $request){
@@ -82,9 +89,9 @@ class ProfilePeopleController extends Controller
         $setting = Setting::first();
         $message = "Hello, " . $user->name . ".\nYour password has been changed successfully. If you didn't make this change, please contact us immediately.";
         $api = Http::baseUrl('https://app.japati.id')
-        ->withToken('API-TOKEN-fnG7nPGvCXVhuluKPxoyqj0YNKT8jAb2QnmWYyQBMQeJrbdnPps7l7')
+        ->withToken('API-TOKEN-0RxRG4eYZzWHSbH4Z7u570dgtxoxANyLUVfm4JC3Tu7SNrf083yBrx')
         ->post('/api/send-message', [
-            'gateway' => '6282128208361',
+            'gateway' => '6282130657304',
             'number' => $user->phone_number,
             'type' => 'text',
             'message' => $message,
@@ -120,9 +127,9 @@ class ProfilePeopleController extends Controller
         ]);
 
         $api = Http::baseUrl('https://app.japati.id')
-            ->withToken('API-TOKEN-fnG7nPGvCXVhuluKPxoyqj0YNKT8jAb2QnmWYyQBMQeJrbdnPps7l7')
+            ->withToken('API-TOKEN-0RxRG4eYZzWHSbH4Z7u570dgtxoxANyLUVfm4JC3Tu7SNrf083yBrx')
             ->post('/api/send-message', [
-                'gateway' => '6282128208361',
+                'gateway' => '6282130657304',
                 'number' => $request->phone,
                 'type' => 'text',
                 'message' => '' . $otp. ' is your ' .$setting->app_name. ' Verivication code.',
@@ -177,9 +184,9 @@ class ProfilePeopleController extends Controller
     
             $message = "Hello, " . $user->name . ".\nYour " . $setting->app_name . " account is now connected with " . $phone . " number. If you didn't make this change, please contact us immediately.";
             $api = Http::baseUrl('https://app.japati.id')
-                ->withToken('API-TOKEN-fnG7nPGvCXVhuluKPxoyqj0YNKT8jAb2QnmWYyQBMQeJrbdnPps7l7')
+                ->withToken('API-TOKEN-0RxRG4eYZzWHSbH4Z7u570dgtxoxANyLUVfm4JC3Tu7SNrf083yBrx')
                 ->post('/api/send-message', [
-                    'gateway' => '6282128208361',
+                    'gateway' => '6282130657304',
                     'number' => $phone,
                     'type' => 'text',
                     'message' => $message,

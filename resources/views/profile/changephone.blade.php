@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $setting?->app_name ?? config('app.name') }} - Change Phone Number</title>  
+    <title>{{ $setting?->app_name ?? config('app.name') }} - Change Phone Number</title>
     <link rel="icon" href="{{ $setting?->app_logo ? asset('storage/' . $setting?->app_logo) : asset('default_favicon.ico') }}" type="image/png">
 
     <!-- Google Fonts: Poppins -->
@@ -16,90 +16,103 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #f0f2f5;
+            color: #495057;
         }
 
         .container {
-            max-width: 600px;
-            margin-top: 50px;
+            max-width: 500px;
+            margin-top: 80px;
+            background-color: #fff;
             padding: 40px;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid #28a745; /* Changed to green */
         }
 
-        .container:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-header {
+        h3 {
             font-weight: 600;
-            font-size: 1.25rem;
+            margin-bottom: 30px;
             text-align: center;
-            color: #4a4a4a;
-            background-color: #28a745;
-            padding: 15px;
-            border-radius: 8px 8px 0 0;
+            color: #000000; /* Changed to green */
         }
 
-        .form-group input {
-            font-size: 1.1rem;
-            padding: 12px;
-            border: 1px solid #d1d7dd;
-            border-radius: 6px;
-            transition: border-color 0.3s;
+        label {
+            font-weight: 500;
+            color: #6c757d;
         }
 
-        .form-group input:focus {
-            border-color: #28a745;
-            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
-        }
-
-        .btn-primary {
-            font-size: 1.1rem;
-            padding: 10px;
-            background-color: #28a745;
+        .input-group-text {
+            background-color: #f8f9fa;
             border: none;
-            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #28a745; /* Changed to green */
+        }
+
+        button {
+            font-weight: 500;
+            background-color: #28a745; /* Changed to green */
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
             transition: background-color 0.3s;
         }
 
-        .btn-primary:hover {
-            background-color: #218838;
+        button:hover {
+            background-color: #007bff; /* Changed hover color to blue */
         }
 
-        .invalid-feedback {
-            font-size: 0.875rem;
-            color: #dc3545;
-            margin-top: 5px;
+        .alert ul {
+            padding-left: 20px;
+        }
+
+        .input-group {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .input-group input {
+            border: none;
         }
     </style>
+    
 </head>
 <body>
-    <main class="container">
-        <div class="card border-0">
-            <div class="card-header">
-                <h5 class="mb-0 text-black">Enter Your New Phone Number</h5>
-            </div>
-            <div class="card-body p-4">
-                <form action="{{ route('change-phone-customer') }}" method="POST">
-                    @csrf
-                    <div class="form-group mb-4">
-                        <input type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="13"
-                            class="form-control text-center" id="phone"
-                            name="phone" placeholder="Phone Number" value="{{ auth()->user()->phone }}" required>
-                        @error('phone')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Submit</button>
-                </form>
-            </div>
-        </div>
-    </main>
+    <div class="container">
+        <h3>Change Phone Number</h3>
 
-    <!-- Bootstrap JS -->
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('change-phone-customer') }}" method="POST">
+            @csrf
+            <div class="form-group mb-4">
+                <div class="input-group">
+                    <input type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '');" maxlength="13"
+                        class="form-control text-center" id="phone" name="phone" placeholder="Phone Number"
+                        value="{{ auth()->user()->phone }}" required autocomplete="off">
+                    @error('phone')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Save changes</button>
+        </form>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YWBdKqSMPvld8e8kEHTaVypvxl3lXtDSelwE4k20DdBOx2h74R6TvM7Sdz12tbY" crossorigin="anonymous"></script>
 </body>
 </html>
