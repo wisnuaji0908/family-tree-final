@@ -10,6 +10,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     {{-- d3js --}}
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/d3@6"></script>
+    <script src="https://unpkg.com/family-chart"></script>
     <style>
         /* CSS untuk diagram */
          body {
@@ -224,275 +226,249 @@
             top: -8px; /* Mengatur posisi garis */
             border-radius: 2px; /* Menambahkan sudut melingkar pada garis penghubung */
         }
+    </style>
 
 
 
+    <style>
+        .f3 {
+        height: 700px;
+        max-height: calc(100vh - 80px);
+        width: 900px;
+        max-width: 100%;
+        margin: auto;
+        position: relative;
+        }
+
+        .f3 .cursor-pointer {
+        cursor: pointer;
+        }
+        .f3 svg.main_svg {
+        width: 100%;
+        height: 100%;
+        background-color: #3b5560;
+        color: #3b5560;
+        }
+        .f3 svg.main_svg text {
+        fill: currentColor;
+        }
+        .f3 rect.card-female,
+        .f3 .card-female .card-body-rect,
+        .f3 .card-female .text-overflow-mask {
+        fill: lightpink;
+        }
+        .f3 rect.card-male,
+        .f3 .card-male .card-body-rect,
+        .f3 .card-male .text-overflow-mask {
+        fill: lightblue;
+        }
+        .f3 .card-genderless .card-body-rect,
+        .f3 .card-genderless .text-overflow-mask {
+        fill: lightgray;
+        }
+        .f3 .card_add .card-body-rect {
+        fill: #3b5560;
+        stroke-width: 4px;
+        stroke: #fff;
+        cursor: pointer;
+        }
+        .f3 g.card_add text {
+        fill: #fff;
+        }
+        .f3 .card-main {
+        stroke: #000;
+        }
+        .f3 .card_family_tree rect {
+        transition: 0.3s;
+        }
+        .f3 .card_family_tree:hover rect {
+        transform: scale(1.1);
+        }
+        .f3 .card_add_relative {
+        cursor: pointer;
+        color: #fff;
+        transition: 0.3s;
+        }
+        .f3 .card_add_relative circle {
+        fill: rgba(0, 0, 0, 0);
+        }
+        .f3 .card_add_relative:hover {
+        color: black;
+        }
+        .f3 .card_edit.pencil_icon {
+        color: #fff;
+        transition: 0.3s;
+        }
+        .f3 .card_edit.pencil_icon:hover {
+        color: black;
+        }
+        .f3 .card_break_link,
+        .f3 .link_upper,
+        .f3 .link_lower,
+        .f3 .link_particles {
+        transform-origin: 50% 50%;
+        transition: 1s;
+        }
+        .f3 .card_break_link {
+        color: #fff;
+        }
+        .f3 .card_break_link.closed .link_upper {
+        transform: translate(-140.5px, 655.6px);
+        }
+        .f3 .card_break_link.closed .link_upper g {
+        transform: rotate(-58deg);
+        }
+        .f3 .card_break_link.closed .link_particles {
+        transform: scale(0);
+        }
+        .f3 .input-field input {
+        height: 2.5rem !important;
+        }
+        .f3 .input-field > label:not(.label-icon).active {
+        -webkit-transform: translateY(-8px) scale(0.8);
+        transform: translateY(-8px) scale(0.8);
+        }
     </style>
 </head>
 <body>
 <!-- Include Navbar -->
 @include('nav')
+    <div id="FamilyChart" class="f3"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script type="module">
+        function fetchFamilyData(userId, callback) {
+          $.ajax({
+            url: `/get-parent-people/${userId}`,
+            method: "GET",
+            dataType: "json",
+            success: function(result) {
+              if (result.success) {
+                const person = result.data.person;
+                const father = result.data.father.length ? result.data.father[0] : null;
+                const mother = result.data.mother.length ? result.data.mother[0] : null;
+                const spouses = result.data.couple.map(couple => couple.partner);
 
-<div class="container">
-    <div class="diagram-container">
-        <div class="parents">
-            <div class="parent mother" id="mother">
-                <h6>Mother</h6>
-                <!-- Konten dari JS -->
-            </div>
-            <div class="parent father" id="father">
-                <h6>Father</h6>
-                <!-- Konten dari JS -->
-            </div>
-        </div>
-        <div class="connector-horizontal">
-            <span class="line-horizontal"></span>
-        </div>
-        <div class="connector-vertical">
-            <span class="line-vertical"></span>
-        </div>
-        <div class="children">
-            <div class="person" id="person">
-                <h6>Person</h6>
-                <!-- Konten dari JS -->
-            </div>
-        </div>
-        <div class="person-couple-container">
-        <div id="people" class="person-box">
-            <!-- Data people akan di-append di sini -->
-        </div>
-        <div class="connector-couple">
-            <div class="line-couple"></div>
-        </div>
-        <div id="couple" class="couple-box">
-            <!-- Data couple akan di-append di sini -->
-        </div>
-       </div>
-    </div>
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-
-    <script>
-        function showParentDiagram(id) {
-            $('#mother').empty();
-            $('#father').empty();
-            $('#person').empty();
-            $('#couple').empty();
-
-            $.ajax({
-                url: `/get-parent-people/${id}`,  // Endpoint backend yang akan memberikan data orang tua
-                type: 'GET',
-                success: function(res) {
-                    // Menampilkan data untuk ibu
-                    if (res.data.mother.length > 0) {
-                        $.each(res.data.mother, function(index, value) {    
-                            let lineColor = value.user_parent.gender === 'male' ? 'blue' : 'magenta';
-                            let bgColor = value.user_parent.death_date ? 'black' : 'white';
-                            let textColor = value.user_parent.death_date ? 'white' : 'black';
-                            const birthDate = value.user_parent.birth_date ? new Date(value.user_parent.birth_date).toLocaleDateString() : 'N/A';
-                            const deathDate = value.user_parent.death_date ? new Date(value.user_parent.death_date).toLocaleDateString() : '-';
-                            $('#mother').append(`
-                                <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: 1px; font-size: 12px; border-radius: 8%;">
-                                    <p style="font-weight: bold; text-align: center;">${value.user_parent.name} (${value.parent})</p>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <p>Birth Date:</p>
-                                        <p>${birthDate}</p>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <p>Death Date:</p>
-                                        <p>${deathDate}</p>
-                                    </div>
-                                </div>
-                            `);
-                        });
-                    } else {
-                        $('#mother').append(`
-                            <div style="color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px; box-sizing: border-box; text-align: center; border-radius: 8%;">
-                                <p style="margin: 0;">No data for mother</p>
-                            </div>
-                        `);
+                const data = [
+                  {
+                    id: person.id.toString(),
+                    rels: {
+                      spouses: spouses.map(spouse => spouse.id.toString()),
+                      father: father ? father.user_parent.id.toString() : null,
+                      mother: mother ? mother.user_parent.id.toString() : null,
+                      children: []
+                    },
+                    data: {
+                      "name": person.name,
+                      birthday: mother.user_parent.birth_date + ` (${person.gender})`,
+                      "gender": person.gender.charAt(0).toUpperCase()
                     }
-
-                    // Menampilkan data untuk ayah
-                    if (res.data.father.length > 0) {
-                        $.each(res.data.father, function(index, value) {
-                            let lineColor = value.user_parent.gender === 'male' ? 'blue' : 'magenta';
-                            let bgColor = value.user_parent.death_date ? 'black' : 'white';
-                            let textColor = value.user_parent.death_date ? 'white' : 'black';
-                            const birthDate = value.user_parent.birth_date ? new Date(value.user_parent.birth_date).toLocaleDateString() : 'N/A';
-                            const deathDate = value.user_parent.death_date ? new Date(value.user_parent.death_date).toLocaleDateString() : '-';
-                            $('#father').append(`
-                                <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: -30px; font-size: 12px; border-radius: 8%;">
-                                    <p style="font-weight: bold; text-align: center;">${value.user_parent.name} (${value.parent})</p>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <p>Birth Date:</p>
-                                        <p>${birthDate}</p>
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <p>Death Date:</p>
-                                        <p>${deathDate}</p>
-                                    </div>
-                                </div>
-                            `);
-                        });
-                    } else {
-                        $('#father').append(`
-                            <div style="color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px; box-sizing: border-box; text-align: center; border-radius: 8%;">
-                                <p style="margin: 0;">No data for father</p>
-                            </div>
-                        `);
+                  },
+                  ...spouses.map(spouse => ({
+                    id: spouse.id.toString(),
+                    rels: {
+                      spouses: [person.id.toString()],
+                      children: []
+                    },
+                    data: {
+                      "name": spouse.name,
+                      birthday: mother.user_parent.birth_date + ` (${spouse.gender})`,
+                      "gender": spouse.gender.charAt(0).toUpperCase()
                     }
+                  }))
+                ];
 
-                    // Menampilkan data untuk person/child
-                    if (res.data.person) {
-                        const person = res.data.person;
-                        let lineColor = (person.gender === 'male') ? 'blue' : 'magenta';
-                        let bgColor = person.death_date ? 'black' : 'white';
-                        let textColor = person.death_date ? 'white' : 'black';
-                        const birthDate = person.birth_date ? new Date(person.birth_date).toLocaleDateString() : 'N/A';
-                        const deathDate = person.death_date ? new Date(person.death_date).toLocaleDateString() : '-';
-                        $('#person').append(`
-                            <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 5px; width: 160px; margin-left: 0; font-size: 12px; border-radius: 8%;">
-                                <p style="font-weight: bold; text-align: center;">${person.name} (people)</p>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <p>Birth Date:</p>
-                                    <p>${birthDate}</p>
-                                </div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <p>Death Date:</p>
-                                    <p>${deathDate}</p>
-                                </div>
-                            </div>
-                        `);
+                if (father) {
+                  data.push({
+                    id: father.user_parent.id.toString(),
+                    rels: {
+                      spouses: mother ? [mother.user_parent.id.toString()] : [],
+                      children: [person.id.toString()]
+                    },
+                    data: {
+                      "name": father.user_parent.name + `(${father.parent})`,
+                      "parent": father.parent,
+                      birthday: mother.user_parent.birth_date + ` (${father.user_parent.gender})`,
+                      "gender": father.user_parent.gender.charAt(0).toUpperCase()
                     }
-
-        // Menampilkan data untuk pasangan (couple)
-        if (res.data.couple && res.data.couple.length > 0) {
-            const couple = res.data.couple[0];
-            const coupleId = couple.partner;
-
-            // Konfigurasi warna dan tanggal berdasarkan kondisi
-            const lineColor = (coupleId.gender === 'male') ? 'blue' : 'magenta';
-            const bgColor = couple.divorce_date ? 'red' : 'green';
-            const textColor = 'white';
-            const birthDate = coupleId.birth_date ? new Date(coupleId.birth_date).toLocaleDateString() : 'N/A';
-            const divorceDate = couple.divorce_date ? new Date(couple.divorce_date).toLocaleDateString() : '-';
-
-            // Panggil fungsi untuk mendapatkan orang tua pasangan
-            getCoupleParents(coupleId.id);
-
-                                    //                     .line-horizontal {
-                                //     width: 75px; /* Panjang garis horizontal */
-                                //     height: 2px;
-                                //     background-color: green;
-                                //     position: absolute;
-                                //     left: 160px;
-                                //     top: -60px;  /* Mengatur posisi garis agar berada di tengah antara mother dan father */
-                                // }
-
-            // tampilan parents couple
-            $('#couple').append(`
-                <div id="couple-container" style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-top: -220px;">
-                    <div id="couple-parents" style="display: flex; flex-direction: column; align-items: center; margin-bottom: -30px; transform: translateX(50px);">
-                        <div id="parent-line" style="display: flex; justify-content: center; align-items: center; position: relative; margin-top: -15px;">
-                            <!-- Garis horizontal di antara kedua parent -->
-                               
-                            <div style="width: 100px; height: 2px; background-color: green; position: absolute; top: 100%;"></div>
-                            <!-- Tempat untuk menampilkan orang tua -->
-                        </div>
-                        <!-- Garis vertikal yang menghubungkan pasangan dengan garis horizontal -->
-                        <div style="width: 2px; height: 20px; top: -60px; background-color: green;"></div>
-                    </div>
-                    <!-- Tambahkan margin-top khusus untuk couple -->
-                    <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 3px; margin: 90px 5px 5px; width: 160px; font-size: 12px; border-radius: 8%;">
-                        <p style="font-weight: bold;">${coupleId.name} (couple)</p>
-                        <div style="display: flex; justify-content: space-between;">
-                            <p>Birth Date:</p>
-                            <p>${birthDate}</p>
-                        </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <p>Divorce Date:</p>
-                            <p>${divorceDate}</p>
-                        </div>
-                    </div>
-                </div>
-            `);
-
-
-
-        } else {
-            $('#couple').append(`
-                <div style="color: black; border: 2px solid black; padding: 10px; margin: 5px; width: 160px; height: 116px; box-sizing: border-box; text-align: center; border-radius: 8%;">
-                    <p style="margin: 0;">No data for couple</p>
-                </div>
-            `);
-        }
-
-        // Fungsi untuk mendapatkan orang tua pasangan
-        function getCoupleParents(coupleId) {
-            $.ajax({
-                url: `/get-parent-people/${coupleId}`,
-                type: 'GET',
-                success: function(res) {
-                    let parentsHTML = '';
-
-                    // Menampilkan data untuk Ibu dan Ayah
-                    parentsHTML += displayParentData(res.data.mother, 'mother');
-                    parentsHTML += displayParentData(res.data.father, 'father');
-
-                    // Tempatkan orang tua di dalam elemen "parent-line"
-                    $('#couple-parents #parent-line').html(parentsHTML);
+                  });
                 }
-            });
-        }
 
-        // Fungsi untuk menampilkan data orang tua
-        function displayParentData(parentsData, parentType) {
-            let parentHTML = '';
-            
-            if (parentsData.length > 0) {
-                $.each(parentsData, function(index, value) {
-                    const lineColor = value.user_parent.gender === 'male' ? 'blue' : 'magenta';
-                    const bgColor = value.user_parent.death_date ? 'black' : 'white';
-                    const textColor = value.user_parent.death_date ? 'white' : 'black';
-                    const birthDate = value.user_parent.birth_date ? new Date(value.user_parent.birth_date).toLocaleDateString() : 'N/A';
-                    const deathDate = value.user_parent.death_date ? new Date(value.user_parent.death_date).toLocaleDateString() : '-';
+                if (mother) {
+                  data.push({
+                    id: mother.user_parent.id.toString(),
+                    rels: {
+                      spouses: father ? [father.user_parent.id.toString()] : [],
+                      children: [person.id.toString()]
+                    },
+                    data: {
+                      "name": mother.user_parent.name + `(${mother.parent})`,
+                      "parent": mother.parent,
+                      birthday: mother.user_parent.birth_date + ` (${mother.user_parent.gender})`,
+                      "gender": mother.user_parent.gender,
+                    }
+                  });
+                }
 
-                    parentHTML += `
-                        <div style="background-color: ${bgColor}; color: ${textColor}; border: 3px solid ${lineColor}; padding: 5px; margin: 0 10px; width: 160px; font-size: 12px; border-radius: 8%; text-align: center;">
-                            <p style="font-weight: bold;">${value.user_parent.name} (${parentType})</p>
-                            <div style="display: flex; justify-content: space-between;">
-                                <p>Birth Date:</p>
-                                <p>${birthDate}</p>
-                            </div>
-                            <div style="display: flex; justify-content: space-between;">
-                                <p>Death Date:</p>
-                                <p>${deathDate}</p>
-                            </div>
-                        </div>
-                    `;
-                });
-            } else {
-                parentHTML += `
-                    <div style="color: black; border: 2px solid black; padding: 10px; margin: 0 10px; width: 160px; height: 116px; box-sizing: border-box; text-align: center; border-radius: 8%;">
-                        <p style="margin: 0;">No data for ${parentType}</p>
-                    </div>
-                `;
+                callback(data);
+              } else {
+                console.error("failed:", result.message);
+                callback([]);
+              }
+            },
+            error: function(xhr, status, error) {
+              console.error("error:", error);
+              callback([]);
             }
-
-            return parentHTML;
-        }
-                }
-            });
+          });
         }
 
-        // Panggil fungsi saat halaman dimuat
-        $(document).ready(function() {
-            showParentDiagram({{ $person->id }}); 
+        fetchFamilyData(1, function(data) {
+          console.log("data:", data);
         });
+
+      
+        let dataUser = [];
+
+        fetchFamilyData(1, function(data) {
+          dataUser = data;
+
+          const store = f3.createStore({
+                data: dataUser,
+                node_separation: 250,
+                level_separation: 150
+              }),
+              view = f3.d3AnimationView({
+                store,
+                cont: document.querySelector("#FamilyChart")
+              }),
+              Card = f3.elements.Card({
+                store,
+                svg: view.svg,
+                card_dim: {
+                  w: 220,
+                  h: 70,
+                  text_x: 75,
+                  text_y: 15,
+                  img_w: 60,
+                  img_h: 60,
+                  img_x: 5,
+                  img_y: 5
+                },
+                card_display: [
+                  (d) => `${d.data["name"] || ""}`,
+                  (d) => `${d.data["birthday"] || ""}`,
+                ],
+                mini_tree: true,
+                link_break: false
+              });
+
+          view.setCard(Card);
+          store.setOnUpdate((props) => view.update(props || {}));
+          store.update.tree({ initial: true });
+        });
+
+
     </script>
 </body>
 </html>
