@@ -228,203 +228,194 @@
         }
     </style>
 
-<style>
-    /* Wrapper utama dengan latar belakang gradasi dan bayangan halus */
-    .f3 {
-        height: 700px;
-        max-height: calc(100vh - 80px);
-        width: 900px;
-        max-width: 100%;
-        margin: auto;
-        position: relative;
-        background: linear-gradient(145deg, #f0f0f0, #ffffff);
-        border-radius: 20px;
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-        overflow: hidden;
-        transition: box-shadow 0.4s ease, transform 0.3s ease;
-    }
+    <style>
+        .f3 {
+            height: 700px;
+            max-height: calc(100vh - 80px);
+            width: 900px;
+            max-width: 100%;
+            margin: auto;
+            position: relative;
+            background: linear-gradient(145deg, #f0f0f0, #ffffff);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: box-shadow 0.4s ease, transform 0.3s ease;
+        }
 
-    /* Efek hover untuk memperbesar elemen utama */
-    .f3:hover {
-        transform: scale(1.02);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-    }
+        /* Efek hover untuk memperbesar elemen utama */
+        .f3:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
 
-    /* Cursor pointer pada elemen yang dapat diklik */
-    .f3 .cursor-pointer {
-        cursor: pointer;
-    }
+        /* Cursor pointer pada elemen yang dapat diklik */
+        .f3 .cursor-pointer {
+            cursor: pointer;
+        }
 
-    /* SVG utama dengan latar belakang gradien dan efek hover */
-    .f3 svg.main_svg {
-        width: 100%;
-        height: 100%;
-        background-color: #3b5560;
-        color: #3b5560;
-        transition: background-color 0.4s ease, transform 0.3s ease;
-    }
+        /* SVG utama dengan latar belakang gradien dan efek hover */
+        .f3 svg.main_svg {
+            width: 100%;
+            height: 100%;
+            background-color: #3b5560;
+            color: #3b5560;
+            transition: background-color 0.4s ease, transform 0.3s ease;
+        }
 
-    .f3 svg.main_svg:hover {
-        background-color: #2e3a44;
-        transform: scale(1.05);
-    }
+        .f3 svg.main_svg:hover {
+            background-color: #2e3a44;
+            transform: scale(1.05);
+        }
 
-    .f3 svg.main_svg text {
-        fill: currentColor;
-    }
+        .f3 svg.main_svg text {
+            fill: currentColor;
+        }
 
-    /* Kartu Gender dengan efek warna lembut dan transisi halus */
-    .f3 rect.card-female,
-    .f3 .card-female .card-body-rect,
-    .f3 .card-female .text-overflow-mask {
-        fill: #f7b7b5; /* Soft pink */
-        transition: fill 0.3s ease-in-out;
-    }
+        /* Kartu Gender dengan efek warna lembut dan transisi halus */
+        .f3 rect.card-female,
+        .f3 .card-female .card-body-rect,
+        .f3 .card-female .text-overflow-mask {
+            fill: #f7b7b5; /* Soft pink */
+            transition: fill 0.3s ease-in-out;
+        }
 
-    .f3 rect.card-male,
-    .f3 .card-male .card-body-rect,
-    .f3 .card-male .text-overflow-mask {
-        fill: #a7c9f0; /* Soft blue */
-        transition: fill 0.3s ease-in-out;
-    }
+        .f3 rect.card-male,
+        .f3 .card-male .card-body-rect,
+        .f3 .card-male .text-overflow-mask {
+            fill: #a7c9f0; /* Soft blue */
+            transition: fill 0.3s ease-in-out;
+        }
 
-    .f3 .card-genderless .card-body-rect,
-    .f3 .card-genderless .text-overflow-mask {
-        fill: #d3d3d3; /* Soft gray */
-    }
+        .f3 .card-genderless .card-body-rect,
+        .f3 .card-genderless .text-overflow-mask {
+            fill: #d3d3d3; /* Soft gray */
+        }
 
-    /* Kartu Add dengan desain interaktif dan efek hover */
-    .f3 .card_add .card-body-rect {
-        fill: #3b5560;
-        stroke-width: 4px;
-        stroke: #fff;
-        cursor: pointer;
-        border-radius: 12px;
-        transition: transform 0.3s ease, fill 0.4s ease;
-    }
+        .f3 .card_add .card-body-rect {
+            fill: #3b5560;
+            stroke-width: 4px;
+            stroke: #fff;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: transform 0.3s ease, fill 0.4s ease;
+        }
 
-    .f3 g.card_add text {
-        fill: #fff;
-    }
+        .f3 g.card_add text {
+            fill: #fff;
+        }
 
-    .f3 .card_add:hover .card-body-rect {
-        fill: #2e3a44;
-        transform: scale(1.1);
-    }
+        .f3 .card_add:hover .card-body-rect {
+            fill: #2e3a44;
+            transform: scale(1.1);
+        }
 
-    /* Kartu Utama dengan efek hover yang lebih modern */
-    .f3 .card-main {
-        stroke: #000;
-        border-radius: 12px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-        transition: box-shadow 0.3s ease, transform 0.3s ease;
-    }
+        .f3 .card-main {
+            stroke: #000;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
 
-    .f3 .card-main:hover {
-        transform: scale(1.05);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-    }
+        .f3 .card-main:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
 
-    /* Hover effect pada kartu Family Tree dengan animasi smooth */
-    .f3 .card_family_tree rect {
-        transition: 0.3s ease, transform 0.3s ease;
-        border-radius: 12px;
-    }
+        .f3 .card_family_tree rect {
+            transition: 0.3s ease, transform 0.3s ease;
+            border-radius: 12px;
+        }
 
-    .f3 .card_family_tree:hover rect {
-        transform: scale(1.1);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    }
+        .f3 .card_family_tree:hover rect {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
 
-    /* Kartu Add Relative dengan warna highlight dan animasi */
-    .f3 .card_add_relative {
-        cursor: pointer;
-        color: #fff;
-        transition: color 0.4s ease, transform 0.3s ease;
-    }
+        .f3 .card_add_relative {
+            cursor: pointer;
+            color: #fff;
+            transition: color 0.4s ease, transform 0.3s ease;
+        }
 
-    .f3 .card_add_relative:hover {
-        color: #f39c12; /* Highlight color */
-        transform: scale(1.1);
-    }
+        .f3 .card_add_relative:hover {
+            color: #f39c12; 
+            transform: scale(1.1);
+        }
 
-    .f3 .card_add_relative circle {
-        fill: rgba(0, 0, 0, 0);
-    }
+        .f3 .card_add_relative circle {
+            fill: rgba(0, 0, 0, 0);
+        }
 
-    /* Ikon edit dengan animasi rotasi */
-    .f3 .card_edit.pencil_icon {
-        color: #fff;
-        transition: color 0.4s ease, transform 0.3s ease;
-    }
+        .f3 .card_edit.pencil_icon {
+            color: #fff;
+            transition: color 0.4s ease, transform 0.3s ease;
+        }
 
-    .f3 .card_edit.pencil_icon:hover {
-        color: #f39c12;
-        transform: rotate(15deg);
-    }
+        .f3 .card_edit.pencil_icon:hover {
+            color: #f39c12;
+            transform: rotate(15deg);
+        }
 
-    /* Link break dan partikel dengan efek animasi */
-    .f3 .card_break_link,
-    .f3 .link_upper,
-    .f3 .link_lower,
-    .f3 .link_particles {
-        transform-origin: 50% 50%;
-        transition: transform 1s ease, opacity 0.4s ease;
-    }
+        .f3 .card_break_link,
+        .f3 .link_upper,
+        .f3 .link_lower,
+        .f3 .link_particles {
+            transform-origin: 50% 50%;
+            transition: transform 1s ease, opacity 0.4s ease;
+        }
 
-    .f3 .card_break_link {
-        color: #fff;
-    }
+        .f3 .card_break_link {
+            color: #fff;
+        }
 
-    .f3 .card_break_link.closed .link_upper {
-        transform: translate(-140.5px, 655.6px);
-    }
+        .f3 .card_break_link.closed .link_upper {
+            transform: translate(-140.5px, 655.6px);
+        }
 
-    .f3 .card_break_link.closed .link_upper g {
-        transform: rotate(-58deg);
-    }
+        .f3 .card_break_link.closed .link_upper g {
+            transform: rotate(-58deg);
+        }
 
-    .f3 .card_break_link.closed .link_particles {
-        transform: scale(0);
-    }
+        .f3 .card_break_link.closed .link_particles {
+            transform: scale(0);
+        }
 
-    /* Input field dengan desain modern dan transisi */
-    .f3 .input-field input {
-        height: 2.5rem !important;
-        border-radius: 10px;
-        border: 1px solid #ccc;
-        padding: 0 15px;
-        font-size: 1rem;
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
+        .f3 .input-field input {
+            height: 2.5rem !important;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            padding: 0 15px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
 
-    .f3 .input-field input:focus {
-        border-color: #3b5560;
-        box-shadow: 0 0 8px rgba(59, 85, 96, 0.2);
-    }
+        .f3 .input-field input:focus {
+            border-color: #3b5560;
+            box-shadow: 0 0 8px rgba(59, 85, 96, 0.2);
+        }
 
-    .f3 .input-field > label:not(.label-icon).active {
-        transform: translateY(-8px) scale(0.8);
-        color: #3b5560;
-    }
+        .f3 .input-field > label:not(.label-icon).active {
+            transform: translateY(-8px) scale(0.8);
+            color: #3b5560;
+        }
 
-    /* Efek animasi pada elemen yang muncul */
-    .f3 .card-main, .f3 .card_add, .f3 .card_add_relative {
-        opacity: 0;
-        animation: fadeIn 1s forwards;
-    }
+        .f3 .card-main, .f3 .card_add, .f3 .card_add_relative {
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
 
-    .f3 .card-main:nth-child(1),
-    .f3 .card_add:nth-child(2),
-    .f3 .card_add_relative:nth-child(3) {
-        animation-delay: 0.5s;
-    }
+        .f3 .card-main:nth-child(1),
+        .f3 .card_add:nth-child(2),
+        .f3 .card_add_relative:nth-child(3) {
+            animation-delay: 0.5s;
+        }
 
-    @keyframes fadeIn {
-        0% { opacity: 0; transform: translateY(30px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-</style>
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 
 </head>
 <body>
@@ -440,11 +431,12 @@
             method: "GET",
             dataType: "json",
             success: function(result) {
-              if (result.success) {
+            console.log("Server response:", result.data);
+
+            if (result.success) {
                 const person = result.data.person;
-                console.log(person);
-                
-                
+                console.log("Person:", person);
+
                 const father = result.data.father.length ? result.data.father[0] : null;
                 const mother = result.data.mother.length ? result.data.mother[0] : null;
                 const spouses = result.data.couple.map(couple => couple.partner);
@@ -460,7 +452,7 @@
                     },
                     data: {
                       "name": `${person.name} (People)`,
-                      birthday: mother.user_parent.birth_date + ` (${person.gender})`+ ` ${person.death_date == null ? '' : `(`+ person.death_date + `)`}`,
+                      birthday: `${person.birth_date}` + `(${person.gender})` + (person.death_date ? `(${person.death_date})` : ''),
                       "gender": person.gender.charAt(0).toUpperCase(),
                       "death_date": person.death_date ? person.death_date : 'Death Date Not Provided'
                     }
@@ -473,7 +465,7 @@
                     },
                     data: {
                       "name": `${spouse.name} (Couple)`,
-                      birthday: mother.user_parent.birth_date + ` (${spouse.gender})`+ ` (${spouse.death_date == null ? '' : ``+ spouse.death_date + `)`})`,
+                      birthday: `${spouse.birth_date}` + `(${spouse.gender})` + (spouse.death_date ? `(${spouse.death_date})` : ''),
                       "gender": spouse.gender.charAt(0).toUpperCase(),
                       "death_date": spouse.death_date ? spouse.death_date : 'Death Date Not Provided'
                     }
@@ -489,8 +481,7 @@
                     },
                     data: {
                       "name": `${father.user_parent.name} (Father)`,
-                      "parent": father.parent,
-                      birthday: mother.user_parent.birth_date + ` (${father.user_parent.gender})` + ` (${father.death_date == null ? '' : ` (`+father.death_date + `)`})`,
+                      birthday: `${father.birth_date}` + `(${father.gender})` + `(${father.death_date})`,
                       "gender": father.user_parent.gender.charAt(0).toUpperCase(),
                       "death_date": father.user_parent.death_date ? father.user_parent.death_date : 'Death Date Not Provided'
                     }
@@ -506,74 +497,64 @@
                     },
                     data: {
                       "name": `${mother.user_parent.name} (Mother)`,
-                      "parent": mother.parent,
-                      birthday: mother.user_parent.birth_date + ` (${mother.user_parent.gender})`+ ` (${mother.death_date == null ? '' : ` (`+mother.death_date + `)`})`,
-                      "gender": mother.user_parent.gender,
+                      birthday: `${mother.birth_date}`+ `(${mother.gender})` + `(${mother.death_date})`,
+                      "gender": mother.user_parent.gender.charAt(0).toUpperCase(),
                       "death_date": mother.user_parent.death_date ? mother.user_parent.death_date : 'Death Date Not Provided'
                     }
-                  });
+                  });   
                 }
-
+                    
                 callback(data);
               } else {
-                console.error("failed:", result.message);
+                console.error("Failed:", result.message);
                 callback([]);
               }
             },
             error: function(xhr, status, error) {
-              console.error("error:", error);
+              console.error("Error:", error);
               callback([]);
             }
           });
         }
 
-        fetchFamilyData(17, function(data) {
-          console.log("data:", data);
-        });
-
-      
-        let dataUser = [];
-
-        fetchFamilyData(17, function(data) {
-          dataUser = data;
-
+        fetchFamilyData(1, function(data) {
+          console.log("Data:", data);
           const store = f3.createStore({
-                data: dataUser,
-                node_separation: 250,
-                level_separation: 150
-              }),
-              view = f3.d3AnimationView({
-                store,
-                cont: document.querySelector("#FamilyChart")
-              }),
-              Card = f3.elements.Card({
-                store,
-                svg: view.svg,
-                card_dim: {
-                  w: 220,
-                  h: 70,
-                  text_x: 75,
-                  text_y: 15,
-                  img_w: 60,
-                  img_h: 60,
-                  img_x: 5,
-                  img_y: 5
-                },
-                card_display: [
-                  (d) => `${d.data["name"] || ""}`,
-                  (d) => `${d.data["birthday"] || ""}`,
-                  (d) => `${d.data["death_date"] || ""}`,
-                ],
-                mini_tree: true,
-                link_break: false
-              });
+              data,
+              node_separation: 250,
+              level_separation: 150
+          }),
+          view = f3.d3AnimationView({
+              store,
+              cont: document.querySelector("#FamilyChart")
+          }),
+          Card = f3.elements.Card({
+              store,
+              svg: view.svg,
+              card_dim: {
+                w: 220,
+                h: 70,
+                text_x: 75,
+                text_y: 15,
+                img_w: 60,
+                img_h: 60,
+                img_x: 5,
+                img_y: 5
+              },
+              card_display: [
+                (d) => `${d.data["name"] || ""}`,
+                (d) => `${d.data["birthday"] || ""}`,
+                (d) => `${d.data["death_date"] || ""}`,
+              ],
+              mini_tree: true,
+              link_break: false
+          });
 
           view.setCard(Card);
           store.setOnUpdate((props) => view.update(props || {}));
           store.update.tree({ initial: true });
         });
-
-
     </script>
 </body>
+
 </html>

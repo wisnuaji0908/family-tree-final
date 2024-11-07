@@ -343,10 +343,7 @@
                                                 }
                                             }
                                         </script> --}}
-<<<<<<< HEAD
                                 
-=======
->>>>>>> 37b43822bef42e2d716f215d2d36da8c8dfad0c3
                                     @foreach ($people as $i => $data)
                                         <tr>
                                             <td>{{ ($people->currentPage() - 1) * $people->perPage() + $i + 1 }}.</td>
