@@ -442,6 +442,9 @@
             success: function(result) {
               if (result.success) {
                 const person = result.data.person;
+                console.log(person);
+                
+                
                 const father = result.data.father.length ? result.data.father[0] : null;
                 const mother = result.data.mother.length ? result.data.mother[0] : null;
                 const spouses = result.data.couple.map(couple => couple.partner);
@@ -524,14 +527,14 @@
           });
         }
 
-        fetchFamilyData(1, function(data) {
+        fetchFamilyData(17, function(data) {
           console.log("data:", data);
         });
 
       
         let dataUser = [];
 
-        fetchFamilyData(1, function(data) {
+        fetchFamilyData(17, function(data) {
           dataUser = data;
 
           const store = f3.createStore({

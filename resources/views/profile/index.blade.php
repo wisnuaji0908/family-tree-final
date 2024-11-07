@@ -88,7 +88,7 @@
         <h1>{{ $setting?->app_name ?? config('app.name') }} - Profile</h1>
         
         <!-- Profile Photo -->
-        <img src="{{ $people->photo_profile ? asset('storage/' . $people->photo_profile) : asset('pp.png') }}" alt="Profile Photo" class="profile-photo">
+        <img src="{{ $people?->photo_profile ? asset('storage/' . $people->photo_profile) : asset('pp.jpeg') }}" alt="Profile Photo" class="profile-photo">
 
         
         @if (session('success'))
@@ -103,7 +103,7 @@
         @endif
         <div class="profile-field">
             <span>Name:</span>
-            <span>{{ $people->name }}</span>
+            <span>{{ $people?->name }}</span>
         </div>
         <div class="profile-field">
             <span>Number Phone:</span>
@@ -111,7 +111,7 @@
         </div>
         <div class="profile-field">
             <span>Date of Birth:</span>
-            <span>{{ $people->birth_date ? \Carbon\Carbon::parse($people->birth_date)->format('d-m-Y') : 'Not filled' }}</span>
+            <span>{{ $people?->birth_date ? \Carbon\Carbon::parse($people->birth_date)->format('d-m-Y') : 'Not filled' }}</span>
         </div>        
         <div class="profile-field">
             <span>Gender:</span>

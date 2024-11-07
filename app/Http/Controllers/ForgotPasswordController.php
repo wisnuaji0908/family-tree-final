@@ -58,12 +58,12 @@ class ForgotPasswordController extends Controller
 
             // Kirim OTP ke nomor telepon customer menggunakan API
             $apiResponse = Http::baseUrl('https://app.japati.id')
-            ->withToken('API-TOKEN-fnG7nPGvCXVhuluKPxoyqj0YNKT8jAb2QnmWYyQBMQeJrbdnPps7l7')
+            ->withToken('API-TOKEN-0RxRG4eYZzWHSbH4Z7u570dgtxoxANyLUVfm4JC3Tu7SNrf083yBrx')
             ->post('/api/send-message', [
-                'gateway' => '6282128208361',
+                'gateway' => '6282130657304',
                 'number' => $request->identifier,
                 'type' => 'text',
-                'message' => '*' . $otp . '* adalah kode OTP Anda. Demi keamanan, jangan bagikan kode ini.',
+                'message' => '*' . $otp . '* is your OTP code. For security reasons, do not share this code.',
             ]);
 
             if ($apiResponse->failed()) {

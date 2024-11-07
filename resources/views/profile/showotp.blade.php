@@ -15,35 +15,68 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f8f9fa;
+            background-color: #f0f2f5;
+            color: #495057;
         }
 
         .container {
             max-width: 500px;
-            margin-top: 100px;
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 80px;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid #28a745; /* Green */
         }
 
-        .card-header {
+        h3 {
             font-weight: 600;
+            margin-bottom: 30px;
             text-align: center;
-            color: #ffffff;
-            background-color: #007bff;
+            color: #000000;
         }
 
-        .form-group input {
-            font-size: 1.1rem;
-            padding: 10px;
-            border-radius: 4px;
-        }
-
-        .btn-primary {
+        label {
             font-weight: 500;
-            font-size: 1rem;
+            color: #6c757d;
+        }
+
+        .input-group-text {
+            background-color: #f8f9fa;
+            border: none;
+            cursor: pointer;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #28a745; /* Green */
+        }
+
+        button {
+            font-weight: 500;
+            background-color: #28a745; /* Green */
+            border: none;
             padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #007bff; /* Blue hover */
+        }
+
+        .alert ul {
+            padding-left: 20px;
+        }
+
+        .input-group {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        .input-group input {
+            border: none;
         }
 
         .invalid-feedback {
@@ -53,35 +86,40 @@
     </style>
 </head>
 <body>
-    <main class="container">
-        <div class="row justify-content-center">
-            <div class="col-12">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header">
-                        <h6 class="mb-0 text-center">Please enter the OTP code sent to 
-                            <strong>{{ substr(auth()->user()->phone, 0, 2) . '*' . substr(auth()->user()->phone, -2) }}</strong>
-                        </h6>                      
-                    </div>
-                    <div class="card-body p-4">
-                        <form action="{{ route('validate-otp-phone') }}" method="POST">
-                            @csrf
-                            <div class="form-group mb-3">
-                                <input type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '');" minlength="6" maxlength="6"
-                                    class="form-control text-center @error('otp') is-invalid @enderror" id="otp"
-                                    name="otp" placeholder="OTP Code" required>
-                                @error('otp')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Submit</button>
-                        </form>
-                    </div>
+    <div class="container">
+        <h3>Validate OTP</h3>
+
+        <div class="alert alert-info">
+            <p>Please enter the OTP code sent to <strong>{{ substr(auth()->user()->phone, 0, 2) . '*' . substr(auth()->user()->phone, -2) }}</strong></p>
+        </div>
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('validate-otp-phone') }}" method="POST">
+            @csrf
+            <div class="form-group mb-4">
+                <div class="input-group">
+                    <input type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '');" minlength="6" maxlength="6"
+                        class="form-control text-center @error('otp') is-invalid @enderror" id="otp"
+                        name="otp" placeholder="OTP Code" required>
+                    @error('otp')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
-        </div>
-    </main>
 
-    <!-- Bootstrap JS -->
+            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+        </form>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YWBdKqSMPvld8e8kEHTaVypvxl3lXtDSelwE4k20DdBOx2h74R6TvM7Sdz12tbY" crossorigin="anonymous"></script>
 </body>
 </html>

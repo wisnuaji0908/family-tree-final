@@ -37,7 +37,7 @@
             font-weight: 600;
             margin-bottom: 30px;
             text-align: center;
-            color: #28a745; /* Changed to green */
+            color: #000000; /* Changed to green */
         }
     
         label {
@@ -140,7 +140,7 @@
                 @enderror
             </div>
             
-            <button type="submit" class="btn btn-success btn-block">Save changes</button>
+            <button type="submit" class="btn btn-primary btn-block">Save changes</button>
         </form>
     </div>
 
