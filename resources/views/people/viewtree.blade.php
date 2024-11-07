@@ -228,107 +228,204 @@
         }
     </style>
 
-
-
-    <style>
-        .f3 {
+<style>
+    /* Wrapper utama dengan latar belakang gradasi dan bayangan halus */
+    .f3 {
         height: 700px;
         max-height: calc(100vh - 80px);
         width: 900px;
         max-width: 100%;
         margin: auto;
         position: relative;
-        }
+        background: linear-gradient(145deg, #f0f0f0, #ffffff);
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: box-shadow 0.4s ease, transform 0.3s ease;
+    }
 
-        .f3 .cursor-pointer {
+    /* Efek hover untuk memperbesar elemen utama */
+    .f3:hover {
+        transform: scale(1.02);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Cursor pointer pada elemen yang dapat diklik */
+    .f3 .cursor-pointer {
         cursor: pointer;
-        }
-        .f3 svg.main_svg {
+    }
+
+    /* SVG utama dengan latar belakang gradien dan efek hover */
+    .f3 svg.main_svg {
         width: 100%;
         height: 100%;
         background-color: #3b5560;
         color: #3b5560;
-        }
-        .f3 svg.main_svg text {
+        transition: background-color 0.4s ease, transform 0.3s ease;
+    }
+
+    .f3 svg.main_svg:hover {
+        background-color: #2e3a44;
+        transform: scale(1.05);
+    }
+
+    .f3 svg.main_svg text {
         fill: currentColor;
-        }
-        .f3 rect.card-female,
-        .f3 .card-female .card-body-rect,
-        .f3 .card-female .text-overflow-mask {
-        fill: lightpink;
-        }
-        .f3 rect.card-male,
-        .f3 .card-male .card-body-rect,
-        .f3 .card-male .text-overflow-mask {
-        fill: lightblue;
-        }
-        .f3 .card-genderless .card-body-rect,
-        .f3 .card-genderless .text-overflow-mask {
-        fill: lightgray;
-        }
-        .f3 .card_add .card-body-rect {
+    }
+
+    /* Kartu Gender dengan efek warna lembut dan transisi halus */
+    .f3 rect.card-female,
+    .f3 .card-female .card-body-rect,
+    .f3 .card-female .text-overflow-mask {
+        fill: #f7b7b5; /* Soft pink */
+        transition: fill 0.3s ease-in-out;
+    }
+
+    .f3 rect.card-male,
+    .f3 .card-male .card-body-rect,
+    .f3 .card-male .text-overflow-mask {
+        fill: #a7c9f0; /* Soft blue */
+        transition: fill 0.3s ease-in-out;
+    }
+
+    .f3 .card-genderless .card-body-rect,
+    .f3 .card-genderless .text-overflow-mask {
+        fill: #d3d3d3; /* Soft gray */
+    }
+
+    /* Kartu Add dengan desain interaktif dan efek hover */
+    .f3 .card_add .card-body-rect {
         fill: #3b5560;
         stroke-width: 4px;
         stroke: #fff;
         cursor: pointer;
-        }
-        .f3 g.card_add text {
+        border-radius: 12px;
+        transition: transform 0.3s ease, fill 0.4s ease;
+    }
+
+    .f3 g.card_add text {
         fill: #fff;
-        }
-        .f3 .card-main {
-        stroke: #000;
-        }
-        .f3 .card_family_tree rect {
-        transition: 0.3s;
-        }
-        .f3 .card_family_tree:hover rect {
+    }
+
+    .f3 .card_add:hover .card-body-rect {
+        fill: #2e3a44;
         transform: scale(1.1);
-        }
-        .f3 .card_add_relative {
+    }
+
+    /* Kartu Utama dengan efek hover yang lebih modern */
+    .f3 .card-main {
+        stroke: #000;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+
+    .f3 .card-main:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Hover effect pada kartu Family Tree dengan animasi smooth */
+    .f3 .card_family_tree rect {
+        transition: 0.3s ease, transform 0.3s ease;
+        border-radius: 12px;
+    }
+
+    .f3 .card_family_tree:hover rect {
+        transform: scale(1.1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Kartu Add Relative dengan warna highlight dan animasi */
+    .f3 .card_add_relative {
         cursor: pointer;
         color: #fff;
-        transition: 0.3s;
-        }
-        .f3 .card_add_relative circle {
+        transition: color 0.4s ease, transform 0.3s ease;
+    }
+
+    .f3 .card_add_relative:hover {
+        color: #f39c12; /* Highlight color */
+        transform: scale(1.1);
+    }
+
+    .f3 .card_add_relative circle {
         fill: rgba(0, 0, 0, 0);
-        }
-        .f3 .card_add_relative:hover {
-        color: black;
-        }
-        .f3 .card_edit.pencil_icon {
+    }
+
+    /* Ikon edit dengan animasi rotasi */
+    .f3 .card_edit.pencil_icon {
         color: #fff;
-        transition: 0.3s;
-        }
-        .f3 .card_edit.pencil_icon:hover {
-        color: black;
-        }
-        .f3 .card_break_link,
-        .f3 .link_upper,
-        .f3 .link_lower,
-        .f3 .link_particles {
+        transition: color 0.4s ease, transform 0.3s ease;
+    }
+
+    .f3 .card_edit.pencil_icon:hover {
+        color: #f39c12;
+        transform: rotate(15deg);
+    }
+
+    /* Link break dan partikel dengan efek animasi */
+    .f3 .card_break_link,
+    .f3 .link_upper,
+    .f3 .link_lower,
+    .f3 .link_particles {
         transform-origin: 50% 50%;
-        transition: 1s;
-        }
-        .f3 .card_break_link {
+        transition: transform 1s ease, opacity 0.4s ease;
+    }
+
+    .f3 .card_break_link {
         color: #fff;
-        }
-        .f3 .card_break_link.closed .link_upper {
+    }
+
+    .f3 .card_break_link.closed .link_upper {
         transform: translate(-140.5px, 655.6px);
-        }
-        .f3 .card_break_link.closed .link_upper g {
+    }
+
+    .f3 .card_break_link.closed .link_upper g {
         transform: rotate(-58deg);
-        }
-        .f3 .card_break_link.closed .link_particles {
+    }
+
+    .f3 .card_break_link.closed .link_particles {
         transform: scale(0);
-        }
-        .f3 .input-field input {
+    }
+
+    /* Input field dengan desain modern dan transisi */
+    .f3 .input-field input {
         height: 2.5rem !important;
-        }
-        .f3 .input-field > label:not(.label-icon).active {
-        -webkit-transform: translateY(-8px) scale(0.8);
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        padding: 0 15px;
+        font-size: 1rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .f3 .input-field input:focus {
+        border-color: #3b5560;
+        box-shadow: 0 0 8px rgba(59, 85, 96, 0.2);
+    }
+
+    .f3 .input-field > label:not(.label-icon).active {
         transform: translateY(-8px) scale(0.8);
-        }
-    </style>
+        color: #3b5560;
+    }
+
+    /* Efek animasi pada elemen yang muncul */
+    .f3 .card-main, .f3 .card_add, .f3 .card_add_relative {
+        opacity: 0;
+        animation: fadeIn 1s forwards;
+    }
+
+    .f3 .card-main:nth-child(1),
+    .f3 .card_add:nth-child(2),
+    .f3 .card_add_relative:nth-child(3) {
+        animation-delay: 0.5s;
+    }
+
+    @keyframes fadeIn {
+        0% { opacity: 0; transform: translateY(30px); }
+        100% { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
 </head>
 <body>
 <!-- Include Navbar -->
@@ -359,9 +456,10 @@
                       children: []
                     },
                     data: {
-                      "name": person.name,
-                      birthday: mother.user_parent.birth_date + ` (${person.gender})`,
-                      "gender": person.gender.charAt(0).toUpperCase()
+                      "name": `${person.name} (People)`,
+                      birthday: mother.user_parent.birth_date + ` (${person.gender})`+ ` ${person.death_date == null ? '' : `(`+ person.death_date + `)`}`,
+                      "gender": person.gender.charAt(0).toUpperCase(),
+                      "death_date": person.death_date ? person.death_date : 'Death Date Not Provided'
                     }
                   },
                   ...spouses.map(spouse => ({
@@ -371,9 +469,10 @@
                       children: []
                     },
                     data: {
-                      "name": spouse.name,
-                      birthday: mother.user_parent.birth_date + ` (${spouse.gender})`,
-                      "gender": spouse.gender.charAt(0).toUpperCase()
+                      "name": `${spouse.name} (Couple)`,
+                      birthday: mother.user_parent.birth_date + ` (${spouse.gender})`+ ` (${spouse.death_date == null ? '' : ``+ spouse.death_date + `)`})`,
+                      "gender": spouse.gender.charAt(0).toUpperCase(),
+                      "death_date": spouse.death_date ? spouse.death_date : 'Death Date Not Provided'
                     }
                   }))
                 ];
@@ -386,10 +485,11 @@
                       children: [person.id.toString()]
                     },
                     data: {
-                      "name": father.user_parent.name + `(${father.parent})`,
+                      "name": `${father.user_parent.name} (Father)`,
                       "parent": father.parent,
-                      birthday: mother.user_parent.birth_date + ` (${father.user_parent.gender})`,
-                      "gender": father.user_parent.gender.charAt(0).toUpperCase()
+                      birthday: mother.user_parent.birth_date + ` (${father.user_parent.gender})` + ` (${father.death_date == null ? '' : ` (`+father.death_date + `)`})`,
+                      "gender": father.user_parent.gender.charAt(0).toUpperCase(),
+                      "death_date": father.user_parent.death_date ? father.user_parent.death_date : 'Death Date Not Provided'
                     }
                   });
                 }
@@ -402,10 +502,11 @@
                       children: [person.id.toString()]
                     },
                     data: {
-                      "name": mother.user_parent.name + `(${mother.parent})`,
+                      "name": `${mother.user_parent.name} (Mother)`,
                       "parent": mother.parent,
-                      birthday: mother.user_parent.birth_date + ` (${mother.user_parent.gender})`,
+                      birthday: mother.user_parent.birth_date + ` (${mother.user_parent.gender})`+ ` (${mother.death_date == null ? '' : ` (`+mother.death_date + `)`})`,
                       "gender": mother.user_parent.gender,
+                      "death_date": mother.user_parent.death_date ? mother.user_parent.death_date : 'Death Date Not Provided'
                     }
                   });
                 }
@@ -458,6 +559,7 @@
                 card_display: [
                   (d) => `${d.data["name"] || ""}`,
                   (d) => `${d.data["birthday"] || ""}`,
+                  (d) => `${d.data["death_date"] || ""}`,
                 ],
                 mini_tree: true,
                 link_break: false
