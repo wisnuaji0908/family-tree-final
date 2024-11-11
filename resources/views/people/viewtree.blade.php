@@ -452,7 +452,7 @@
                     },
                     data: {
                       "name": `${person.name} (People)`,
-                      birthday: `${person.birth_date}` + `(${person.gender})` + (person.death_date ? `(${person.death_date})` : ''),
+                       birthday: `${person.birth_date}` + `(${person.gender})` + (person.death_date ? `(${person.death_date})` : ''),
                       "gender": person.gender.charAt(0).toUpperCase(),
                       "death_date": person.death_date ? person.death_date : 'Death Date Not Provided'
                     }
@@ -465,7 +465,7 @@
                     },
                     data: {
                       "name": `${spouse.name} (Couple)`,
-                      birthday: `${spouse.birth_date}` + `(${spouse.gender})` + (spouse.death_date ? `(${spouse.death_date})` : ''),
+                       birthday: `${spouse.birth_date}` + `(${spouse.gender})` + (spouse.death_date ? `(${spouse.death_date})` : ''),
                       "gender": spouse.gender.charAt(0).toUpperCase(),
                       "death_date": spouse.death_date ? spouse.death_date : 'Death Date Not Provided'
                     }
@@ -473,36 +473,40 @@
                 ];
 
                 if (father) {
-                  data.push({
+                console.log("Father Data:", father);
+                data.push({
                     id: father.user_parent.id.toString(),
                     rels: {
-                      spouses: mother ? [mother.user_parent.id.toString()] : [],
-                      children: [person.id.toString()]
+                    spouses: mother ? [mother.user_parent.id.toString()] : [],
+                    children: [person.id.toString()]
                     },
                     data: {
-                      "name": `${father.user_parent.name} (Father)`,
-                      birthday: `${father.birth_date}` + `(${father.gender})` + `(${father.death_date})`,
-                      "gender": father.user_parent.gender.charAt(0).toUpperCase(),
-                      "death_date": father.user_parent.death_date ? father.user_parent.death_date : 'Death Date Not Provided'
+                    "name": `${father.user_parent.name} (Father)`,
+                    birthday: `${father.user_parent.birth_date || ''}` + ` (${father.user_parent.gender || ''})` + (father.user_parent.death_date ? ` (${father.user_parent.death_date})` : ''),
+                    "gender": father.user_parent.gender ? father.user_parent.gender.charAt(0).toUpperCase() : 'Gender Not Provided',
+                    "death_date": father.user_parent.death_date ? father.user_parent.death_date : 'Death Date Not Provided'
                     }
-                  });
+                });
                 }
 
+
                 if (mother) {
-                  data.push({
+                console.log("Mother Data:", mother);
+                data.push({
                     id: mother.user_parent.id.toString(),
                     rels: {
-                      spouses: father ? [father.user_parent.id.toString()] : [],
-                      children: [person.id.toString()]
+                    spouses: father ? [father.user_parent.id.toString()] : [],
+                    children: [person.id.toString()]
                     },
                     data: {
-                      "name": `${mother.user_parent.name} (Mother)`,
-                      birthday: `${mother.birth_date}`+ `(${mother.gender})` + `(${mother.death_date})`,
-                      "gender": mother.user_parent.gender.charAt(0).toUpperCase(),
-                      "death_date": mother.user_parent.death_date ? mother.user_parent.death_date : 'Death Date Not Provided'
+                    "name": `${mother.user_parent.name} (Mother)`,
+                    birthday: `${mother.user_parent.birth_date || ''}` + ` (${mother.user_parent.gender || ''})` + (mother.user_parent.death_date ? ` (${mother.user_parent.death_date})` : ''),
+                    "gender": mother.user_parent.gender ? mother.user_parent.gender.charAt(0).toUpperCase() : 'Gender Not Provided',
+                    "death_date": mother.user_parent.death_date ? mother.user_parent.death_date : 'Death Date Not Provided'
                     }
-                  });   
+                });   
                 }
+
                     
                 callback(data);
               } else {
