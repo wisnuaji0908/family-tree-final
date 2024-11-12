@@ -17,8 +17,6 @@ class CouplePeopleController extends Controller
         $claimedPersonId = Auth::user()->people_id;
 
         $coupleperson = Couple::with(['people', 'partner'])
-            ->where('people_id', $claimedPersonId)
-            ->orWhere('couple_id', $claimedPersonId)
             ->paginate(5);
 
         return view('couplepeople.index', compact('coupleperson', 'setting'));
@@ -32,28 +30,33 @@ class CouplePeopleController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'couple_id' => 'required|exists:people,id|different:people_id',
-            'married_date' => 'required|date',
-            'divorce_date' => 'nullable|date|after_or_equal:married_date',
-        ]);
-    
-        $claimedPersonId = Auth::user()->people_id;
-        $person = People::findOrFail($claimedPersonId);
-    
-        // Cek apakah person adalah perempuan dan sudah memiliki pasangan aktif
-        if ($person->gender === 'female' && $person->couples()->whereNull('divorce_date')->exists()) {
-            return redirect()->back()->withErrors('This female person already has a partner.');
-        }
-    
-        // Dapatkan pasangan untuk validasi gender
-        $partner = People::findOrFail($request->couple_id);
-        if ($person->gender === $partner->gender) {
-            return redirect()->back()->withErrors('The couple must be of different genders.');
-        }
-    
-        // Cek apakah pasangan ini sudah terdaftar
+{
+    $request->validate([
+        'couple_id' => 'required|exists:people,id|different:people_id',
+        'married_date' => 'required|date',
+        'divorce_date' => 'nullable|date|after_or_equal:married_date',
+    ]);
+
+    $claimedPersonId = $request->people_id;
+    $person = People::findOrFail($claimedPersonId);
+
+    // Cek apakah orang ini sudah meninggal
+    if (!is_null($person->death_date)) {
+        return redirect()->back()->withErrors('This person is deceased and cannot have a new partner.');
+    }
+
+    // Cek apakah person adalah perempuan dan sudah memiliki pasangan aktif
+    if ($person->gender === 'female' && $person->couples()->whereNull('divorce_date')->exists()) {
+        return redirect()->back()->withErrors('This female person already has a partner.');
+    }
+
+    // Dapatkan pasangan untuk validasi gender
+    $partner = People::findOrFail($request->couple_id);
+
+    // Cek apakah pasangan ini sudah meninggal
+    if (!is_null($partner->death_date)) {
+        // Jika pasangan meninggal, izinkan menikah lagi, cek apakah pernikahan sebelumnya sudah terputus
+        // Jika pasangan sebelumnya masih tercatat tanpa divorce_date, tandakan sebagai pernikahan yang berakhir
         $existingCouple = Couple::where(function ($query) use ($claimedPersonId, $request) {
             $query->where('people_id', $claimedPersonId)
                   ->where('couple_id', $request->couple_id);
@@ -61,21 +64,44 @@ class CouplePeopleController extends Controller
             $query->where('people_id', $request->couple_id)
                   ->where('couple_id', $claimedPersonId);
         })->first();
-    
-        if ($existingCouple) {
-            return redirect()->back()->withErrors('This couple is already registered.');
+
+        if ($existingCouple && is_null($existingCouple->divorce_date)) {
+            // Jika pasangan meninggal tetapi masih ada pasangan yang aktif, beri tahu bahwa pasangan sebelumnya harus diceraikan terlebih dahulu
+            return redirect()->back()->withErrors('This person cannot marry again until the previous marriage is officially divorced.');
         }
-    
-        Couple::create([
-            'user_id' => Auth::id(),
-            'people_id' => $claimedPersonId,
-            'couple_id' => $request->couple_id,
-            'married_date' => $request->married_date,
-            'divorce_date' => $request->divorce_date,
-        ]);
-    
-        return redirect()->route('peoplecouple.index')->with('success', 'Couple created successfully.');
     }
+
+    // Cek apakah gender pasangan sudah sesuai
+    if ($person->gender === $partner->gender) {
+        return redirect()->back()->withErrors('The couple must be of different genders.');
+    }
+
+    // Cek apakah pasangan ini sudah terdaftar
+    $existingCouple = Couple::where(function ($query) use ($claimedPersonId, $request) {
+        $query->where('people_id', $claimedPersonId)
+              ->where('couple_id', $request->couple_id);
+    })->orWhere(function ($query) use ($claimedPersonId, $request) {
+        $query->where('people_id', $request->couple_id)
+              ->where('couple_id', $claimedPersonId);
+    })->first();
+
+    if ($existingCouple) {
+        return redirect()->back()->withErrors('This couple is already registered.');
+    }
+
+    // Menambahkan pasangan baru jika semua validasi lulus
+    Couple::create([
+        'user_id' => Auth::id(),
+        'people_id' => $claimedPersonId,
+        'couple_id' => $request->couple_id,
+        'married_date' => $request->married_date,
+        'divorce_date' => $request->divorce_date,
+    ]);
+
+    return redirect()->route('peoplecouple.index')->with('success', 'Couple created successfully.');
+}
+
+    
 
     public function edit(Couple $couplesperson)
     {

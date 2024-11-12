@@ -25,65 +25,78 @@ class CoupleController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'people_id' => 'required|exists:people,id',
-            'couple_id' => 'required|exists:people,id|different:people_id',
-            'married_date' => 'required|date',
-            'divorce_date' => 'nullable|date|after_or_equal:married_date',
-        ]);
-    
-        // Dapatkan informasi gender dari people_id dan couple_id
-        $person = People::findOrFail($request->people_id);
-        $partner = People::findOrFail($request->couple_id);
-    
-        // Validasi apakah gender mereka berbeda
-        if ($person->gender === $partner->gender) {
-            return redirect()->back()->withErrors('The couple must be of different genders.');
-        }
-    
-        // Cek jika person adalah perempuan dan sudah memiliki pasangan
-        if ($person->gender === 'female') {
-            // Cek apakah dia sudah memiliki pasangan dan pasangan tersebut belum bercerai
-            $existingCouple = $person->couples()->whereNull('divorce_date')->exists();
-            if ($existingCouple) {
-                return redirect()->back()->withErrors('This female person already has a partner.');
-            }
-        }
-    
-        // Cek jika partner adalah perempuan dan sudah memiliki pasangan
-        if ($partner->gender === 'female') {
-            // Cek apakah dia sudah memiliki pasangan dan pasangan tersebut belum bercerai
-            $existingCouple = $partner->couples()->whereNull('divorce_date')->exists();
-            if ($existingCouple) {
-                return redirect()->back()->withErrors('This female partner already has a partner.');
-            }
-        }
-    
-        // Cek apakah pasangan sudah ada di database
-        $existingCouple = Couple::where(function($query) use ($request) {
-            $query->where('people_id', $request->people_id)
-                  ->where('couple_id', $request->couple_id);
-        })->orWhere(function($query) use ($request) {
-            $query->where('people_id', $request->couple_id)
-                  ->where('couple_id', $request->people_id);
-        })->first();
-    
-        if ($existingCouple) {
-            return redirect()->back()->withErrors('This couple is already registered.');
-        }
-    
-        // Jika lolos validasi, simpan pasangan
-        Couple::create([
-            'user_id' => Auth::id(),
-            'people_id' => $request->people_id,
-            'couple_id' => $request->couple_id,
-            'married_date' => $request->married_date,
-            'divorce_date' => $request->divorce_date,
-        ]);
-    
-        return redirect()->route('couple.index')->with('success', 'Couple created successfully.');
+{
+    $request->validate([
+        'people_id' => 'required|exists:people,id',
+        'couple_id' => 'required|exists:people,id|different:people_id',
+        'married_date' => 'required|date',
+        'divorce_date' => 'nullable|date|after_or_equal:married_date',
+    ]);
+
+    // Dapatkan informasi gender dari people_id dan couple_id
+    $person = People::findOrFail($request->people_id);
+    $partner = People::findOrFail($request->couple_id);
+
+    // Validasi apakah gender mereka berbeda
+    if ($person->gender === $partner->gender) {
+        return redirect()->back()->withErrors('The couple must be of different genders.');
     }
+
+    // Cek jika partner adalah perempuan dan sudah memiliki pasangan yang belum bercerai dan belum meninggal
+    if ($partner->gender === 'female') {
+        $existingCouple = $partner->couples()
+            ->whereNull('divorce_date')
+            ->whereDoesntHave('partner', function($query) {
+                $query->whereNotNull('death_date');
+            })->exists();
+
+        if ($existingCouple) {
+            return redirect()->back()->withErrors('This female partner already has an active partner.');
+        }
+    }
+
+    if ($partner->gender === 'male') {
+        $existingCouple = $partner->couples()
+            ->whereNull('divorce_date')
+            ->whereDoesntHave('partner', function($query) {
+                $query->whereNotNull('death_date');
+            })->exists();
+
+        if ($existingCouple) {
+            return redirect()->back()->withErrors('This male partner already has an active partner.');
+        }
+    }
+
+    // Cek jika salah satu pasangan sudah meninggal
+    if ($person->death_date || $partner->death_date) {
+        return redirect()->back()->withErrors('One or both partners are deceased and cannot marry.');
+    }
+
+    // Cek apakah pasangan sudah ada di database
+    $existingCouple = Couple::where(function($query) use ($request) {
+        $query->where('people_id', $request->people_id)
+              ->where('couple_id', $request->couple_id);
+    })->orWhere(function($query) use ($request) {
+        $query->where('people_id', $request->couple_id)
+              ->where('couple_id', $request->people_id);
+    })->first();
+
+    if ($existingCouple) {
+        return redirect()->back()->withErrors('This couple is already registered.');
+    }
+
+    // Jika lolos validasi, simpan pasangan
+    Couple::create([
+        'user_id' => Auth::id(),
+        'people_id' => $request->people_id,
+        'couple_id' => $request->couple_id,
+        'married_date' => $request->married_date,
+        'divorce_date' => $request->divorce_date,
+    ]);
+
+    return redirect()->route('couple.index')->with('success', 'Couple created successfully.');
+}
+
     
     
 
@@ -174,7 +187,7 @@ class CoupleController extends Controller
 
     
     public function getTreeData($id)
-    {
+{
     // Mengambil data orang dengan pasangan mereka, diurutkan berdasarkan tanggal pernikahan
     $people = People::with(['couples' => function($query) {
         $query->orderBy('married_date', 'asc');
@@ -195,15 +208,16 @@ class CoupleController extends Controller
     // Menambahkan pasangan dan status pernikahan mereka
     foreach ($people->couples as $couple) {
         $isDivorced = !is_null($couple->divorce_date); // Cek apakah pasangan ini sudah bercerai
-    
-        // Jika pasangan sudah bercerai
-        if ($isDivorced) {
+        $isDeceased = !is_null($couple->partner->death_date); // Cek apakah pasangan sudah meninggal
+        
+        // Jika pasangan sudah meninggal, beri warna hitam
+        if ($isDeceased) {
+            $treeData['color'] = 'black'; // Pasangan meninggal diberi warna hitam
+        } elseif ($isDivorced) {
+            // Jika pasangan sudah bercerai
             $treeData['color'] = 'red'; // Orang utama tetap merah karena bercerai
-        }
-    
-        // Jika pasangan belum bercerai, orang ini mungkin menikah lagi
-        if (!$isDivorced) {
-            $hasNewPartnerAfterDivorce = true;
+        } else {
+            // Jika pasangan belum bercerai dan belum meninggal
             $treeData['color'] = 'green'; // Orang utama berubah menjadi hijau jika menikah lagi
         }
     
@@ -213,27 +227,36 @@ class CoupleController extends Controller
             'gender' => $couple->partner->gender,
             'married_date' => $couple->married_date,
             'divorce_date' => $couple->divorce_date,
-            'color' => $isDivorced ? 'red' : 'green', // Pasangan yang bercerai berwarna merah
+            'death_date' => $couple->partner->death_date, // Tampilkan death_date jika ada
+            'color' => $isDeceased ? 'black' : ($isDivorced ? 'red' : 'green'), // Pasangan yang meninggal berwarna hitam, bercerai merah, menikah lagi hijau
             'children' => []
         ];
     }
 
-    
     // Mengambil pasangan lain yang mungkin ada di partner (untuk pasangan lain dari partner)
     $otherPartners = Couple::where('couple_id', $people->id)->with('people')->get();
     foreach ($otherPartners as $otherPartner) {
+        // Cek apakah pasangan ini sudah meninggal
+        $isOtherPartnerDeceased = !is_null($otherPartner->people->death_date);
+        $isOtherPartnerDivorced = !is_null($otherPartner->divorce_date);
+
+        // Tentukan warna berdasarkan status perceraian dan kematian
+        $partnerColor = $isOtherPartnerDeceased ? 'black' : ($isOtherPartnerDivorced ? 'red' : 'green');
+
         $treeData['children'][] = [
             'name' => $otherPartner->people->name,
             'gender' => $otherPartner->people->gender,
             'married_date' => $otherPartner->married_date,
             'divorce_date' => $otherPartner->divorce_date,
-            'color' => $otherPartner->divorce_date ? 'red' : 'green',
+            'death_date' => $otherPartner->people->death_date, // Tampilkan death_date jika ada
+            'color' => $partnerColor, // Pasangan yang meninggal berwarna hitam, bercerai merah, menikah lagi hijau
             'children' => []
         ];
     }
 
     return response()->json($treeData);
 }
+
 
 
     
