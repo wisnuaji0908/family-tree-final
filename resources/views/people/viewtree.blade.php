@@ -489,7 +489,6 @@
                 });
                 }
 
-
                 if (mother) {
                 console.log("Mother Data:", mother);
                 data.push({
@@ -521,18 +520,18 @@
           });
         }
 
-        fetchFamilyData(1, function(data) {
-          console.log("Data:", data);
-          const store = f3.createStore({
-              data,
-              node_separation: 250,
-              level_separation: 150
-          }),
-          view = f3.d3AnimationView({
-              store,
-              cont: document.querySelector("#FamilyChart")
-          }),
-          Card = f3.elements.Card({
+            fetchFamilyData(1, function(data) {
+            console.log("Data:", data);
+            const store = f3.createStore({
+                data,
+                node_separation: 250,
+                level_separation: 150
+            }),
+            view = f3.d3AnimationView({
+                store,
+                cont: document.querySelector("#FamilyChart")
+            }),
+            Card = f3.elements.Card({
               store,
               svg: view.svg,
               card_dim: {
