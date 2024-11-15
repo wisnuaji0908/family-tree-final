@@ -442,35 +442,38 @@
                 const spouses = result.data.couple.map(couple => couple.partner);
 
                 const data = [
-                  {
+                {
                     id: person.id.toString(),
                     rels: {
-                      spouses: spouses.map(spouse => spouse.id.toString()),
-                      father: father ? father.user_parent.id.toString() : null,
-                      mother: mother ? mother.user_parent.id.toString() : null,
-                      children: []
+                    spouses: spouses.map(spouse => spouse.id.toString()),
+                    father: father ? father.user_parent.id.toString() : null,
+                    mother: mother ? mother.user_parent.id.toString() : null,
+                    children: []
                     },
                     data: {
-                      "name": `${person.name} (People)`,
-                       birthday: `${person.birth_date}` + `(${person.gender})` + (person.death_date ? `(${person.death_date})` : ''),
-                      "gender": person.gender.charAt(0).toUpperCase(),
-                      "death_date": person.death_date ? person.death_date : 'Death Date Not Provided'
+                    "name": `${person.name} (People)`,
+                    birthday: `${person.birth_date}` + ` (${person.gender})` + (person.death_date ? ` (${person.death_date})` : ''),
+                    "gender": person.gender.charAt(0).toUpperCase(),
+                    "death_date": person.death_date ? person.death_date : 'Death Date Not Provided',
+                    "color": person.death_date ? "black" : "white"
                     }
-                  },
-                  ...spouses.map(spouse => ({
+                },
+                ...spouses.map(spouse => ({
                     id: spouse.id.toString(),
                     rels: {
-                      spouses: [person.id.toString()],
-                      children: []
+                    spouses: [person.id.toString()],
+                    children: []
                     },
                     data: {
-                      "name": `${spouse.name} (Couple)`,
-                       birthday: `${spouse.birth_date}` + `(${spouse.gender})` + (spouse.death_date ? `(${spouse.death_date})` : ''),
-                      "gender": spouse.gender.charAt(0).toUpperCase(),
-                      "death_date": spouse.death_date ? spouse.death_date : 'Death Date Not Provided'
+                    "name": `${spouse.name} (Couple)`,
+                    birthday: `${spouse.birth_date}` + ` (${spouse.gender})` + (spouse.death_date ? ` (${spouse.death_date})` : ''),
+                    "gender": spouse.gender.charAt(0).toUpperCase(),
+                    "death_date": spouse.death_date ? spouse.death_date : 'Death Date Not Provided',
+                    "color": spouse.death_date ? "black" : "white"
                     }
-                  }))
+                }))
                 ];
+
 
                 if (father) {
                 console.log("Father Data:", father);
@@ -484,10 +487,12 @@
                     "name": `${father.user_parent.name} (Father)`,
                     birthday: `${father.user_parent.birth_date || ''}` + ` (${father.user_parent.gender || ''})` + (father.user_parent.death_date ? ` (${father.user_parent.death_date})` : ''),
                     "gender": father.user_parent.gender ? father.user_parent.gender.charAt(0).toUpperCase() : 'Gender Not Provided',
-                    "death_date": father.user_parent.death_date ? father.user_parent.death_date : 'Death Date Not Provided'
+                    "death_date": father.user_parent.death_date ? father.user_parent.death_date : 'Death Date Not Provided',
+                    "color": father.user_parent.death_date ? "black" : "white"  
                     }
                 });
                 }
+
 
                 if (mother) {
                 console.log("Mother Data:", mother);
@@ -501,12 +506,13 @@
                     "name": `${mother.user_parent.name} (Mother)`,
                     birthday: `${mother.user_parent.birth_date || ''}` + ` (${mother.user_parent.gender || ''})` + (mother.user_parent.death_date ? ` (${mother.user_parent.death_date})` : ''),
                     "gender": mother.user_parent.gender ? mother.user_parent.gender.charAt(0).toUpperCase() : 'Gender Not Provided',
-                    "death_date": mother.user_parent.death_date ? mother.user_parent.death_date : 'Death Date Not Provided'
+                    "death_date": mother.user_parent.death_date ? mother.user_parent.death_date : 'Death Date Not Provided',
+                    "color": mother.user_parent.death_date ? "black" : "white"  
                     }
                 });   
                 }
 
-                    
+
                 callback(data);
               } else {
                 console.error("Failed:", result.message);
