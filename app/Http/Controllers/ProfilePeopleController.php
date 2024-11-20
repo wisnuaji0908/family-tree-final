@@ -19,6 +19,10 @@ class ProfilePeopleController extends Controller
         $setting = Setting::first();
         $user = auth()->user();
         $people = People::where('user_id', $user->id)->first();
+
+        if (!$people) {
+            $people = $user->profile;
+        }
         
         return view('profilepeople.index', compact('setting', 'user', 'people'));
     }
@@ -41,29 +45,46 @@ class ProfilePeopleController extends Controller
 
     
     $profileData = [
-        'user_id' => $user->id,
         'name' => $request->name,
         'birth_date' => $request->born,
         'place_birth' => $request->place_birth,
         'gender' => $request->gender,
     ];
 
-    // $profile = People::where('user_id', $user->id)->first();
+    $people = People::where('user_id', $user->id)->first();
 
-    $profile = People::updateOrCreate([
-        'user_id' => $user->id,
-    ], $profileData);
-
-
-    if ($request->hasFile('photo')) {
-        if ($profile && $profile->photo_profile && Storage::exists('public/' . $profile->photo_profile)) {
-            Storage::delete('public/' . $profile->photo_profile);
+    if ($people) {
+        $people->update($profileData);
+        $profile = $people->refresh();
+        if ($request->hasFile('photo')) {
+            if ($profile && $profile->photo_profile && Storage::exists('public/' . $profile->photo_profile)) {
+                Storage::delete('public/' . $profile->photo_profile);
+            }
+    
+            $profileData['photo_profile'] = $request->file('photo')->store('profiles', 'public');
         }
+    } else {
+        $user->profile->update($profileData);
 
-        $profileData['photo_profile'] = $request->file('photo')->store('profiles', 'public');
+        $profile = $user->profile->refresh();
+
+        if ($request->hasFile('photo')) {
+            if ($profile && $profile->photo_profile && Storage::exists('public/' . $profile->photo_profile)) {
+                Storage::delete('public/' . $profile->photo_profile);
+            }
+    
+            $profileData['photo_profile'] = $request->file('photo')->store('profiles', 'public');
+        }
     }
 
-    $profile->update($profileData);
+
+    // $profile = People::where('user_id', $user->id)->first();
+
+    // $profile = People::update($profileData);
+
+    // $profile = People::updateOrCreate([
+    //     'user_id' => $user->id,
+    // ], $profileData);
 
     return redirect()->route('landing.profile.people')->with('success', 'Profile updated successfully');
     }
@@ -149,6 +170,10 @@ class ProfilePeopleController extends Controller
         $setting = Setting::first();
         $user = auth()->user(); 
         $people = People::where('user_id', $user->id)->first();
+
+        if (!$people) {
+            $people = $user->profile;
+        }
 
         return view('profilepeople.editprofile', compact('setting', 'user', 'people'));
     }
