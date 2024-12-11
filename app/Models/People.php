@@ -21,10 +21,29 @@ class People extends Model
         'photo_profile',
     ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-    public function couples(){
+    public function couples()
+    {
         return $this->hasMany(Couple::class, 'people_id');
     }
+
+    public function parents()
+    {
+        return $this->hasMany(Parents::class, 'people_id');
+    }
+
+
+    // protected static function boot()
+    // {
+    //     parent::boot();
+
+    //     // Global scope: Selalu tampilkan data milik admin
+    //     static::addGlobalScope('include_admin', function ($query) {
+    //         $query->orWhere('user_id', 1); // Data milik admin
+    //     });
+    // }
+
 }

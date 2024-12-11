@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $setting?->app_name ?? config('app.name') }} - People</title>  
+    <title>{{ $setting?->app_name ?? config('app.name') }} - People</title>
     <link rel="icon" href="{{ $setting?->app_logo ? asset('storage/' . $setting?->app_logo) : asset('default_favicon.ico') }}" type="image/png">
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
@@ -15,10 +15,10 @@
         body {
             background-color: #f5f7fa;
             font-family: 'Poppins', sans-serif;
-            font-size: 15px; 
+            font-size: 15px;
         }
         .container-fluid {
-            padding: 0; 
+            padding: 0;
         }
         .card {
             border-radius: 12px;
@@ -29,31 +29,31 @@
             background-color: #51A783;
             color: white;
             border-radius: 12px 12px 0 0;
-            padding: 15px; 
+            padding: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 16px; 
+            font-size: 16px;
         }
         .btn-add {
-            background-color: #0056b3; 
+            background-color: #0056b3;
             border: none;
-            padding: 10px 35px; 
-            font-size: 15px; 
-            font-weight: 600; 
+            padding: 10px 35px;
+            font-size: 15px;
+            font-weight: 600;
             color: white;
             border-radius: 30px;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3); 
+            box-shadow: 0 2px 10px rgba(0, 123, 255, 0.3);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 15px; 
+            margin-bottom: 15px;
         }
         .btn-edit {
-            background-color: #f0ad4e; 
+            background-color: #f0ad4e;
             color: white;
-            font-size: 15px; 
+            font-size: 15px;
         }
         .btn-delete {
             background-color: #dc3545;
@@ -64,12 +64,12 @@
             margin: 0 auto;
             border-collapse: collapse;
             font-size: 15px;
-            width: 95%; 
+            width: 95%;
         }
 
         th, td {
             text-align: left;
-            padding: 12px; 
+            padding: 12px;
             border-bottom: 1px solid #dee2e6;
         }
 
@@ -90,10 +90,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 15px; 
+            font-size: 15px;
         }
         .search-container {
-            margin-bottom: 20px; 
+            margin-bottom: 20px;
         }
         rect {
             fill: white;
@@ -119,9 +119,9 @@
             visibility: hidden;
         }
         .btn-light-green {
-            background-color: #51A783; 
-            color: white; 
-            border: none; 
+            background-color: #51A783;
+            color: white;
+            border: none;
         }
 
     </style>
@@ -131,7 +131,7 @@
 @include('nav')
 
 
-<div class="container-fluid py-0"> 
+<div class="container-fluid py-0">
     <div class="row">
         <div class="col-12">
             <div class="card my-2">
@@ -278,7 +278,7 @@
                                                     .attr("x", 0)
                                                     .attr("text-anchor", "middle")
                                                     .style("fill", "gray")
-                                                    .text(function(d) { 
+                                                    .text(function(d) {
                                                         return "Gender: " + d.data.gender + " | Birth: " + d.data.birth_date + " | Death: " + d.data.death_date;
                                                     });
 
@@ -343,7 +343,7 @@
                                                 }
                                             }
                                         </script> --}}
-                                
+
                                     @foreach ($people as $i => $data)
                                         <tr>
                                             <td>{{ ($people->currentPage() - 1) * $people->perPage() + $i + 1 }}.</td>
@@ -359,6 +359,7 @@
                                                 @endif
                                             </td>
                                             <td class="text-center">
+                                                @if(Auth::user()->role === 'admin' || $data->user_id === Auth::user()->id)
                                                 <a href="{{ route('people.edit', $data->id) }}" class="btn btn-sm btn-edit">Edit</a>
                                                 <a href="{{ route('people.viewtree', $data->id) }}" class="btn btn-sm btn-light-green">View Tree</a>
                                                 <form action="{{ route('people.destroy', $data->id) }}" method="POST" class="d-inline">
@@ -366,11 +367,14 @@
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-delete" onclick="return confirm('Are you sure?')">Delete</button>
                                                 </form>
+                                                @else
+                                                    <span class="text-muted">No actions available</span>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach
                                 @endif
-                            </tbody>    
+                            </tbody>
                         </table>
                     </div>
                 </div>

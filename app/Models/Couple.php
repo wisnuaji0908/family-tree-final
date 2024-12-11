@@ -22,17 +22,16 @@ class Couple extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
     public function people()
     {
-        return $this->belongsTo(People::class, 'people_id');
+        return $this->belongsTo(People::class, 'people_id', 'id');
     }
 
     public function partner()
     {
         return $this->belongsTo(People::class, 'couple_id');
     }
-
-    
 }

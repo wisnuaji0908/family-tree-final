@@ -14,10 +14,10 @@ class ParentsController extends Controller
     public function index()
     {
         $setting = Setting::first();
-        $parents = Parents::with(['user', 'people', 'userParent'])->paginate(5); 
+        $parents = Parents::with(['user', 'people', 'userParent'])->paginate(5);
         return view('parents.index', compact('parents', 'setting'));
     }
-    
+
 
     public function create()
     {
@@ -78,7 +78,7 @@ class ParentsController extends Controller
         $people = People::all();
         $setting = Setting::first();
         return view('parents.edit', compact('parent', 'users', 'people', 'setting'));
-    
+
     }
 
     public function update(Request $request, $id)
@@ -110,7 +110,7 @@ class ParentsController extends Controller
         // Cek apakah kombinasi parent sudah ada di database, kecuali record yang sedang di-update
         $existingParent = Parents::where('people_id', $request->people_id)
             ->where('parent_id', $request->parent_id)
-            ->where('id', '!=', $id) 
+            ->where('id', '!=', $id)
             ->first();
 
         if ($existingParent) {
@@ -121,8 +121,8 @@ class ParentsController extends Controller
         $parentData->update([
             'user_id' => Auth::id(),
             'people_id' => $request->people_id,
-            'parent_id' => $request->parent_id, 
-            'parent' => $request->parent, 
+            'parent_id' => $request->parent_id,
+            'parent' => $request->parent,
         ]);
 
         return redirect()->route('parents.index')->with('success', 'Parent updated successfully.');
@@ -132,7 +132,7 @@ class ParentsController extends Controller
     {
         // Ambil parent berdasarkan ID
         $parent = Parents::findOrFail($id);
-        
+
         // Ambil data parent berdasarkan user yang sedang login
         $parents = Parents::where('people_id', $parent->people_id)
             ->where('user_id', Auth::id())
@@ -169,16 +169,16 @@ class ParentsController extends Controller
     {
         $person = People::find($id);
 
-        $parentFather = \App\Models\Parents::where('people_id', $id)
+        $parentFather = Parents::where('people_id', $id)
             ->where('parent', 'father')
             ->with(['userParent', 'people'])
             ->get();
 
-        $parentMother = \App\Models\Parents::where('people_id', $id)
+        $parentMother = Parents::where('people_id', $id)
             ->where('parent', 'mother')
             ->with(['userParent', 'people'])
             ->get();
-            
+
 
         return response()->json([
             'success' => true,

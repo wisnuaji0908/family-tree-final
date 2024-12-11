@@ -18,11 +18,13 @@ class Parents extends Model
         'parent',
     ];
 
-    public function user(): BelongsTo{
-        return $this->belongsTo(User::class, 'people_id', 'id');
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function userParent(): BelongsTo {
+    public function userParent(): BelongsTo
+    {
         return $this->belongsTo(People::class, 'parent_id', 'id');
     }
 
