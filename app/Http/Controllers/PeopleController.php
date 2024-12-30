@@ -196,6 +196,8 @@ class PeopleController extends Controller
         }
     }
 
+    // tolong refactor kode php8.2 laravel 11 berikut: `paste`
+//    php docs
     public function getFamilyTree($id)
     {
         try {
@@ -211,7 +213,25 @@ class PeopleController extends Controller
             $edges = [];
 
             // Fungsi untuk menambahkan node jika belum ada
-            $addNodeIfNotExists = function ($id, $label, $type, $color) use (&$nodes) {
+            $addNodeIfNotExists = function ($id, $label, $type, $color, $gender, $isNewNode) use (&$nodes) {
+                if (!$id || !$label || !$color || !$type) {
+                    \Log::warning("Skipping node with incomplete data", [
+                        'id' => $id,
+                        'label' => $label,
+                        'color' => $color,
+                        'type' => $type,
+                    ]);
+                    return;
+                }
+
+                if (!in_array($gender, ['male', 'female'])) {
+                    \Log::warning("Invalid gender for node {$id}. Setting default gender to 'male'.");
+                    $gender = 'male';
+                }
+
+                $borderColor = $gender === 'female' ? 'pink' : 'blue';
+                $textColor = $this->getTextColor($color);
+
                 if (!collect($nodes)->firstWhere('data.id', $id)) {
                     $nodes[] = [
                         "data" => [
@@ -219,40 +239,90 @@ class PeopleController extends Controller
                             "label" => $label,
                             "type" => $type,
                             "color" => $color,
+                            "borderColor" => $borderColor,
+                            "textColor" => $textColor,
+                            "gender" => $gender,
+                            "is_new_node" => $isNewNode,
                         ]
                     ];
-                    \Log::info("Node added", ['id' => $id, 'label' => $label]);
+                    \Log::info("Node added", ['id' => $id, 'label' => $label, 'borderColor' => $borderColor]);
                 }
             };
 
             // Fungsi untuk menambahkan edge jika belum ada
-            $addEdgeIfNotExists = function ($source, $target, $role = null) use (&$edges) {
-                if (!collect($edges)->firstWhere('data', ['source' => $source, 'target' => $target])) {
+            $addEdgeIfNotExists = function ($source, $target, $role, $color = null, $additionalInfo = null) use (&$edges, &$nodes) {
+                $label = $role;
+                if ($additionalInfo) {
+                    $label .= isset($additionalInfo['married_date'])
+                        ? "\nTanggal Nikah: {$additionalInfo['married_date']}" : '';
+                    $label .= isset($additionalInfo['divorce_date'])
+                        ? "\nTanggal Cerai: {$additionalInfo['divorce_date']}" : '';
+                }
+
+                // Set warna khusus untuk role "Anak"
+                $color = $role === 'Anak' ? '#F0e68c' : ($color ?? ($role === 'Cerai' ? 'red' : 'green'));
+
+                // Pastikan source dan target nodes ada
+                $existingSourceNode = collect($nodes)->firstWhere('data.id', $source);
+                $existingTargetNode = collect($nodes)->firstWhere('data.id', $target);
+
+                if (!$existingSourceNode || !$existingTargetNode) {
+                    \Log::warning("Edge skipped because source or target node is missing", [
+                        'source' => $source,
+                        'target' => $target,
+                    ]);
+                    return;
+                }
+
+                if (
+                    !collect($edges)->first(function ($edge) use ($source, $target, $role) {
+                        // Kalau sudah ada edge cerai, skip edge pasangan
+                        if (
+                            $edge['data']['source'] === $source &&
+                            $edge['data']['target'] === $target &&
+                            $edge['data']['role'] === 'Cerai'
+                        ) {
+                            return true;
+                        }
+
+                        // Kalau belum ada edge sama sekali, tambahkan
+                        return $edge['data']['source'] === $source &&
+                            $edge['data']['target'] === $target;
+                    })
+                ) {
                     $edges[] = [
                         "data" => [
                             "source" => $source,
                             "target" => $target,
                             "role" => $role,
-                            "label" => $role,
-                        ]
+                            "label" => $label,
+                            "color" => $color,
+                        ],
                     ];
-                    \Log::info("Edge added", ['source' => $source, 'target' => $target, 'role' => $role]);
+                    \Log::info("Edge added", [
+                        'source' => $source,
+                        'target' => $target,
+                        'role' => $role,
+                        'label' => $label,
+                        'color' => $color,
+                    ]);
                 }
             };
 
             // Tambahkan Person Node
             $personNodeId = "person_{$person->id}";
-            // Cek apakah pasangan memiliki anak
             $hasChildren = \DB::table('parents')->where('parent_id', $person->id)->exists();
             $role = $hasChildren
                 ? ($person->gender === 'male' ? 'Father' : 'Mother')
-                : 'Pasangan'; // Jika tidak punya anak, role default jadi "Pasangan"
+                : 'Pasangan';
 
             $addNodeIfNotExists(
                 $personNodeId,
                 "{$person->name}\nGender: {$person->gender}\nRole: {$role}\nTempat, Tanggal lahir: {$person->place_birth}, {$person->birth_date}\nMeninggal: " . ($person->death_date ?? 'Belum Meninggal'),
                 $person->death_date ? 'dead' : 'alive',
-                $person->gender === 'female' ? 'pink' : 'blue'
+                $person->gender === 'female' ? 'pink' : 'blue',
+                $person->gender,
+                false
             );
 
             // Tambahkan Couples Node dan Edge
@@ -271,10 +341,12 @@ class PeopleController extends Controller
                         $partnerNodeId,
                         "{$partner->name}\nGender: {$partner->gender}\nRole: {$role}\n" . ($couple->divorce_date ? "Bercerai: {$couple->divorce_date}" : "Status: Menikah") . "\nMenikah: {$couple->married_date}\nMeninggal: " . ($partner->death_date ?? 'Belum Meninggal'),
                         'spouse',
-                        $couple->divorce_date ? 'red' : ($partner->death_date && !$couple->divorce_date ? 'gray' : 'green')
+                        $couple->divorce_date ? 'red' : ($partner->death_date ? 'gray' : 'green'),
+                        $partner->gender,
+                        false
                     );
 
-                    // Tambahkan edge pasangan
+                    // Tambahkan edge pasangan dengan label
                     $addEdgeIfNotExists($personNodeId, $partnerNodeId, 'Pasangan');
                 }
             }
@@ -283,15 +355,78 @@ class PeopleController extends Controller
             // Tambahkan Anak dan Hubungan Parents
             foreach ($allPeople as $people) {
                 $childNodeId = "person_{$people->id}";
-                $color = $people->death_date ? 'black' : ($people->gender === 'female' ? 'pink' : 'blue');
+
+                // Perbaikan query pasangan
+                $partnerRecords = \DB::table('couple')
+                    ->where('people_id', $people->id)
+                    ->orWhere('couple_id', $people->id)
+                    ->get();
+
+                // Cek apakah punya pasangan
+                $hasPartner = $partnerRecords->isNotEmpty();
+
+                // Cek apakah punya anak
+                $hasChildren = \DB::table('parents')->where('parent_id', $people->id)->exists();
+
+                // Tentukan role berdasarkan kondisi
+                if ($hasChildren) {
+                    $role = $people->gender === 'male' ? 'Father' : 'Mother';
+                } elseif ($hasPartner) {
+                    $role = 'Pasangan';
+                } else {
+                    $role = 'Anak';
+                }
+
+                // Tentukan warna node
+                $color = $people->death_date
+                    ? 'black' // Prioritas warna jika meninggal
+                    : ($hasPartner
+                        ? ($people->gender === 'female' ? 'pink' : 'blue') // Warna jika ada pasangan
+                        : 'white'); // Default warna jika tidak ada pasangan/anak
+
+                // Debugging log
+                \Log::info("Warna node dikirim ke frontend", [
+                    'node_id' => $childNodeId,
+                    'color' => $color,
+                    'role' => $role,
+                    'hasPartner' => $hasPartner,
+                    'hasChildren' => $hasChildren,
+                ]);
+
+                // Jenis node
+                $type = $hasPartner || $hasChildren ? 'parent' : 'child';
+
+                // Tambahkan node dengan role
                 $addNodeIfNotExists(
                     $childNodeId,
-                    "{$people->name}\nGender: {$people->gender}\nTempat, Tanggal lahir: {$people->place_birth}, {$people->birth_date}\nMeninggal: " . ($people->death_date ?? 'Belum Meninggal'),
-                    $people->death_date ? 'dead' : 'alive',
-                    $color
+                    "{$people->name}\nGender: {$people->gender}\nRole: {$role}\nTempat, Tanggal lahir: {$people->place_birth}, {$people->birth_date}\nMeninggal: " . ($people->death_date ?? 'Belum Meninggal'),
+                    $type,
+                    $color,
+                    $people->gender,
+                    !\DB::table('parents')->where('people_id', $people->id)->exists()
                 );
 
-                \Log::info("Node anak ditambahkan", ['childNodeId' => $childNodeId]);
+                foreach ($partnerRecords as $partnerRecord) {
+                    $partnerId = $partnerRecord->people_id === $people->id
+                        ? $partnerRecord->couple_id
+                        : $partnerRecord->people_id;
+
+                    $partner = People::find($partnerId);
+
+                    if ($partner) {
+                        $isDivorced = !is_null($partnerRecord->divorce_date);
+                        $partnerNodeId = "person_{$partner->id}";
+                        $currentNodeId = "person_{$people->id}";
+
+                        $edgeLabel = $isDivorced
+                            ? "Cerai\nTanggal Nikah: {$partnerRecord->married_date}\nTanggal Cerai: {$partnerRecord->divorce_date}"
+                            : "Pasangan\nTanggal Nikah: {$partnerRecord->married_date}";
+
+                        $edgeColor = $isDivorced ? 'red' : 'green';
+
+                        $addEdgeIfNotExists($currentNodeId, $partnerNodeId, $edgeLabel, $edgeColor);
+                    }
+                }
 
                 // Ambil relasi orang tua
                 $parentRelations = \DB::table('parents')->where('people_id', $people->id)->get();
@@ -313,13 +448,17 @@ class PeopleController extends Controller
                             $parentNodeId1,
                             "{$firstParent->name}\nGender: {$firstParent->gender}\nRole: Father\nTempat, Tanggal Lahir: {$firstParent->place_birth}, {$firstParent->birth_date}\nMeninggal: " . ($firstParent->death_date ?? 'Belum Meninggal'),
                             'parent',
-                            $firstParent->death_date ? 'black' : ($firstParent->gender === 'female' ? 'pink' : 'blue')
+                            $firstParent->death_date ? 'black' : ($firstParent->gender === 'female' ? 'pink' : 'blue'),
+                            $firstParent->gender, // Tambahkan gender
+                            false // Bukan node baru
                         );
                         $addNodeIfNotExists(
                             $parentNodeId2,
                             "{$secondParent->name}\nGender: {$secondParent->gender}\nRole: Mother\nTempat, Tanggal Lahir: {$secondParent->place_birth}, {$secondParent->birth_date}\nMeninggal: " . ($secondParent->death_date ?? 'Belum Meninggal'),
                             'parent',
-                            $secondParent->death_date ? 'black' : ($secondParent->gender === 'female' ? 'pink' : 'blue')
+                            $secondParent->death_date ? 'black' : ($secondParent->gender === 'female' ? 'pink' : 'blue'),
+                            $secondParent->gender, // Tambahkan gender
+                            false // Bukan node baru
                         );
 
                         \Log::info("Node pasangan ditambahkan", ['fatherNodeId' => $parentNodeId1, 'motherNodeId' => $parentNodeId2]);
@@ -336,7 +475,7 @@ class PeopleController extends Controller
                         // Tambahkan edge dari pasangan langsung ke anak
                         $existingChildEdge = collect($edges)->firstWhere('data', ['source' => $parentNodeId1, 'target' => $childNodeId]);
                         if (!$existingChildEdge) {
-                            $addEdgeIfNotExists($parentNodeId1, $childNodeId, 'Anak');
+                            $addEdgeIfNotExists($parentNodeId1, $childNodeId, 'Anak', color: '#F0e68c');
                             \Log::info("Edge anak dari pasangan ditambahkan", ['source' => $parentNodeId1, 'target' => $childNodeId]);
                         } else {
                             \Log::info("Edge anak dari pasangan sudah ada", ['source' => $parentNodeId1, 'target' => $childNodeId]);
@@ -349,11 +488,22 @@ class PeopleController extends Controller
                         if ($parent) {
                             $parentNodeId = "person_{$parent->id}";
 
+                            // Tentukan role berdasarkan gender
+                            $role = $parent->gender === 'male' ? 'Father' : 'Mother';
+
+                            // Tentukan warna node
+                            $color = $parent->death_date
+                                ? 'black' // Jika sudah meninggal
+                                : ($parent->gender === 'female' ? 'pink' : 'blue'); // Warna sesuai gender
+
+                            // Tambahkan node dengan role dinamis
                             $addNodeIfNotExists(
                                 $parentNodeId,
-                                "{$parent->name}\nGender: {$parent->gender}\nRole: Parent\nTempat, Tanggal Lahir: {$parent->place_birth}, {$parent->birth_date}\nMeninggal: " . ($parent->death_date ?? 'Belum Meninggal'),
+                                "{$parent->name}\nGender: {$parent->gender}\nRole: {$role}\nTempat, Tanggal Lahir: {$parent->place_birth}, {$parent->birth_date}\nMeninggal: " . ($parent->death_date ?? 'Belum Meninggal'),
                                 'parent',
-                                $parent->death_date ? 'black' : ($parent->gender === 'female' ? 'pink' : 'blue')
+                                $color,    // Warna sesuai kondisi
+                                $parent->gender, // Gender
+                                false      // Bukan node baru
                             );
 
                             \Log::info("Node parent tunggal ditambahkan", ['parentNodeId' => $parentNodeId]);
@@ -403,6 +553,19 @@ class PeopleController extends Controller
         $positions = \DB::table('diagram_positions')->get();
         \Log::info("Fetched positions: ", $positions->toArray()); // Tambahkan log
         return response()->json($positions); // Return semua posisi node
+    }
+
+    // Fungsi untuk menentukan warna teks berdasarkan warna node
+    private function getTextColor($nodeColor)
+    {
+        return match ($nodeColor) {
+            'blue' => '#00FFFF',   // Biru -> Cyan
+            'pink' => '#FFF5E1',   // Pink -> Krem
+            'black' => '#FFFFFF',  // Hitam -> Putih
+            'white' => '#000000',  // Putih -> Hitam
+            'green' => '#FFFF00',  // Hijau -> Kuning
+            default => '#000000',  // Default Hitam
+        };
     }
 
 }

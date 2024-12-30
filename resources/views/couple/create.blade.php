@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>{{ $setting?->app_name ?? config('app.name') }} - Create Couple</title> 
+   <title>{{ $setting?->app_name ?? config('app.name') }} - Create Couple</title>
    <link rel="icon" href="{{ $setting?->app_logo ? asset('storage/' . $setting?->app_logo) : asset('default_favicon.ico') }}" type="image/png">
    <!-- Google Font -->
    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
@@ -153,19 +153,23 @@
                     @csrf
                     <div class="mb-3">
                         <label for="people_id" class="form-label">Person</label>
-                        <select name="people_id" id="people_id" class="form-select" required>
-                        <option value="" disabled selected>Select Person</option>
+                        <select name="people_id" id="people_id" class="form-select" required onchange="filterPartners()">
+                            <option value="" disabled selected>Select Person</option>
                             @foreach($people as $person)
-                                <option value="{{ $person->id }}">{{ $person->name }}</option>
+                                <option value="{{ $person->id }}" data-gender="{{ $person->gender }}" data-divorce-date="{{ $person->divorce_date }}">
+                                    {{ $person->name }} - {{ $person->gender === 'male' ? 'Male' : 'Female' }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
                     <div class="mb-3">
                         <label for="couple_id" class="form-label">Partner</label>
                         <select name="couple_id" id="couple_id" class="form-select" required>
-                        <option value="" disabled selected>Select Partner</option>
+                            <option value="" disabled selected>Select Partner</option>
                             @foreach($people as $person)
-                                <option value="{{ $person->id }}">{{ $person->name }}</option>
+                                <option value="{{ $person->id }}" data-gender="{{ $person->gender }}">
+                                    {{ $person->name }} - {{ $person->gender === 'male' ? 'Male' : 'Female' }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -195,10 +199,49 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+    const peopleDropdown = document.getElementById('people_id');
+    const partnerDropdown = document.getElementById('couple_id');
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('married_date').setAttribute('max', today);
     document.getElementById('divorce_date').setAttribute('max', today);
+
+    function filterPartners() {
+        const selectedPerson = peopleDropdown.options[peopleDropdown.selectedIndex];
+        const selectedPersonGender = selectedPerson.getAttribute('data-gender');
+        const selectedPersonDivorceDate = selectedPerson.getAttribute('data-divorce-date');
+
+        // Validasi jika perempuan dan belum bercerai
+        if (selectedPersonGender === 'female' && !selectedPersonDivorceDate) {
+            alert('This person cannot remarry as she is already married and not divorced.');
+            partnerDropdown.disabled = true;
+            return;
+        } else {
+            partnerDropdown.disabled = false;
+        }
+
+        for (let i = 0; i < partnerDropdown.options.length; i++) {
+            const partnerOption = partnerDropdown.options[i];
+            const partnerGender = partnerOption.getAttribute('data-gender');
+            const partnerDivorceDate = partnerOption.getAttribute('data-divorce-date');
+
+            // Default enable all options
+            partnerOption.disabled = false;
+
+            // Validasi gender dan pasangan aktif
+            if (
+                partnerGender === selectedPersonGender || // Disable jika gender sama
+                selectedPerson.value === partnerOption.value || // Disable jika orang yang sama
+                (partnerGender === 'female' && !partnerDivorceDate) // Disable jika partner perempuan belum bercerai
+            ) {
+                partnerOption.disabled = true;
+            }
+        }
+    }
+
+    // Event listener untuk person dropdown
+    peopleDropdown.addEventListener('change', filterPartners);
 </script>
+
 
 </body>
 </html>

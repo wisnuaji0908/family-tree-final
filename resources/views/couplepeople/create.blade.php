@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $setting?->app_name ?? config('app.name') }} - Create Couple</title> 
+    <title>{{ $setting?->app_name ?? config('app.name') }} - Create Couple</title>
     <link rel="icon" href="{{ $setting?->app_logo ? asset('storage/' . $setting?->app_logo) : asset('default_favicon.ico') }}" type="image/png">
    <!-- Google Font -->
    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
@@ -152,19 +152,23 @@
                     @csrf
                     <div class="mb-3">
                         <label for="people_id" class="form-label">Person</label>
-                        <select name="people_id" id="people_id" class="form-select" required>
-                        <option value="" disabled selected>Select Person</option>
+                        <select name="people_id" id="people_id" class="form-select" required onchange="validatePersonSelection()">
+                            <option value="" disabled selected>Select Person</option>
                             @foreach($people as $person)
-                                <option value="{{ $person->id }}">{{ $person->name }}</option>
+                                <option value="{{ $person->id }}" data-gender="{{ $person->gender }}" data-active="{{ $person->active_marriage ? 'true' : 'false' }}">
+                                    {{ $person->name }} - {{ ucfirst($person->gender) }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
                     <div class="mb-3">
                         <label for="couple_id" class="form-label">Partner</label>
                         <select name="couple_id" id="couple_id" class="form-select" required>
-                        <option value="" disabled selected>Select Partner</option>
+                            <option value="" disabled selected>Select Partner</option>
                             @foreach($people as $person)
-                                <option value="{{ $person->id }}">{{ $person->name }}</option>
+                                <option value="{{ $person->id }}" data-gender="{{ $person->gender }}" data-active="{{ $person->active_marriage ? 'true' : 'false' }}">
+                                    {{ $person->name }} - {{ ucfirst($person->gender) }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -195,9 +199,41 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('married_date').setAttribute('max', today);
-    document.getElementById('divorce_date').setAttribute('max', today);
+    const peopleDropdown = document.getElementById('people_id');
+    const partnerDropdown = document.getElementById('couple_id');
+
+    function validatePersonSelection() {
+        const selectedPerson = peopleDropdown.options[peopleDropdown.selectedIndex];
+        const personGender = selectedPerson.getAttribute('data-gender');
+        const personActiveMarriage = selectedPerson.getAttribute('data-active') === 'true';
+
+        // Reset partner dropdown
+        for (let i = 0; i < partnerDropdown.options.length; i++) {
+            const option = partnerDropdown.options[i];
+            option.disabled = false;
+        }
+
+        // Disable invalid partners
+        for (let i = 0; i < partnerDropdown.options.length; i++) {
+            const partnerOption = partnerDropdown.options[i];
+            const partnerGender = partnerOption.getAttribute('data-gender');
+            const partnerActiveMarriage = partnerOption.getAttribute('data-active') === 'true';
+
+            // Same gender or active marriage restriction
+            if (
+                personGender === partnerGender ||
+                partnerActiveMarriage ||
+                peopleDropdown.value === partnerOption.value
+            ) {
+                partnerOption.disabled = true;
+            }
+        }
+
+        // Alert if person has an active marriage
+        if (personActiveMarriage) {
+            alert('This person cannot remarry until their current marriage is dissolved.');
+        }
+    }
 </script>
 
 </body>

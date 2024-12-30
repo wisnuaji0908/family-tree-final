@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $setting?->app_name ?? config('app.name') }} - Edit Parents</title>  
+    <title>{{ $setting?->app_name ?? config('app.name') }} - Edit Parents</title>
     <link rel="icon" href="{{ $setting?->app_logo ? asset('storage/' . $setting?->app_logo) : asset('default_favicon.ico') }}" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -24,8 +24,8 @@
             width: 100%;
             padding: 0 15px;
             display: flex;
-            justify-content: center; 
-            align-items: center; 
+            justify-content: center;
+            align-items: center;
         }
 
         .card {
@@ -62,21 +62,21 @@
         }
 
         .btn.bg-gradient-danger {
-            background: linear-gradient(45deg, #dc3545, #c82333); 
+            background: linear-gradient(45deg, #dc3545, #c82333);
             color: white;
         }
 
         .btn.bg-gradient-danger:hover {
-            background: linear-gradient(45deg, #c82333, #bd2130); 
+            background: linear-gradient(45deg, #c82333, #bd2130);
         }
 
         .btn.bg-gradient-primary {
-            background: linear-gradient(45deg, #007bff, #0056b3); 
+            background: linear-gradient(45deg, #007bff, #0056b3);
             color: white;
         }
 
         .btn.bg-gradient-primary:hover {
-            background: linear-gradient(45deg, #0056b3, #003f7f); 
+            background: linear-gradient(45deg, #0056b3, #003f7f);
         }
 
         .form-label {
@@ -112,7 +112,7 @@
                 <form action="{{ route('parentspeople.update', $parent->id) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    
+
                     <div class="mb-3">
                         <label for="people_id" class="form-label">Person</label>
                         <select name="people_id" id="people_id" class="form-select" required>
@@ -126,12 +126,12 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="parent_id" class="form-label">Parent Name</label>
+                        <label for="parent_id" class="form-label">Parent</label>
                         <select name="parent_id" id="parent_id" class="form-select" required>
-                            <option value="">Select Parent</option>
+                            <option value="" selected disabled>Pilih Parent</option>
                             @foreach ($people as $person)
-                                <option value="{{ $person->id }}" {{ $parent->parent_id == $person->id ? 'selected' : '' }}>
-                                    {{ $person->name }}
+                                <option value="{{ $person->id }}" data-gender="{{ $person->gender }}">
+                                    {{ $person->name }} ({{ ucfirst($person->gender) }})
                                 </option>
                             @endforeach
                         </select>
@@ -140,8 +140,7 @@
                     <div class="mb-3">
                         <label for="parent" class="form-label">Parent Role</label>
                         <select name="parent" id="parent" class="form-select" required>
-                            <option value="father" {{ $parent->parent == 'father' ? 'selected' : '' }}>Father</option>
-                            <option value="mother" {{ $parent->parent == 'mother' ? 'selected' : '' }}>Mother</option>
+                            <option value="" disabled selected>Pilih Role</option>
                         </select>
                     </div>
 
@@ -168,5 +167,18 @@
     </div>
 </div>
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script>
+    document.getElementById('parent_id').addEventListener('change', function () {
+        const gender = this.options[this.selectedIndex].dataset.gender;
+        const roleSelect = document.getElementById('parent');
+        roleSelect.innerHTML = ''; // Reset options
+
+        if (gender === 'male') {
+            roleSelect.innerHTML = '<option value="father">Father</option>';
+        } else if (gender === 'female') {
+            roleSelect.innerHTML = '<option value="mother">Mother</option>';
+        }
+    });
+</script>
 </body>
 </html>

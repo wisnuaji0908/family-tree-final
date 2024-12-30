@@ -19,8 +19,10 @@ class ParentsPeopleController extends Controller
         $claimedPersonId = Auth::user()->people_id;
 
         $parents = Parents::with(['user', 'people', 'userParent'])
-            ->where('people_id', $claimedPersonId)
-            ->orWhere('parent_id', $claimedPersonId)
+            ->where(function ($query) use ($claimedPersonId) {
+                $query->where('people_id', $claimedPersonId)
+                    ->orWhere('parent_id', $claimedPersonId);
+            })
             ->paginate(5);
 
         return view('parentspeople.index', compact('parents', 'loggedInUser', 'setting'));
@@ -36,32 +38,36 @@ class ParentsPeopleController extends Controller
 
     public function store(Request $request)
     {
+        // Validasi Input
         $request->validate([
             'user_id' => 'nullable|exists:users,id',
             'people_id' => 'required|exists:people,id',
-            'parent_id' => 'nullable|exists:people,id|different:people_id',
+            'parent_id' => 'required|exists:people,id|different:people_id',
             'parent' => 'required|in:father,mother',
         ]);
 
+        // Cek Gender Parent
+        $parent = People::find($request->parent_id);
+        if ($parent) {
+            if (
+                ($parent->gender === 'male' && $request->parent !== 'father') ||
+                ($parent->gender === 'female' && $request->parent !== 'mother')
+            ) {
+                return redirect()->back()
+                    ->withErrors(['parent' => 'Role tidak sesuai dengan gender parent.'])
+                    ->withInput();
+            }
+        }
+
+        // Cek jika sudah ada 2 parent
         $existingParentsCount = Parents::where('people_id', $request->people_id)->count();
         if ($existingParentsCount >= 2) {
-            return redirect()->back()->withErrors(['people_id' => 'This person already has two parents.'])->withInput();
+            return redirect()->back()
+                ->withErrors(['people_id' => 'This person already has two parents.'])
+                ->withInput();
         }
 
-        $existingParentWithSameRole = Parents::where('people_id', $request->people_id)
-            ->where('parent', $request->parent)
-            ->first();
-
-        if ($existingParentWithSameRole) {
-            return redirect()->back()->withErrors(['parent' => 'This person already has a ' . $request->parent . '.'])->withInput();
-        }
-
-        $person = People::find($request->people_id);
-        $parent = People::find($request->parent_id);
-        if ($person && $parent && $person->name === $parent->name) {
-            return redirect()->back()->withErrors(['parent_id' => 'Person and Parent names cannot be the same.'])->withInput();
-        }
-
+        // Simpan Data
         Parents::create([
             'user_id' => Auth::id(),
             'people_id' => $request->people_id,
@@ -89,34 +95,41 @@ class ParentsPeopleController extends Controller
 
     public function update(Request $request, string $id)
     {
-
         $parent = Parents::findOrFail($id);
-
-        if (auth()->user()->id !== $parent->user_id) {
-            return redirect()->back()->with('error', 'Anda tidak memiliki izin untuk mengedit data ini.');
-        }
 
         $request->validate([
             'user_id' => 'nullable|exists:users,id',
-            'people_id' => 'required|exists:people,id|unique:parents,people_id,' . $id,
-            'parent_id' => 'nullable|exists:people,id|different:people_id',
+            'people_id' => 'required|exists:people,id',
+            'parent_id' => 'required|exists:people,id|different:people_id',
             'parent' => 'required|in:father,mother',
         ]);
 
-        if (
-            ($parent->parent === 'father' && $request->parent === 'mother') ||
-            ($parent->parent === 'mother' && $request->parent === 'father')
-        ) {
-            return redirect()->back()->with('error', 'Tidak dapat mengubah parent role dari ' . $parent->parent . ' menjadi ' . $request->parent . '.');
-        }
-
-        $person = People::find($request->people_id);
+        // Cek Gender Parent
         $parentData = People::find($request->parent_id);
-
-        if ($person && $parentData && $person->name === $parentData->name) {
-            return redirect()->back()->withErrors(['parent_id' => 'Person and Parent names cannot be the same.'])->withInput();
+        if ($parentData) {
+            if (
+                ($parentData->gender === 'male' && $request->parent !== 'father') ||
+                ($parentData->gender === 'female' && $request->parent !== 'mother')
+            ) {
+                return redirect()->back()
+                    ->withErrors(['parent' => 'Role tidak sesuai dengan gender parent.'])
+                    ->withInput();
+            }
         }
 
+        // Tambahkan pengecekan apakah parent_id + role sudah digunakan
+        $existingParent = Parents::where('parent_id', $request->parent_id)
+            ->where('parent', $request->parent)
+            ->where('id', '!=', $parent->id) // Jangan cek data yang sedang diedit
+            ->first();
+
+        if ($existingParent) {
+            return redirect()->back()
+                ->withErrors(['parent_id' => 'Parent dengan role ini sudah digunakan oleh orang lain.'])
+                ->withInput();
+        }
+
+        // Update Data
         $parent->update([
             'user_id' => Auth::id(),
             'people_id' => $request->people_id,
